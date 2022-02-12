@@ -17,6 +17,35 @@
 		4C4A73AE27B3D2D6004EDA61 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A738427B3D2D4004EDA61 /* ContentView.swift */; };
 		4C4A73AF27B3D2D6004EDA61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C4A738527B3D2D5004EDA61 /* Assets.xcassets */; };
 		4C4A73B027B3D2D6004EDA61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C4A738527B3D2D5004EDA61 /* Assets.xcassets */; };
+		4C4A73C727B3E2E2004EDA61 /* CGRPCZlib in Frameworks */ = {isa = PBXBuildFile; productRef = 4C4A73C627B3E2E2004EDA61 /* CGRPCZlib */; };
+		4C4A73C927B3E2E2004EDA61 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 4C4A73C827B3E2E2004EDA61 /* GRPC */; };
+		4C4A73CB27B3E2E2004EDA61 /* protoc-gen-grpc-swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4C4A73CA27B3E2E2004EDA61 /* protoc-gen-grpc-swift */; };
+		4C4A73CF27B3FB8A004EDA61 /* warp.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */; };
+		4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */; };
+		4C4A73D327B3FB8A004EDA61 /* warp.proto in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CE27B3FB8A004EDA61 /* warp.proto */; };
+		4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CE27B3FB8A004EDA61 /* warp.proto */; };
+		4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56B827B40DE100A9B537 /* CGRPCZlib */; };
+		4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56BA27B40DE100A9B537 /* GRPC */; };
+		4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */; };
+		4CDD56BE27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */; };
+		4CDD56C127B4108F00A9B537 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56C027B4108F00A9B537 /* Auth.swift */; };
+		4CDD56C227B4108F00A9B537 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56C027B4108F00A9B537 /* Auth.swift */; };
+		4CDD56C427B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */; };
+		4CDD56C527B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */; };
+		4CDD56C727B6672D00A9B537 /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56C627B6672D00A9B537 /* Discovery.swift */; };
+		4CDD56C827B6672D00A9B537 /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56C627B6672D00A9B537 /* Discovery.swift */; };
+		4CDD56DE27B6808D00A9B537 /* BonjourResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56DD27B6808D00A9B537 /* BonjourResolver.swift */; };
+		4CDD56DF27B6808D00A9B537 /* BonjourResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56DD27B6808D00A9B537 /* BonjourResolver.swift */; };
+		4CDD56E627B79A3700A9B537 /* CertificateClientV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */; };
+		4CDD56E727B79A3700A9B537 /* CertificateClientV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */; };
+		4CDD56E927B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56E827B79B5100A9B537 /* DiscoveryViewModel.swift */; };
+		4CDD56EA27B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56E827B79B5100A9B537 /* DiscoveryViewModel.swift */; };
+		4CDD56EC27B79C2C00A9B537 /* WarpBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56EB27B79C2C00A9B537 /* WarpBackend.swift */; };
+		4CDD56ED27B79C2C00A9B537 /* WarpBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56EB27B79C2C00A9B537 /* WarpBackend.swift */; };
+		4CDD56EF27B7A5B100A9B537 /* RemoteRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */; };
+		4CDD56F027B7A5B100A9B537 /* RemoteRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */; };
+		4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56F227B7B85900A9B537 /* warp.pb.swift */; };
+		4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56F227B7B85900A9B537 /* warp.pb.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +78,19 @@
 		4C4A73A327B3D2D6004EDA61 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		4C4A73A927B3D2D6004EDA61 /* Tests_macOSLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOSLaunchTests.swift; sourceTree = "<group>"; };
+		4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.grpc.swift; sourceTree = "<group>"; };
+		4C4A73CE27B3FB8A004EDA61 /* warp.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = warp.proto; sourceTree = "<group>"; };
+		4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateServerV2.swift; sourceTree = "<group>"; };
+		4CDD56C027B4108F00A9B537 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpRegistrationProvider.swift; sourceTree = "<group>"; };
+		4CDD56C627B6672D00A9B537 /* Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery.swift; sourceTree = "<group>"; };
+		4CDD56C927B6774000A9B537 /* warpinator-project--iOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "warpinator-project--iOS--Info.plist"; sourceTree = "<group>"; };
+		4CDD56DD27B6808D00A9B537 /* BonjourResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourResolver.swift; sourceTree = "<group>"; };
+		4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateClientV2.swift; sourceTree = "<group>"; };
+		4CDD56E827B79B5100A9B537 /* DiscoveryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryViewModel.swift; sourceTree = "<group>"; };
+		4CDD56EB27B79C2C00A9B537 /* WarpBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpBackend.swift; sourceTree = "<group>"; };
+		4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRegistration.swift; sourceTree = "<group>"; };
+		4CDD56F227B7B85900A9B537 /* warp.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.pb.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +98,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */,
+				4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +107,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C4A73C727B3E2E2004EDA61 /* CGRPCZlib in Frameworks */,
+				4C4A73CB27B3E2E2004EDA61 /* protoc-gen-grpc-swift in Frameworks */,
+				4C4A73C927B3E2E2004EDA61 /* GRPC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,11 +133,13 @@
 		4C4A737D27B3D2D4004EDA61 = {
 			isa = PBXGroup;
 			children = (
+				4CDD56C927B6774000A9B537 /* warpinator-project--iOS--Info.plist */,
 				4C4A738227B3D2D4004EDA61 /* Shared */,
 				4C4A739127B3D2D5004EDA61 /* macOS */,
 				4C4A739A27B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A627B3D2D6004EDA61 /* Tests macOS */,
 				4C4A738B27B3D2D5004EDA61 /* Products */,
+				4C4A73C027B3DDFA004EDA61 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -98,7 +147,13 @@
 			isa = PBXGroup;
 			children = (
 				4C4A738327B3D2D4004EDA61 /* warpinator_projectApp.swift */,
-				4C4A738427B3D2D4004EDA61 /* ContentView.swift */,
+				4CDD56F827B83C3400A9B537 /* lib */,
+				4CDD56E427B798D800A9B537 /* ViewModels */,
+				4CDD56E327B7985C00A9B537 /* Views */,
+				4CDD56BF27B4105800A9B537 /* Backend */,
+				4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */,
+				4CDD56F227B7B85900A9B537 /* warp.pb.swift */,
+				4C4A73CE27B3FB8A004EDA61 /* warp.proto */,
 				4C4A738527B3D2D5004EDA61 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -141,6 +196,51 @@
 			path = "Tests macOS";
 			sourceTree = "<group>";
 		};
+		4C4A73C027B3DDFA004EDA61 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4CDD56BF27B4105800A9B537 /* Backend */ = {
+			isa = PBXGroup;
+			children = (
+				4CDD56EB27B79C2C00A9B537 /* WarpBackend.swift */,
+				4CDD56C027B4108F00A9B537 /* Auth.swift */,
+				4CDD56C627B6672D00A9B537 /* Discovery.swift */,
+				4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */,
+				4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */,
+				4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */,
+				4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */,
+			);
+			path = Backend;
+			sourceTree = "<group>";
+		};
+		4CDD56E327B7985C00A9B537 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4C4A738427B3D2D4004EDA61 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CDD56E427B798D800A9B537 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4CDD56E827B79B5100A9B537 /* DiscoveryViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4CDD56F827B83C3400A9B537 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				4CDD56DD27B6808D00A9B537 /* BonjourResolver.swift */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -157,6 +257,10 @@
 			dependencies = (
 			);
 			name = "warpinator-project (iOS)";
+			packageProductDependencies = (
+				4CDD56B827B40DE100A9B537 /* CGRPCZlib */,
+				4CDD56BA27B40DE100A9B537 /* GRPC */,
+			);
 			productName = "warpinator-project (iOS)";
 			productReference = 4C4A738A27B3D2D5004EDA61 /* warpinator-project.app */;
 			productType = "com.apple.product-type.application";
@@ -174,6 +278,11 @@
 			dependencies = (
 			);
 			name = "warpinator-project (macOS)";
+			packageProductDependencies = (
+				4C4A73C627B3E2E2004EDA61 /* CGRPCZlib */,
+				4C4A73C827B3E2E2004EDA61 /* GRPC */,
+				4C4A73CA27B3E2E2004EDA61 /* protoc-gen-grpc-swift */,
+			);
 			productName = "warpinator-project (macOS)";
 			productReference = 4C4A739027B3D2D5004EDA61 /* warpinator-project.app */;
 			productType = "com.apple.product-type.application";
@@ -249,6 +358,9 @@
 				Base,
 			);
 			mainGroup = 4C4A737D27B3D2D4004EDA61;
+			packageReferences = (
+				4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */,
+			);
 			productRefGroup = 4C4A738B27B3D2D5004EDA61 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -299,7 +411,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CDD56EC27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
+				4CDD56C727B6672D00A9B537 /* Discovery.swift in Sources */,
+				4CDD56EF27B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
+				4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
+				4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */,
+				4CDD56C427B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4C4A73CF27B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AD27B3D2D6004EDA61 /* ContentView.swift in Sources */,
+				4CDD56E627B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
+				4CDD56E927B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
+				4CDD56C127B4108F00A9B537 /* Auth.swift in Sources */,
+				4CDD56DE27B6808D00A9B537 /* BonjourResolver.swift in Sources */,
+				4C4A73D327B3FB8A004EDA61 /* warp.proto in Sources */,
 				4C4A73AB27B3D2D6004EDA61 /* warpinator_projectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -308,7 +432,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CDD56ED27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
+				4CDD56C827B6672D00A9B537 /* Discovery.swift in Sources */,
+				4CDD56F027B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
+				4CDD56BE27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
+				4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */,
+				4CDD56C527B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AE27B3D2D6004EDA61 /* ContentView.swift in Sources */,
+				4CDD56E727B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
+				4CDD56EA27B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
+				4CDD56C227B4108F00A9B537 /* Auth.swift in Sources */,
+				4CDD56DF27B6808D00A9B537 /* BonjourResolver.swift in Sources */,
+				4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */,
 				4C4A73AC27B3D2D6004EDA61 /* warpinator_projectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -398,6 +534,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -451,6 +588,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -468,6 +606,7 @@
 				DEVELOPMENT_TEAM = 6THNG9YB47;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "warpinator-project--iOS--Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -498,6 +637,7 @@
 				DEVELOPMENT_TEAM = 6THNG9YB47;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "warpinator-project--iOS--Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -703,6 +843,45 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/grpc/grpc-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4C4A73C627B3E2E2004EDA61 /* CGRPCZlib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = CGRPCZlib;
+		};
+		4C4A73C827B3E2E2004EDA61 /* GRPC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = GRPC;
+		};
+		4C4A73CA27B3E2E2004EDA61 /* protoc-gen-grpc-swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = "protoc-gen-grpc-swift";
+		};
+		4CDD56B827B40DE100A9B537 /* CGRPCZlib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = CGRPCZlib;
+		};
+		4CDD56BA27B40DE100A9B537 /* GRPC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = GRPC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4C4A737E27B3D2D4004EDA61 /* Project object */;
 }
