@@ -25,13 +25,23 @@ struct ContentView: View {
     
     @State var clientAddress = "192.168.0.100"
     
+    let auth: Auth
+    
     let warp: WarpBackend
     
     @ObservedObject var discoveryViewModel: DiscoveryViewModel
     
     
     init() {
-        warp = WarpBackend.from(discoveryConfig: .init(api_version: "2", auth_port: 42001, hostname: Foundation.ProcessInfo().hostName))
+        
+        let hostName = Foundation.ProcessInfo().hostName
+        
+        auth = Auth(hostName: hostName)
+        
+        warp = WarpBackend.from(
+            discoveryConfig: .init(identity: auth.identity, api_version: "2", auth_port: 42001, hostname: hostName),
+            auth: auth
+        )
         
         discoveryViewModel = .init(warp: warp)
         
@@ -52,35 +62,40 @@ struct ContentView: View {
                     ForEach(discoveryViewModel.remotes) { remote in
                         Button("Remote: \(remote.title)") {
                             
-                            DispatchQueue.global(qos: .default).async {
-                                Task {
-                                    let resolveResult = try? await remote.peer.resolveDNSName()
-                                    
-                                    guard let (host, _) = resolveResult else {
-                                        print("failed to resolve")
-                                        return
-                                    }
-                                    
-                                    print("sucessfully resolved: \(host)")
-                                    
-                                    DispatchQueue.global(qos: .background).async {
-                                        let result = try? fetchCertV2(host: host, auth_port: 42001, regRequest: RegRequest.with({
-                                            $0.hostname = warp.remoteRegistration.discovery.config.hostname
-                                        }))
-                                        
-                                        print("Got result: \(result?.lockedCert ?? "nil")")
-                                        
-                                        Task { @MainActor in
-                                            if let lockedCert = result?.lockedCert {
-                                                self.string = lockedCert
-                                            } else {
-                                                self.string = "failed"
-                                            }
-                                        }
-                                        
-                                    }
-                                }
+                            Task {
+                                await remote.ping()
                             }
+                            
+                            
+//                            DispatchQueue.global(qos: .default).async {
+//                                Task {
+//                                    let resolveResult = try? await remote.peer.resolveDNSName()
+//
+//                                    guard let (host, _) = resolveResult else {
+//                                        print("failed to resolve")
+//                                        return
+//                                    }
+//
+//                                    print("sucessfully resolved: \(host)")
+//
+//                                    DispatchQueue.global(qos: .background).async {
+//                                        let result = try? fetchCertV2(host: host, auth_port: 42001, regRequest: RegRequest.with({
+//                                            $0.hostname = warp.remoteRegistration.discovery.config.hostname
+//                                        }))
+//
+//                                        print("Got result: \(result?.lockedCert ?? "nil")")
+//
+//                                        Task { @MainActor in
+//                                            if let lockedCert = result?.lockedCert {
+//                                                self.string = lockedCert
+//                                            } else {
+//                                                self.string = "failed"
+//                                            }
+//                                        }
+//
+//                                    }
+//                                }
+//                            }
                         }
                     }
                 }
@@ -100,7 +115,7 @@ struct ContentView: View {
                 })
                 
                 Button("start cert v2 server", action: {
-                    let server = CertServerV2()
+                    let server = CertServerV2(auth: auth)
                     
                     DispatchQueue.global(qos: .userInitiated).async {
                         try? server.run()
@@ -121,13 +136,13 @@ struct ContentView: View {
                 })
                 
                 Button("print peers", action: {
-                    for remote in warp.remoteRegistration.discovery.remotes {
-                        print("\n")
-                        
-                        print(remote)
-                        
-                        //                        let socketAddress = try? SocketAddress.makeAddressResolvingHost(remote.resolvedDNSName, port: Int(remote.txtRecord["auth-port"] ?? "") ?? 42001)
-                    }
+//                    for remote in warp.remoteRegistration.discovery.remotes {
+//                        print("\n")
+//
+//                        print(remote)
+//
+//                        //                        let socketAddress = try? SocketAddress.makeAddressResolvingHost(remote.resolvedDNSName, port: Int(remote.txtRecord["auth-port"] ?? "") ?? 42001)
+//                    }
                 })
             }
         }

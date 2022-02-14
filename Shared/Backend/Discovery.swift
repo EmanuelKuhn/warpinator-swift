@@ -4,6 +4,7 @@
 //
 //  Created by Emanuel on 11/02/2022.
 //
+// This file contains classes for mDNS discovery of peers
 
 import Foundation
 
@@ -11,6 +12,8 @@ import OSLog
 import Network
 
 struct DiscoveryConfig {
+    let identity: String
+    
     let api_version: String
     let auth_port: Int
     let hostname: String
@@ -30,16 +33,16 @@ struct MDNSPeer {
     /// the name would not resolve to an ip address when using it to connect with .hostandport untill a new
     /// `dns-sd -L` type lookup query is send. Thus it is easier to always resolve the domain, type, name combination to a
     /// dns name host and immidiatly use the result to start a network connection.
-    func resolveDNSName(callback: @escaping (Result<(String, Int), Error>) -> Void) {
-        
-        DispatchQueue.main.async {
-            BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name)) { result in
-                DispatchQueue.global().async {
-                    callback(result)
-                }
-            }
-        }
-    }
+//    func resolveDNSName(callback: @escaping (Result<(String, Int), Error>) -> Void) {
+//        
+//        DispatchQueue.main.async {
+//            BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name)) { result in
+//                DispatchQueue.global().async {
+//                    callback(result)
+//                }
+//            }
+//        }
+//    }
     
     func resolveDNSName() async throws -> (String, Int) {
         return try await BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name))
@@ -53,9 +56,9 @@ struct MDNSPeer {
         return Int(txtRecord.dictionary["auth_port"] ?? "nil")
     }
     
-    func computeKey() -> String {
-        return "\(domain) \(type) \(name)"
-    }
+//    func computeKey() -> String {
+//        return "\(domain) \(type) \(name)"
+//    }
 }
 
 
@@ -66,34 +69,41 @@ class Discovery {
     private var listener: NWListener?
     private var browser: NWBrowser?
     
-    var remotes: Array<MDNSPeer> {
-        return Array(self.peers.values)
+//    var remotes: Array<MDNSPeer> {
+//        return Array(self.peers.values)
+//    }
+//    
+//    private var peers: Dictionary<String, MDNSPeer>
+    
+    enum RemoteChanged {
+        case added(peer: MDNSPeer)
+        case removed(name: String)
     }
     
-    private var peers: Dictionary<String, MDNSPeer>
+    typealias RemoteChangeListener = (RemoteChanged) -> Void
     
-    private var onRemotesChangedListeners: Array<() -> Void> = []
+    private var onRemoteChangedListeners: Array<RemoteChangeListener> = []
 
-    func addOnRemotesChangedListener(_ listener: @escaping () -> Void) {
-        self.onRemotesChangedListeners.append(listener)
+    func addOnRemoteChangedListener(_ listener: @escaping RemoteChangeListener) {
+        self.onRemoteChangedListeners.append(listener)
     }
     
-    private func onRemotesChanged() {
-        onRemotesChangedListeners.forEach({
-            $0()
+    private func onRemotesChanged(_ change: RemoteChanged) {
+        onRemoteChangedListeners.forEach({
+            $0(change)
         })
     }
     
     init(config: DiscoveryConfig) {
         self.config = config
-        
-        self.peers = .init()
     }
     
     private func addPeer(peer: MDNSPeer) {
-        self.peers[peer.computeKey()] = peer
-        
-        self.onRemotesChanged()
+        self.onRemotesChanged(.added(peer: peer))
+    }
+    
+    private func removePeer(name: String) {
+        self.onRemotesChanged(.removed(name: name))
     }
     
     
@@ -155,6 +165,15 @@ class Discovery {
                     
                 case .removed(let removed_result):
                     print("discovery .removed: \(removed_result)")
+                    
+                    guard case let .service(name, _, _, _) = removed_result.endpoint else {
+                        print("Expected endpoint to be .service but was \(removed_result.endpoint)")
+                        
+                        return
+                    }
+                    
+                    self.removePeer(name: name)
+                    
                 case .changed(old: let old, new: let new, flags: let flags):
                     print("discovery .changed \(old), \(new), \(flags)")
                 @unknown default:
@@ -181,7 +200,7 @@ class Discovery {
         
         let txtRecord =  NWTXTRecord(["api-version": config.api_version, "auth-port": String(config.auth_port), "hostname": config.hostname, "type": "real"])
         
-        listener.service = NWListener.Service(name: "IOS-UID",
+        listener.service = NWListener.Service(name: config.identity,
                                               type: "_warpinator._tcp",
                                               txtRecord: txtRecord)
         

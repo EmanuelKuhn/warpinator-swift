@@ -7,24 +7,33 @@
 
 import Foundation
 
-struct Remote: Identifiable {
-    let id: String
-    let title: String
-    
-    let peer: MDNSPeer
-}
 
 class DiscoveryViewModel: ObservableObject {
+
+    struct VMRemote: Identifiable {
+        let id: String
+        let title: String
+        
+        let peer: MDNSPeer
+        
+        fileprivate let remote: Remote
+        
+        func ping() async {
+            
+            await remote.requestCertificate()
+            
+            print("ping: \(try? await remote.ping(remote: remote))")
+        }
+    }
     
-    @Published var remotes: Array<Remote> = []
+    @Published var remotes: Array<VMRemote> = []
     
     init(warp: WarpBackend) {
-        warp.remoteRegistration.discovery.addOnRemotesChangedListener {
-            
+        warp.remoteRegistration.addOnRemoteChangedListener { remotes in
             print("DiscoveryViewModel: onRemotesChangedListener")
             
-            self.remotes = warp.remoteRegistration.discovery.remotes.map({ peer in
-                Remote(id: peer.computeKey(), title: "\(peer.txtRecord["hostname"] ?? ""): \(peer.name)", peer: peer)
+            self.remotes = remotes.map({ remote in
+                VMRemote(id: remote.name, title: "\(remote.mdnsPeer.txtRecord["hostname"] ?? ""): \(remote.name)", peer: remote.mdnsPeer, remote: remote)
             })
         }
     }

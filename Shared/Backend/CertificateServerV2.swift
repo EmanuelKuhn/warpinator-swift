@@ -20,8 +20,8 @@ class CertServerV2 {
     let address: String
     let auth_port: Int
     
-    init() {
-        self.auth = Auth()
+    init(auth: Auth) {
+        self.auth = auth
         self.address = "::"
         self.auth_port = 42001
     }

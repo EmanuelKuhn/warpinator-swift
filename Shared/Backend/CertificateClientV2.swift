@@ -24,7 +24,7 @@ func fetchCertV2(host: String, auth_port port: Int, regRequest: RegRequest) thro
       try? client.channel.close().wait()
     }
     
-    client.defaultCallOptions.timeLimit = .timeout(.seconds(5))
+//    client.defaultCallOptions.timeLimit = .timeout(.seconds(5))
     
     return getCert(using: client, regRequest: regRequest)
 

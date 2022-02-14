@@ -6,56 +6,69 @@
 //
 
 import Foundation
+import Sodium
 
 
 class RemoteRegistration {
     
-    struct Remote {
-        let id: String
-        
-        let mdnsPeer: MDNSPeer
-        
-        var certificate: String? = nil
-        
-        static func from(mdnsPeer: MDNSPeer) -> Remote {
-            return .init(id: mdnsPeer.computeKey(), mdnsPeer: mdnsPeer)
-        }
-        
-        func update(with mdnsPeer: MDNSPeer) {
-            assert(mdnsPeer.computeKey() == self.id)
-            
-            
-            print("TODO: update with peer")
-        }
-    }
-    
     let discovery: Discovery
+    
+    private let auth: Auth
     
     private var remotesDict: Dictionary<String, Remote>
     
-    init(discovery: Discovery) {
+    init(discovery: Discovery, auth: Auth) {
         self.discovery = discovery
         
+        self.auth = auth
+        
         self.remotesDict = .init()
+        
+        self.discovery.addOnRemoteChangedListener(self.onRemoteChangedListener)
     }
     
-    func addPeer(mdnsPeer: MDNSPeer) {
-        if let oldRemote = self.remotesDict[mdnsPeer.computeKey()] {
-            oldRemote.update(with: mdnsPeer)
+    func addPeer(mdnsPeer: MDNSPeer) async {
+        if let oldRemote = self.remotesDict[mdnsPeer.name] {
+            await oldRemote.update(with: mdnsPeer)
         } else {
-            let newRemote = Remote.from(mdnsPeer: mdnsPeer)
+            let newRemote = await Remote.from(mdnsPeer: mdnsPeer, actor: RemoteActor(auth: auth))
             
-            self.remotesDict[newRemote.id] = newRemote
+            await self.remotesDict[newRemote.name] = newRemote
             
             register(remote: newRemote)
         }
-        
-        
     }
+    
+    private func onRemoteChangedListener(change: Discovery.RemoteChanged) {
+        Task {
+            switch(change) {
+            case .added(let peer):
+                await self.addPeer(mdnsPeer: peer)
+            case .removed(let name):
+                await self.remotesDict[name]?.setActive(false)
+            }
+            
+            // Send update
+            onRemotesChanged()
+        }
+    }
+    
+    private var onRemotesChangedListeners: Array<(Array<Remote>) -> Void> = []
+    
+    func addOnRemoteChangedListener(_ listener: @escaping (Array<Remote>) -> Void) {
+        self.onRemotesChangedListeners.append(listener)
+    }
+    
+    private func onRemotesChanged() {
+        self.onRemotesChangedListeners.forEach({
+            $0(Array(self.remotesDict.values))
+        })
+    }
+    
     
     func register(remote: Remote) {
         /// First fetch certificate
         
-        //        let cert = getCerremote: RemoteRegistration.Remote()
+        //        let cert = remote.mdnsPeer.resolveDNSName()
     }
 }

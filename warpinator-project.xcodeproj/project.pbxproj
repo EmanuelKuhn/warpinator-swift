@@ -46,6 +46,13 @@
 		4CDD56F027B7A5B100A9B537 /* RemoteRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */; };
 		4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56F227B7B85900A9B537 /* warp.pb.swift */; };
 		4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56F227B7B85900A9B537 /* warp.pb.swift */; };
+		4CDD56FC27B90AC200A9B537 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56FB27B90AC200A9B537 /* Sodium */; };
+		4CDD56FE27B90AD700A9B537 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56FD27B90AD700A9B537 /* Sodium */; };
+		4CDD570027B93F2600A9B537 /* WarpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56FF27B93F2600A9B537 /* WarpClient.swift */; };
+		4CDD570127B93F2600A9B537 /* WarpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56FF27B93F2600A9B537 /* WarpClient.swift */; };
+		4CDD570327B93F9E00A9B537 /* Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD570227B93F9E00A9B537 /* Remote.swift */; };
+		4CDD570427B93F9E00A9B537 /* Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD570227B93F9E00A9B537 /* Remote.swift */; };
+		4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +64,13 @@
 			remoteInfo = "warpinator-project (iOS)";
 		};
 		4C4A73A427B3D2D6004EDA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C4A738F27B3D2D5004EDA61;
+			remoteInfo = "warpinator-project (macOS)";
+		};
+		4CDD570D27B982CA00A9B537 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
 			proxyType = 1;
@@ -91,6 +105,11 @@
 		4CDD56EB27B79C2C00A9B537 /* WarpBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpBackend.swift; sourceTree = "<group>"; };
 		4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteRegistration.swift; sourceTree = "<group>"; };
 		4CDD56F227B7B85900A9B537 /* warp.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.pb.swift; sourceTree = "<group>"; };
+		4CDD56F927B8519300A9B537 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		4CDD56FF27B93F2600A9B537 /* WarpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpClient.swift; sourceTree = "<group>"; };
+		4CDD570227B93F9E00A9B537 /* Remote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Remote.swift; sourceTree = "<group>"; };
+		4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "warpinator-projectTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CDD571227B9842600A9B537 /* AuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +119,7 @@
 			files = (
 				4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */,
 				4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */,
+				4CDD56FC27B90AC200A9B537 /* Sodium in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +130,7 @@
 				4C4A73C727B3E2E2004EDA61 /* CGRPCZlib in Frameworks */,
 				4C4A73CB27B3E2E2004EDA61 /* protoc-gen-grpc-swift in Frameworks */,
 				4C4A73C927B3E2E2004EDA61 /* GRPC in Frameworks */,
+				4CDD56FE27B90AD700A9B537 /* Sodium in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,17 +148,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CDD570627B982CA00A9B537 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		4C4A737D27B3D2D4004EDA61 = {
 			isa = PBXGroup;
 			children = (
+				4CDD56F927B8519300A9B537 /* .gitignore */,
 				4CDD56C927B6774000A9B537 /* warpinator-project--iOS--Info.plist */,
 				4C4A738227B3D2D4004EDA61 /* Shared */,
 				4C4A739127B3D2D5004EDA61 /* macOS */,
 				4C4A739A27B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A627B3D2D6004EDA61 /* Tests macOS */,
+				4CDD570A27B982CA00A9B537 /* warpinator-projectTests */,
 				4C4A738B27B3D2D5004EDA61 /* Products */,
 				4C4A73C027B3DDFA004EDA61 /* Frameworks */,
 			);
@@ -166,6 +196,7 @@
 				4C4A739027B3D2D5004EDA61 /* warpinator-project.app */,
 				4C4A739727B3D2D6004EDA61 /* Tests iOS.xctest */,
 				4C4A73A327B3D2D6004EDA61 /* Tests macOS.xctest */,
+				4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -210,9 +241,11 @@
 				4CDD56C027B4108F00A9B537 /* Auth.swift */,
 				4CDD56C627B6672D00A9B537 /* Discovery.swift */,
 				4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */,
+				4CDD570227B93F9E00A9B537 /* Remote.swift */,
 				4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */,
 				4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */,
 				4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */,
+				4CDD56FF27B93F2600A9B537 /* WarpClient.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -241,6 +274,14 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
+		4CDD570A27B982CA00A9B537 /* warpinator-projectTests */ = {
+			isa = PBXGroup;
+			children = (
+				4CDD571227B9842600A9B537 /* AuthTests.swift */,
+			);
+			path = "warpinator-projectTests";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -260,6 +301,7 @@
 			packageProductDependencies = (
 				4CDD56B827B40DE100A9B537 /* CGRPCZlib */,
 				4CDD56BA27B40DE100A9B537 /* GRPC */,
+				4CDD56FB27B90AC200A9B537 /* Sodium */,
 			);
 			productName = "warpinator-project (iOS)";
 			productReference = 4C4A738A27B3D2D5004EDA61 /* warpinator-project.app */;
@@ -282,6 +324,7 @@
 				4C4A73C627B3E2E2004EDA61 /* CGRPCZlib */,
 				4C4A73C827B3E2E2004EDA61 /* GRPC */,
 				4C4A73CA27B3E2E2004EDA61 /* protoc-gen-grpc-swift */,
+				4CDD56FD27B90AD700A9B537 /* Sodium */,
 			);
 			productName = "warpinator-project (macOS)";
 			productReference = 4C4A739027B3D2D5004EDA61 /* warpinator-project.app */;
@@ -323,6 +366,24 @@
 			productReference = 4C4A73A327B3D2D6004EDA61 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		4CDD570827B982CA00A9B537 /* warpinator-projectTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CDD570F27B982CA00A9B537 /* Build configuration list for PBXNativeTarget "warpinator-projectTests" */;
+			buildPhases = (
+				4CDD570527B982CA00A9B537 /* Sources */,
+				4CDD570627B982CA00A9B537 /* Frameworks */,
+				4CDD570727B982CA00A9B537 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4CDD570E27B982CA00A9B537 /* PBXTargetDependency */,
+			);
+			name = "warpinator-projectTests";
+			productName = "warpinator-projectTests";
+			productReference = 4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -347,6 +408,10 @@
 						CreatedOnToolsVersion = 13.2.1;
 						TestTargetID = 4C4A738F27B3D2D5004EDA61;
 					};
+					4CDD570827B982CA00A9B537 = {
+						CreatedOnToolsVersion = 13.2.1;
+						TestTargetID = 4C4A738F27B3D2D5004EDA61;
+					};
 				};
 			};
 			buildConfigurationList = 4C4A738127B3D2D4004EDA61 /* Build configuration list for PBXProject "warpinator-project" */;
@@ -360,6 +425,7 @@
 			mainGroup = 4C4A737D27B3D2D4004EDA61;
 			packageReferences = (
 				4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */,
+				4CDD56FA27B90AC100A9B537 /* XCRemoteSwiftPackageReference "swift-sodium" */,
 			);
 			productRefGroup = 4C4A738B27B3D2D5004EDA61 /* Products */;
 			projectDirPath = "";
@@ -369,6 +435,7 @@
 				4C4A738F27B3D2D5004EDA61 /* warpinator-project (macOS) */,
 				4C4A739627B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A227B3D2D6004EDA61 /* Tests macOS */,
+				4CDD570827B982CA00A9B537 /* warpinator-projectTests */,
 			);
 		};
 /* End PBXProject section */
@@ -404,6 +471,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CDD570727B982CA00A9B537 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -414,8 +488,10 @@
 				4CDD56EC27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
 				4CDD56C727B6672D00A9B537 /* Discovery.swift in Sources */,
 				4CDD56EF27B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
+				4CDD570327B93F9E00A9B537 /* Remote.swift in Sources */,
 				4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
 				4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */,
+				4CDD570027B93F2600A9B537 /* WarpClient.swift in Sources */,
 				4CDD56C427B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
 				4C4A73CF27B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AD27B3D2D6004EDA61 /* ContentView.swift in Sources */,
@@ -435,8 +511,10 @@
 				4CDD56ED27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
 				4CDD56C827B6672D00A9B537 /* Discovery.swift in Sources */,
 				4CDD56F027B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
+				4CDD570427B93F9E00A9B537 /* Remote.swift in Sources */,
 				4CDD56BE27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
 				4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */,
+				4CDD570127B93F2600A9B537 /* WarpClient.swift in Sources */,
 				4CDD56C527B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
 				4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AE27B3D2D6004EDA61 /* ContentView.swift in Sources */,
@@ -467,6 +545,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CDD570527B982CA00A9B537 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -479,6 +565,11 @@
 			isa = PBXTargetDependency;
 			target = 4C4A738F27B3D2D5004EDA61 /* warpinator-project (macOS) */;
 			targetProxy = 4C4A73A427B3D2D6004EDA61 /* PBXContainerItemProxy */;
+		};
+		4CDD570E27B982CA00A9B537 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C4A738F27B3D2D5004EDA61 /* warpinator-project (macOS) */;
+			targetProxy = 4CDD570D27B982CA00A9B537 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -794,6 +885,44 @@
 			};
 			name = Release;
 		};
+		4CDD571027B982CA00A9B537 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6THNG9YB47;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-projectTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/warpinator-project.app/Contents/MacOS/warpinator-project";
+			};
+			name = Debug;
+		};
+		4CDD571127B982CA00A9B537 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6THNG9YB47;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-projectTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/warpinator-project.app/Contents/MacOS/warpinator-project";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -842,6 +971,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4CDD570F27B982CA00A9B537 /* Build configuration list for PBXNativeTarget "warpinator-projectTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CDD571027B982CA00A9B537 /* Debug */,
+				4CDD571127B982CA00A9B537 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -851,6 +989,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
+			};
+		};
+		4CDD56FA27B90AC100A9B537 /* XCRemoteSwiftPackageReference "swift-sodium" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jedisct1/swift-sodium.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -880,6 +1026,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
 			productName = GRPC;
+		};
+		4CDD56FB27B90AC200A9B537 /* Sodium */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CDD56FA27B90AC100A9B537 /* XCRemoteSwiftPackageReference "swift-sodium" */;
+			productName = Sodium;
+		};
+		4CDD56FD27B90AD700A9B537 /* Sodium */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CDD56FA27B90AC100A9B537 /* XCRemoteSwiftPackageReference "swift-sodium" */;
+			productName = Sodium;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
