@@ -48,7 +48,15 @@ actor WarpGRPCClient {
         try? self.group.syncShutdownGracefully()
     }
     
-    func rpcCall<I, O>(rpcCall: WarpRPCCallFunc<I, O>) throws -> O {
+    func rpcCall<I, O>(rpcCall: @escaping WarpRPCCallFunc<I, O>) async throws -> O {
+        let task = Task {
+            return try rpcCallSync(rpcCall: rpcCall)
+        }
+        
+        return try await task.value
+    }
+    
+    func rpcCallSync<I, O>(rpcCall: WarpRPCCallFunc<I, O>) throws -> O {
         let call = rpcCall(client)
         
         do {
