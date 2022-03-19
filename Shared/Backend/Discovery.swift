@@ -195,7 +195,11 @@ class Discovery {
     }
     
     func setupListener() {
-        let params = NWParameters.tcp
+        print("setting up NWListener")
+        
+        /// Has to be udp to be able to start while the WarpServer is already running on the same port.
+        /// (As WarpServer uses tcp for transport).
+        let params = NWParameters.udp
         params.includePeerToPeer = true
         
         let listener = try! NWListener(using: params, on: 42000)
