@@ -987,8 +987,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/grpc/grpc-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = revision;
+				revision = 30fd564c464984b93eca9ca688a998a4f84c9d89;
 			};
 		};
 		4CDD56FA27B90AC100A9B537 /* XCRemoteSwiftPackageReference "swift-sodium" */ = {

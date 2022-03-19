@@ -26,7 +26,7 @@ import SwiftProtobuf
 
 
 /// Usage: instantiate `WarpClient`, then call methods of this protocol to make API calls.
-public protocol WarpClientProtocol: GRPCClient {
+internal protocol WarpClientProtocol: GRPCClient {
   var serviceName: String { get }
   var interceptors: WarpClientInterceptorFactoryProtocol? { get }
 
@@ -84,7 +84,7 @@ public protocol WarpClientProtocol: GRPCClient {
 }
 
 extension WarpClientProtocol {
-  public var serviceName: String {
+  internal var serviceName: String {
     return "Warp"
   }
 
@@ -95,12 +95,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to CheckDuplexConnection.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func checkDuplexConnection(
+  internal func checkDuplexConnection(
     _ request: LookupName,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<LookupName, HaveDuplex> {
     return self.makeUnaryCall(
-      path: "/Warp/CheckDuplexConnection",
+      path: WarpClientMetadata.Methods.checkDuplexConnection.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeCheckDuplexConnectionInterceptors() ?? []
@@ -113,12 +113,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to WaitingForDuplex.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func waitingForDuplex(
+  internal func waitingForDuplex(
     _ request: LookupName,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<LookupName, HaveDuplex> {
     return self.makeUnaryCall(
-      path: "/Warp/WaitingForDuplex",
+      path: WarpClientMetadata.Methods.waitingForDuplex.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeWaitingForDuplexInterceptors() ?? []
@@ -131,12 +131,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to GetRemoteMachineInfo.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func getRemoteMachineInfo(
+  internal func getRemoteMachineInfo(
     _ request: LookupName,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<LookupName, RemoteMachineInfo> {
     return self.makeUnaryCall(
-      path: "/Warp/GetRemoteMachineInfo",
+      path: WarpClientMetadata.Methods.getRemoteMachineInfo.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeGetRemoteMachineInfoInterceptors() ?? []
@@ -150,13 +150,13 @@ extension WarpClientProtocol {
   ///   - callOptions: Call options.
   ///   - handler: A closure called when each response is received from the server.
   /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
-  public func getRemoteMachineAvatar(
+  internal func getRemoteMachineAvatar(
     _ request: LookupName,
     callOptions: CallOptions? = nil,
     handler: @escaping (RemoteMachineAvatar) -> Void
   ) -> ServerStreamingCall<LookupName, RemoteMachineAvatar> {
     return self.makeServerStreamingCall(
-      path: "/Warp/GetRemoteMachineAvatar",
+      path: WarpClientMetadata.Methods.getRemoteMachineAvatar.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeGetRemoteMachineAvatarInterceptors() ?? [],
@@ -170,12 +170,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to ProcessTransferOpRequest.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func processTransferOpRequest(
+  internal func processTransferOpRequest(
     _ request: TransferOpRequest,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<TransferOpRequest, VoidType> {
     return self.makeUnaryCall(
-      path: "/Warp/ProcessTransferOpRequest",
+      path: WarpClientMetadata.Methods.processTransferOpRequest.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeProcessTransferOpRequestInterceptors() ?? []
@@ -188,12 +188,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to PauseTransferOp.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func pauseTransferOp(
+  internal func pauseTransferOp(
     _ request: OpInfo,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<OpInfo, VoidType> {
     return self.makeUnaryCall(
-      path: "/Warp/PauseTransferOp",
+      path: WarpClientMetadata.Methods.pauseTransferOp.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makePauseTransferOpInterceptors() ?? []
@@ -207,13 +207,13 @@ extension WarpClientProtocol {
   ///   - callOptions: Call options.
   ///   - handler: A closure called when each response is received from the server.
   /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
-  public func startTransfer(
+  internal func startTransfer(
     _ request: OpInfo,
     callOptions: CallOptions? = nil,
     handler: @escaping (FileChunk) -> Void
   ) -> ServerStreamingCall<OpInfo, FileChunk> {
     return self.makeServerStreamingCall(
-      path: "/Warp/StartTransfer",
+      path: WarpClientMetadata.Methods.startTransfer.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeStartTransferInterceptors() ?? [],
@@ -227,12 +227,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to CancelTransferOpRequest.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func cancelTransferOpRequest(
+  internal func cancelTransferOpRequest(
     _ request: OpInfo,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<OpInfo, VoidType> {
     return self.makeUnaryCall(
-      path: "/Warp/CancelTransferOpRequest",
+      path: WarpClientMetadata.Methods.cancelTransferOpRequest.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeCancelTransferOpRequestInterceptors() ?? []
@@ -245,12 +245,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to StopTransfer.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func stopTransfer(
+  internal func stopTransfer(
     _ request: StopInfo,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<StopInfo, VoidType> {
     return self.makeUnaryCall(
-      path: "/Warp/StopTransfer",
+      path: WarpClientMetadata.Methods.stopTransfer.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeStopTransferInterceptors() ?? []
@@ -263,12 +263,12 @@ extension WarpClientProtocol {
   ///   - request: Request to send to Ping.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func ping(
+  internal func ping(
     _ request: LookupName,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<LookupName, VoidType> {
     return self.makeUnaryCall(
-      path: "/Warp/Ping",
+      path: WarpClientMetadata.Methods.ping.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makePingInterceptors() ?? []
@@ -276,7 +276,359 @@ extension WarpClientProtocol {
   }
 }
 
-public protocol WarpClientInterceptorFactoryProtocol {
+internal final class WarpClient: WarpClientProtocol {
+  internal let channel: GRPCChannel
+  internal var defaultCallOptions: CallOptions
+  internal var interceptors: WarpClientInterceptorFactoryProtocol?
+
+  /// Creates a client for the Warp service.
+  ///
+  /// - Parameters:
+  ///   - channel: `GRPCChannel` to the service host.
+  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
+  ///   - interceptors: A factory providing interceptors for each RPC.
+  internal init(
+    channel: GRPCChannel,
+    defaultCallOptions: CallOptions = CallOptions(),
+    interceptors: WarpClientInterceptorFactoryProtocol? = nil
+  ) {
+    self.channel = channel
+    self.defaultCallOptions = defaultCallOptions
+    self.interceptors = interceptors
+  }
+}
+
+#if compiler(>=5.5.2) && canImport(_Concurrency)
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+internal protocol WarpAsyncClientProtocol: GRPCClient {
+  static var serviceDescriptor: GRPCServiceDescriptor { get }
+  var interceptors: WarpClientInterceptorFactoryProtocol? { get }
+
+  func makeCheckDuplexConnectionCall(
+    _ request: LookupName,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<LookupName, HaveDuplex>
+
+  func makeWaitingForDuplexCall(
+    _ request: LookupName,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<LookupName, HaveDuplex>
+
+  func makeGetRemoteMachineInfoCall(
+    _ request: LookupName,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<LookupName, RemoteMachineInfo>
+
+  func makeGetRemoteMachineAvatarCall(
+    _ request: LookupName,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncServerStreamingCall<LookupName, RemoteMachineAvatar>
+
+  func makeProcessTransferOpRequestCall(
+    _ request: TransferOpRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<TransferOpRequest, VoidType>
+
+  func makePauseTransferOpCall(
+    _ request: OpInfo,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<OpInfo, VoidType>
+
+  func makeStartTransferCall(
+    _ request: OpInfo,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncServerStreamingCall<OpInfo, FileChunk>
+
+  func makeCancelTransferOpRequestCall(
+    _ request: OpInfo,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<OpInfo, VoidType>
+
+  func makeStopTransferCall(
+    _ request: StopInfo,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<StopInfo, VoidType>
+
+  func makePingCall(
+    _ request: LookupName,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<LookupName, VoidType>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WarpAsyncClientProtocol {
+  internal static var serviceDescriptor: GRPCServiceDescriptor {
+    return WarpClientMetadata.serviceDescriptor
+  }
+
+  internal var interceptors: WarpClientInterceptorFactoryProtocol? {
+    return nil
+  }
+
+  internal func makeCheckDuplexConnectionCall(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<LookupName, HaveDuplex> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.checkDuplexConnection.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCheckDuplexConnectionInterceptors() ?? []
+    )
+  }
+
+  internal func makeWaitingForDuplexCall(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<LookupName, HaveDuplex> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.waitingForDuplex.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeWaitingForDuplexInterceptors() ?? []
+    )
+  }
+
+  internal func makeGetRemoteMachineInfoCall(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<LookupName, RemoteMachineInfo> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.getRemoteMachineInfo.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetRemoteMachineInfoInterceptors() ?? []
+    )
+  }
+
+  internal func makeGetRemoteMachineAvatarCall(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncServerStreamingCall<LookupName, RemoteMachineAvatar> {
+    return self.makeAsyncServerStreamingCall(
+      path: WarpClientMetadata.Methods.getRemoteMachineAvatar.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetRemoteMachineAvatarInterceptors() ?? []
+    )
+  }
+
+  internal func makeProcessTransferOpRequestCall(
+    _ request: TransferOpRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<TransferOpRequest, VoidType> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.processTransferOpRequest.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeProcessTransferOpRequestInterceptors() ?? []
+    )
+  }
+
+  internal func makePauseTransferOpCall(
+    _ request: OpInfo,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<OpInfo, VoidType> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.pauseTransferOp.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makePauseTransferOpInterceptors() ?? []
+    )
+  }
+
+  internal func makeStartTransferCall(
+    _ request: OpInfo,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncServerStreamingCall<OpInfo, FileChunk> {
+    return self.makeAsyncServerStreamingCall(
+      path: WarpClientMetadata.Methods.startTransfer.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeStartTransferInterceptors() ?? []
+    )
+  }
+
+  internal func makeCancelTransferOpRequestCall(
+    _ request: OpInfo,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<OpInfo, VoidType> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.cancelTransferOpRequest.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCancelTransferOpRequestInterceptors() ?? []
+    )
+  }
+
+  internal func makeStopTransferCall(
+    _ request: StopInfo,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<StopInfo, VoidType> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.stopTransfer.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeStopTransferInterceptors() ?? []
+    )
+  }
+
+  internal func makePingCall(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<LookupName, VoidType> {
+    return self.makeAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.ping.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makePingInterceptors() ?? []
+    )
+  }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WarpAsyncClientProtocol {
+  internal func checkDuplexConnection(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) async throws -> HaveDuplex {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.checkDuplexConnection.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCheckDuplexConnectionInterceptors() ?? []
+    )
+  }
+
+  internal func waitingForDuplex(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) async throws -> HaveDuplex {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.waitingForDuplex.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeWaitingForDuplexInterceptors() ?? []
+    )
+  }
+
+  internal func getRemoteMachineInfo(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) async throws -> RemoteMachineInfo {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.getRemoteMachineInfo.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetRemoteMachineInfoInterceptors() ?? []
+    )
+  }
+
+  internal func getRemoteMachineAvatar(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncResponseStream<RemoteMachineAvatar> {
+    return self.performAsyncServerStreamingCall(
+      path: WarpClientMetadata.Methods.getRemoteMachineAvatar.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetRemoteMachineAvatarInterceptors() ?? []
+    )
+  }
+
+  internal func processTransferOpRequest(
+    _ request: TransferOpRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> VoidType {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.processTransferOpRequest.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeProcessTransferOpRequestInterceptors() ?? []
+    )
+  }
+
+  internal func pauseTransferOp(
+    _ request: OpInfo,
+    callOptions: CallOptions? = nil
+  ) async throws -> VoidType {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.pauseTransferOp.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makePauseTransferOpInterceptors() ?? []
+    )
+  }
+
+  internal func startTransfer(
+    _ request: OpInfo,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncResponseStream<FileChunk> {
+    return self.performAsyncServerStreamingCall(
+      path: WarpClientMetadata.Methods.startTransfer.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeStartTransferInterceptors() ?? []
+    )
+  }
+
+  internal func cancelTransferOpRequest(
+    _ request: OpInfo,
+    callOptions: CallOptions? = nil
+  ) async throws -> VoidType {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.cancelTransferOpRequest.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCancelTransferOpRequestInterceptors() ?? []
+    )
+  }
+
+  internal func stopTransfer(
+    _ request: StopInfo,
+    callOptions: CallOptions? = nil
+  ) async throws -> VoidType {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.stopTransfer.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeStopTransferInterceptors() ?? []
+    )
+  }
+
+  internal func ping(
+    _ request: LookupName,
+    callOptions: CallOptions? = nil
+  ) async throws -> VoidType {
+    return try await self.performAsyncUnaryCall(
+      path: WarpClientMetadata.Methods.ping.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makePingInterceptors() ?? []
+    )
+  }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+internal struct WarpAsyncClient: WarpAsyncClientProtocol {
+  internal var channel: GRPCChannel
+  internal var defaultCallOptions: CallOptions
+  internal var interceptors: WarpClientInterceptorFactoryProtocol?
+
+  internal init(
+    channel: GRPCChannel,
+    defaultCallOptions: CallOptions = CallOptions(),
+    interceptors: WarpClientInterceptorFactoryProtocol? = nil
+  ) {
+    self.channel = channel
+    self.defaultCallOptions = defaultCallOptions
+    self.interceptors = interceptors
+  }
+}
+
+#endif // compiler(>=5.5.2) && canImport(_Concurrency)
+
+internal protocol WarpClientInterceptorFactoryProtocol {
 
   /// - Returns: Interceptors to use when invoking 'checkDuplexConnection'.
   func makeCheckDuplexConnectionInterceptors() -> [ClientInterceptor<LookupName, HaveDuplex>]
@@ -309,30 +661,89 @@ public protocol WarpClientInterceptorFactoryProtocol {
   func makePingInterceptors() -> [ClientInterceptor<LookupName, VoidType>]
 }
 
-public final class WarpClient: WarpClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
-  public var interceptors: WarpClientInterceptorFactoryProtocol?
+internal enum WarpClientMetadata {
+  internal static let serviceDescriptor = GRPCServiceDescriptor(
+    name: "Warp",
+    fullName: "Warp",
+    methods: [
+      WarpClientMetadata.Methods.checkDuplexConnection,
+      WarpClientMetadata.Methods.waitingForDuplex,
+      WarpClientMetadata.Methods.getRemoteMachineInfo,
+      WarpClientMetadata.Methods.getRemoteMachineAvatar,
+      WarpClientMetadata.Methods.processTransferOpRequest,
+      WarpClientMetadata.Methods.pauseTransferOp,
+      WarpClientMetadata.Methods.startTransfer,
+      WarpClientMetadata.Methods.cancelTransferOpRequest,
+      WarpClientMetadata.Methods.stopTransfer,
+      WarpClientMetadata.Methods.ping,
+    ]
+  )
 
-  /// Creates a client for the Warp service.
-  ///
-  /// - Parameters:
-  ///   - channel: `GRPCChannel` to the service host.
-  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  ///   - interceptors: A factory providing interceptors for each RPC.
-  public init(
-    channel: GRPCChannel,
-    defaultCallOptions: CallOptions = CallOptions(),
-    interceptors: WarpClientInterceptorFactoryProtocol? = nil
-  ) {
-    self.channel = channel
-    self.defaultCallOptions = defaultCallOptions
-    self.interceptors = interceptors
+  internal enum Methods {
+    internal static let checkDuplexConnection = GRPCMethodDescriptor(
+      name: "CheckDuplexConnection",
+      path: "/Warp/CheckDuplexConnection",
+      type: GRPCCallType.unary
+    )
+
+    internal static let waitingForDuplex = GRPCMethodDescriptor(
+      name: "WaitingForDuplex",
+      path: "/Warp/WaitingForDuplex",
+      type: GRPCCallType.unary
+    )
+
+    internal static let getRemoteMachineInfo = GRPCMethodDescriptor(
+      name: "GetRemoteMachineInfo",
+      path: "/Warp/GetRemoteMachineInfo",
+      type: GRPCCallType.unary
+    )
+
+    internal static let getRemoteMachineAvatar = GRPCMethodDescriptor(
+      name: "GetRemoteMachineAvatar",
+      path: "/Warp/GetRemoteMachineAvatar",
+      type: GRPCCallType.serverStreaming
+    )
+
+    internal static let processTransferOpRequest = GRPCMethodDescriptor(
+      name: "ProcessTransferOpRequest",
+      path: "/Warp/ProcessTransferOpRequest",
+      type: GRPCCallType.unary
+    )
+
+    internal static let pauseTransferOp = GRPCMethodDescriptor(
+      name: "PauseTransferOp",
+      path: "/Warp/PauseTransferOp",
+      type: GRPCCallType.unary
+    )
+
+    internal static let startTransfer = GRPCMethodDescriptor(
+      name: "StartTransfer",
+      path: "/Warp/StartTransfer",
+      type: GRPCCallType.serverStreaming
+    )
+
+    internal static let cancelTransferOpRequest = GRPCMethodDescriptor(
+      name: "CancelTransferOpRequest",
+      path: "/Warp/CancelTransferOpRequest",
+      type: GRPCCallType.unary
+    )
+
+    internal static let stopTransfer = GRPCMethodDescriptor(
+      name: "StopTransfer",
+      path: "/Warp/StopTransfer",
+      type: GRPCCallType.unary
+    )
+
+    internal static let ping = GRPCMethodDescriptor(
+      name: "Ping",
+      path: "/Warp/Ping",
+      type: GRPCCallType.unary
+    )
   }
 }
 
 /// Usage: instantiate `WarpRegistrationClient`, then call methods of this protocol to make API calls.
-public protocol WarpRegistrationClientProtocol: GRPCClient {
+internal protocol WarpRegistrationClientProtocol: GRPCClient {
   var serviceName: String { get }
   var interceptors: WarpRegistrationClientInterceptorFactoryProtocol? { get }
 
@@ -343,7 +754,7 @@ public protocol WarpRegistrationClientProtocol: GRPCClient {
 }
 
 extension WarpRegistrationClientProtocol {
-  public var serviceName: String {
+  internal var serviceName: String {
     return "WarpRegistration"
   }
 
@@ -353,12 +764,12 @@ extension WarpRegistrationClientProtocol {
   ///   - request: Request to send to RequestCertificate.
   ///   - callOptions: Call options.
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  public func requestCertificate(
+  internal func requestCertificate(
     _ request: RegRequest,
     callOptions: CallOptions? = nil
   ) -> UnaryCall<RegRequest, RegResponse> {
     return self.makeUnaryCall(
-      path: "/WarpRegistration/RequestCertificate",
+      path: WarpRegistrationClientMetadata.Methods.requestCertificate.path,
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeRequestCertificateInterceptors() ?? []
@@ -366,16 +777,10 @@ extension WarpRegistrationClientProtocol {
   }
 }
 
-public protocol WarpRegistrationClientInterceptorFactoryProtocol {
-
-  /// - Returns: Interceptors to use when invoking 'requestCertificate'.
-  func makeRequestCertificateInterceptors() -> [ClientInterceptor<RegRequest, RegResponse>]
-}
-
-public final class WarpRegistrationClient: WarpRegistrationClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
-  public var interceptors: WarpRegistrationClientInterceptorFactoryProtocol?
+internal final class WarpRegistrationClient: WarpRegistrationClientProtocol {
+  internal let channel: GRPCChannel
+  internal var defaultCallOptions: CallOptions
+  internal var interceptors: WarpRegistrationClientInterceptorFactoryProtocol?
 
   /// Creates a client for the WarpRegistration service.
   ///
@@ -383,7 +788,7 @@ public final class WarpRegistrationClient: WarpRegistrationClientProtocol {
   ///   - channel: `GRPCChannel` to the service host.
   ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
   ///   - interceptors: A factory providing interceptors for each RPC.
-  public init(
+  internal init(
     channel: GRPCChannel,
     defaultCallOptions: CallOptions = CallOptions(),
     interceptors: WarpRegistrationClientInterceptorFactoryProtocol? = nil
@@ -394,8 +799,101 @@ public final class WarpRegistrationClient: WarpRegistrationClientProtocol {
   }
 }
 
+#if compiler(>=5.5.2) && canImport(_Concurrency)
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+internal protocol WarpRegistrationAsyncClientProtocol: GRPCClient {
+  static var serviceDescriptor: GRPCServiceDescriptor { get }
+  var interceptors: WarpRegistrationClientInterceptorFactoryProtocol? { get }
+
+  func makeRequestCertificateCall(
+    _ request: RegRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<RegRequest, RegResponse>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WarpRegistrationAsyncClientProtocol {
+  internal static var serviceDescriptor: GRPCServiceDescriptor {
+    return WarpRegistrationClientMetadata.serviceDescriptor
+  }
+
+  internal var interceptors: WarpRegistrationClientInterceptorFactoryProtocol? {
+    return nil
+  }
+
+  internal func makeRequestCertificateCall(
+    _ request: RegRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<RegRequest, RegResponse> {
+    return self.makeAsyncUnaryCall(
+      path: WarpRegistrationClientMetadata.Methods.requestCertificate.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeRequestCertificateInterceptors() ?? []
+    )
+  }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WarpRegistrationAsyncClientProtocol {
+  internal func requestCertificate(
+    _ request: RegRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> RegResponse {
+    return try await self.performAsyncUnaryCall(
+      path: WarpRegistrationClientMetadata.Methods.requestCertificate.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeRequestCertificateInterceptors() ?? []
+    )
+  }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+internal struct WarpRegistrationAsyncClient: WarpRegistrationAsyncClientProtocol {
+  internal var channel: GRPCChannel
+  internal var defaultCallOptions: CallOptions
+  internal var interceptors: WarpRegistrationClientInterceptorFactoryProtocol?
+
+  internal init(
+    channel: GRPCChannel,
+    defaultCallOptions: CallOptions = CallOptions(),
+    interceptors: WarpRegistrationClientInterceptorFactoryProtocol? = nil
+  ) {
+    self.channel = channel
+    self.defaultCallOptions = defaultCallOptions
+    self.interceptors = interceptors
+  }
+}
+
+#endif // compiler(>=5.5.2) && canImport(_Concurrency)
+
+internal protocol WarpRegistrationClientInterceptorFactoryProtocol {
+
+  /// - Returns: Interceptors to use when invoking 'requestCertificate'.
+  func makeRequestCertificateInterceptors() -> [ClientInterceptor<RegRequest, RegResponse>]
+}
+
+internal enum WarpRegistrationClientMetadata {
+  internal static let serviceDescriptor = GRPCServiceDescriptor(
+    name: "WarpRegistration",
+    fullName: "WarpRegistration",
+    methods: [
+      WarpRegistrationClientMetadata.Methods.requestCertificate,
+    ]
+  )
+
+  internal enum Methods {
+    internal static let requestCertificate = GRPCMethodDescriptor(
+      name: "RequestCertificate",
+      path: "/WarpRegistration/RequestCertificate",
+      type: GRPCCallType.unary
+    )
+  }
+}
+
 /// To build a server, implement a class that conforms to this protocol.
-public protocol WarpProvider: CallHandlerProvider {
+internal protocol WarpProvider: CallHandlerProvider {
   var interceptors: WarpServerInterceptorFactoryProtocol? { get }
 
   /// Sender methods
@@ -425,11 +923,13 @@ public protocol WarpProvider: CallHandlerProvider {
 }
 
 extension WarpProvider {
-  public var serviceName: Substring { return "Warp" }
+  internal var serviceName: Substring {
+    return WarpServerMetadata.serviceDescriptor.fullName[...]
+  }
 
   /// Determines, calls and returns the appropriate request handler, depending on the request's method.
   /// Returns nil for methods not handled by this service.
-  public func handle(
+  internal func handle(
     method name: Substring,
     context: CallHandlerContext
   ) -> GRPCServerHandlerProtocol? {
@@ -529,8 +1029,190 @@ extension WarpProvider {
     }
   }
 }
+#if compiler(>=5.5.2) && canImport(_Concurrency)
 
-public protocol WarpServerInterceptorFactoryProtocol {
+/// To implement a server, implement an object which conforms to this protocol.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+internal protocol WarpAsyncProvider: CallHandlerProvider {
+  static var serviceDescriptor: GRPCServiceDescriptor { get }
+  var interceptors: WarpServerInterceptorFactoryProtocol? { get }
+
+  /// Sender methods
+  /// api v1 duplex method (ping style)
+  @Sendable func checkDuplexConnection(
+    request: LookupName,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> HaveDuplex
+
+  /// api v2 duplex method (block/future)
+  @Sendable func waitingForDuplex(
+    request: LookupName,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> HaveDuplex
+
+  @Sendable func getRemoteMachineInfo(
+    request: LookupName,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> RemoteMachineInfo
+
+  @Sendable func getRemoteMachineAvatar(
+    request: LookupName,
+    responseStream: GRPCAsyncResponseStreamWriter<RemoteMachineAvatar>,
+    context: GRPCAsyncServerCallContext
+  ) async throws
+
+  @Sendable func processTransferOpRequest(
+    request: TransferOpRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> VoidType
+
+  @Sendable func pauseTransferOp(
+    request: OpInfo,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> VoidType
+
+  /// Receiver methods
+  @Sendable func startTransfer(
+    request: OpInfo,
+    responseStream: GRPCAsyncResponseStreamWriter<FileChunk>,
+    context: GRPCAsyncServerCallContext
+  ) async throws
+
+  /// Both
+  @Sendable func cancelTransferOpRequest(
+    request: OpInfo,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> VoidType
+
+  @Sendable func stopTransfer(
+    request: StopInfo,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> VoidType
+
+  @Sendable func ping(
+    request: LookupName,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> VoidType
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WarpAsyncProvider {
+  internal static var serviceDescriptor: GRPCServiceDescriptor {
+    return WarpServerMetadata.serviceDescriptor
+  }
+
+  internal var serviceName: Substring {
+    return WarpServerMetadata.serviceDescriptor.fullName[...]
+  }
+
+  internal var interceptors: WarpServerInterceptorFactoryProtocol? {
+    return nil
+  }
+
+  internal func handle(
+    method name: Substring,
+    context: CallHandlerContext
+  ) -> GRPCServerHandlerProtocol? {
+    switch name {
+    case "CheckDuplexConnection":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<LookupName>(),
+        responseSerializer: ProtobufSerializer<HaveDuplex>(),
+        interceptors: self.interceptors?.makeCheckDuplexConnectionInterceptors() ?? [],
+        wrapping: self.checkDuplexConnection(request:context:)
+      )
+
+    case "WaitingForDuplex":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<LookupName>(),
+        responseSerializer: ProtobufSerializer<HaveDuplex>(),
+        interceptors: self.interceptors?.makeWaitingForDuplexInterceptors() ?? [],
+        wrapping: self.waitingForDuplex(request:context:)
+      )
+
+    case "GetRemoteMachineInfo":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<LookupName>(),
+        responseSerializer: ProtobufSerializer<RemoteMachineInfo>(),
+        interceptors: self.interceptors?.makeGetRemoteMachineInfoInterceptors() ?? [],
+        wrapping: self.getRemoteMachineInfo(request:context:)
+      )
+
+    case "GetRemoteMachineAvatar":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<LookupName>(),
+        responseSerializer: ProtobufSerializer<RemoteMachineAvatar>(),
+        interceptors: self.interceptors?.makeGetRemoteMachineAvatarInterceptors() ?? [],
+        wrapping: self.getRemoteMachineAvatar(request:responseStream:context:)
+      )
+
+    case "ProcessTransferOpRequest":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<TransferOpRequest>(),
+        responseSerializer: ProtobufSerializer<VoidType>(),
+        interceptors: self.interceptors?.makeProcessTransferOpRequestInterceptors() ?? [],
+        wrapping: self.processTransferOpRequest(request:context:)
+      )
+
+    case "PauseTransferOp":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<OpInfo>(),
+        responseSerializer: ProtobufSerializer<VoidType>(),
+        interceptors: self.interceptors?.makePauseTransferOpInterceptors() ?? [],
+        wrapping: self.pauseTransferOp(request:context:)
+      )
+
+    case "StartTransfer":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<OpInfo>(),
+        responseSerializer: ProtobufSerializer<FileChunk>(),
+        interceptors: self.interceptors?.makeStartTransferInterceptors() ?? [],
+        wrapping: self.startTransfer(request:responseStream:context:)
+      )
+
+    case "CancelTransferOpRequest":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<OpInfo>(),
+        responseSerializer: ProtobufSerializer<VoidType>(),
+        interceptors: self.interceptors?.makeCancelTransferOpRequestInterceptors() ?? [],
+        wrapping: self.cancelTransferOpRequest(request:context:)
+      )
+
+    case "StopTransfer":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<StopInfo>(),
+        responseSerializer: ProtobufSerializer<VoidType>(),
+        interceptors: self.interceptors?.makeStopTransferInterceptors() ?? [],
+        wrapping: self.stopTransfer(request:context:)
+      )
+
+    case "Ping":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<LookupName>(),
+        responseSerializer: ProtobufSerializer<VoidType>(),
+        interceptors: self.interceptors?.makePingInterceptors() ?? [],
+        wrapping: self.ping(request:context:)
+      )
+
+    default:
+      return nil
+    }
+  }
+}
+
+#endif // compiler(>=5.5.2) && canImport(_Concurrency)
+
+internal protocol WarpServerInterceptorFactoryProtocol {
 
   /// - Returns: Interceptors to use when handling 'checkDuplexConnection'.
   ///   Defaults to calling `self.makeInterceptors()`.
@@ -572,19 +1254,102 @@ public protocol WarpServerInterceptorFactoryProtocol {
   ///   Defaults to calling `self.makeInterceptors()`.
   func makePingInterceptors() -> [ServerInterceptor<LookupName, VoidType>]
 }
+
+internal enum WarpServerMetadata {
+  internal static let serviceDescriptor = GRPCServiceDescriptor(
+    name: "Warp",
+    fullName: "Warp",
+    methods: [
+      WarpServerMetadata.Methods.checkDuplexConnection,
+      WarpServerMetadata.Methods.waitingForDuplex,
+      WarpServerMetadata.Methods.getRemoteMachineInfo,
+      WarpServerMetadata.Methods.getRemoteMachineAvatar,
+      WarpServerMetadata.Methods.processTransferOpRequest,
+      WarpServerMetadata.Methods.pauseTransferOp,
+      WarpServerMetadata.Methods.startTransfer,
+      WarpServerMetadata.Methods.cancelTransferOpRequest,
+      WarpServerMetadata.Methods.stopTransfer,
+      WarpServerMetadata.Methods.ping,
+    ]
+  )
+
+  internal enum Methods {
+    internal static let checkDuplexConnection = GRPCMethodDescriptor(
+      name: "CheckDuplexConnection",
+      path: "/Warp/CheckDuplexConnection",
+      type: GRPCCallType.unary
+    )
+
+    internal static let waitingForDuplex = GRPCMethodDescriptor(
+      name: "WaitingForDuplex",
+      path: "/Warp/WaitingForDuplex",
+      type: GRPCCallType.unary
+    )
+
+    internal static let getRemoteMachineInfo = GRPCMethodDescriptor(
+      name: "GetRemoteMachineInfo",
+      path: "/Warp/GetRemoteMachineInfo",
+      type: GRPCCallType.unary
+    )
+
+    internal static let getRemoteMachineAvatar = GRPCMethodDescriptor(
+      name: "GetRemoteMachineAvatar",
+      path: "/Warp/GetRemoteMachineAvatar",
+      type: GRPCCallType.serverStreaming
+    )
+
+    internal static let processTransferOpRequest = GRPCMethodDescriptor(
+      name: "ProcessTransferOpRequest",
+      path: "/Warp/ProcessTransferOpRequest",
+      type: GRPCCallType.unary
+    )
+
+    internal static let pauseTransferOp = GRPCMethodDescriptor(
+      name: "PauseTransferOp",
+      path: "/Warp/PauseTransferOp",
+      type: GRPCCallType.unary
+    )
+
+    internal static let startTransfer = GRPCMethodDescriptor(
+      name: "StartTransfer",
+      path: "/Warp/StartTransfer",
+      type: GRPCCallType.serverStreaming
+    )
+
+    internal static let cancelTransferOpRequest = GRPCMethodDescriptor(
+      name: "CancelTransferOpRequest",
+      path: "/Warp/CancelTransferOpRequest",
+      type: GRPCCallType.unary
+    )
+
+    internal static let stopTransfer = GRPCMethodDescriptor(
+      name: "StopTransfer",
+      path: "/Warp/StopTransfer",
+      type: GRPCCallType.unary
+    )
+
+    internal static let ping = GRPCMethodDescriptor(
+      name: "Ping",
+      path: "/Warp/Ping",
+      type: GRPCCallType.unary
+    )
+  }
+}
 /// To build a server, implement a class that conforms to this protocol.
-public protocol WarpRegistrationProvider: CallHandlerProvider {
+internal protocol WarpRegistrationProvider: CallHandlerProvider {
   var interceptors: WarpRegistrationServerInterceptorFactoryProtocol? { get }
 
   func requestCertificate(request: RegRequest, context: StatusOnlyCallContext) -> EventLoopFuture<RegResponse>
 }
 
 extension WarpRegistrationProvider {
-  public var serviceName: Substring { return "WarpRegistration" }
+  internal var serviceName: Substring {
+    return WarpRegistrationServerMetadata.serviceDescriptor.fullName[...]
+  }
 
   /// Determines, calls and returns the appropriate request handler, depending on the request's method.
   /// Returns nil for methods not handled by this service.
-  public func handle(
+  internal func handle(
     method name: Substring,
     context: CallHandlerContext
   ) -> GRPCServerHandlerProtocol? {
@@ -603,10 +1368,77 @@ extension WarpRegistrationProvider {
     }
   }
 }
+#if compiler(>=5.5.2) && canImport(_Concurrency)
 
-public protocol WarpRegistrationServerInterceptorFactoryProtocol {
+/// To implement a server, implement an object which conforms to this protocol.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+internal protocol WarpRegistrationAsyncProvider: CallHandlerProvider {
+  static var serviceDescriptor: GRPCServiceDescriptor { get }
+  var interceptors: WarpRegistrationServerInterceptorFactoryProtocol? { get }
+
+  @Sendable func requestCertificate(
+    request: RegRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> RegResponse
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension WarpRegistrationAsyncProvider {
+  internal static var serviceDescriptor: GRPCServiceDescriptor {
+    return WarpRegistrationServerMetadata.serviceDescriptor
+  }
+
+  internal var serviceName: Substring {
+    return WarpRegistrationServerMetadata.serviceDescriptor.fullName[...]
+  }
+
+  internal var interceptors: WarpRegistrationServerInterceptorFactoryProtocol? {
+    return nil
+  }
+
+  internal func handle(
+    method name: Substring,
+    context: CallHandlerContext
+  ) -> GRPCServerHandlerProtocol? {
+    switch name {
+    case "RequestCertificate":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<RegRequest>(),
+        responseSerializer: ProtobufSerializer<RegResponse>(),
+        interceptors: self.interceptors?.makeRequestCertificateInterceptors() ?? [],
+        wrapping: self.requestCertificate(request:context:)
+      )
+
+    default:
+      return nil
+    }
+  }
+}
+
+#endif // compiler(>=5.5.2) && canImport(_Concurrency)
+
+internal protocol WarpRegistrationServerInterceptorFactoryProtocol {
 
   /// - Returns: Interceptors to use when handling 'requestCertificate'.
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeRequestCertificateInterceptors() -> [ServerInterceptor<RegRequest, RegResponse>]
+}
+
+internal enum WarpRegistrationServerMetadata {
+  internal static let serviceDescriptor = GRPCServiceDescriptor(
+    name: "WarpRegistration",
+    fullName: "WarpRegistration",
+    methods: [
+      WarpRegistrationServerMetadata.Methods.requestCertificate,
+    ]
+  )
+
+  internal enum Methods {
+    internal static let requestCertificate = GRPCMethodDescriptor(
+      name: "RequestCertificate",
+      path: "/WarpRegistration/RequestCertificate",
+      type: GRPCCallType.unary
+    )
+  }
 }
