@@ -62,6 +62,4 @@ class CertServerV2 {
             $0.onClose
         }.wait()
     }
-
-    
 }

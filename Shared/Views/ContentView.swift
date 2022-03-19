@@ -100,19 +100,6 @@ struct ContentView: View {
                     }
                 }
                 
-                Button("call cert", action: {
-                    let result = try? fetchCertV2(host: clientAddress, auth_port: 42001, regRequest: RegRequest.with({
-                        $0.hostname = warp.remoteRegistration.discovery.config.hostname
-                    }))
-                    
-                    print("Got result: \(result?.lockedCert ?? "nil")")
-                    
-                    if let lockedCert = result?.lockedCert {
-                        string = lockedCert
-                    } else {
-                        string = "failed"
-                    }
-                })
                 
                 Button("start cert v2 server", action: {
                     let server = CertServerV2(auth: auth)
@@ -127,7 +114,7 @@ struct ContentView: View {
                     DispatchQueue.global(qos: .userInitiated).async {
                         warp.remoteRegistration.discovery.setupListener()
                         
-                        print("setup listener")
+                        print("setup listener done")
                         
                         warp.remoteRegistration.discovery.setupBrowser()
                         
