@@ -12,7 +12,7 @@ import NIOCore
 import NIOPosix
 
 
-func fetchCertV2(host: String, auth_port port: Int, regRequest: RegRequest) throws -> RegResponse? {
+func fetchCertV2(host: String, auth_port port: Int, regRequest: RegRequest) async throws -> RegResponse? {
     let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     defer {
       try? group.syncShutdownGracefully()
@@ -26,19 +26,17 @@ func fetchCertV2(host: String, auth_port port: Int, regRequest: RegRequest) thro
     
 //    client.defaultCallOptions.timeLimit = .timeout(.seconds(5))
     
-    return getCert(using: client, regRequest: regRequest)
+    return await getCert(using: client, regRequest: regRequest)
 
 }
 
-private func getCert(using client: WarpRegistrationClient, regRequest: RegRequest) -> RegResponse? {
+private func getCert(using client: WarpRegistrationAsyncClient, regRequest: RegRequest) async -> RegResponse? {
     print("→ getCert")
     
-    let call = client.requestCertificate(regRequest)
-    
     let regResponse: RegResponse
-
+    
     do {
-        regResponse = try call.response.wait()
+        regResponse = try await client.requestCertificate(regRequest)
     } catch {
         print("RPC failed: \(error)")
         return nil
@@ -47,21 +45,13 @@ private func getCert(using client: WarpRegistrationClient, regRequest: RegReques
     return regResponse
 }
 
-private func makeClient(host: String, port: Int, group: EventLoopGroup) throws -> WarpRegistrationClient {
-    
-//    let socketAddress = try SocketAddress.makeAddressResolvingHost(host, port: port)
-    
-//    print("socketAddress: \(String(describing: socketAddress))")
-    
+private func makeClient(host: String, port: Int, group: EventLoopGroup) throws -> WarpRegistrationAsyncClient {
 
     let channel = try GRPCChannelPool.with(
-//        target: .socketAddress(socketAddress),
         target: .host(host, port: port),
         transportSecurity: .plaintext,
         eventLoopGroup: group
     )
     
-    
-
-  return WarpRegistrationClient(channel: channel)
+  return WarpRegistrationAsyncClient(channel: channel)
 }
