@@ -15,65 +15,6 @@ import NIOTransportServices
 
 import NIOSSL
 
-typealias WarpRPCCallFunc<I, O> = (WarpClient) -> (UnaryCall<I, O>)
-
-actor WarpGRPCClient {
-
-    enum WarpError: Error {
-        case connectionError
-    }
-    
-    enum State {
-        case initializing
-        case connected
-        case stale
-    }
-    
-    var state: State = .initializing
-    
-    let group: EventLoopGroup
-    let client: WarpClient
-    
-    init(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String) throws {
-        self.group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-
-        self.client = try makeWarpClient(host: host, port: port, pinnedCertificate: pinnedCertificate, hostnameOverride: hostnameOverride, group: group)
-        
-        self.state = .connected
-    }
-    
-    deinit {
-        try? client.channel.close().wait()
-            
-        try? self.group.syncShutdownGracefully()
-    }
-    
-    func rpcCall<I, O>(rpcCall: @escaping WarpRPCCallFunc<I, O>) async throws -> O {
-        let task = Task {
-            return try rpcCallSync(rpcCall: rpcCall)
-        }
-        
-        return try await task.value
-    }
-    
-    func rpcCallSync<I, O>(rpcCall: WarpRPCCallFunc<I, O>) throws -> O {
-        let call = rpcCall(client)
-        
-        do {
-            return try call.response.wait()
-        } catch is NIOTSError {
-            self.state = .stale
-            
-            throw WarpError.connectionError
-        } catch {
-            print("rpcCall: uncaught error: \(error)")
-            
-            throw error
-        }
-    }
-
-}
-
 //func warpRPCCall<I, O>(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String, rpcCall: WarpRPCCallFunc<I, O>) throws -> O? {
 //    let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
 //    defer {
@@ -101,8 +42,13 @@ actor WarpGRPCClient {
 //    return res
 //}
 
-private func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String, group: EventLoopGroup) throws -> WarpClient {
-            
+let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+
+
+func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String, group: EventLoopGroup=eventLoopGroup) throws -> WarpAsyncClient {
+    
+    print("makeWarpClient(\(host), \(port), \(hostnameOverride)")
+    
     let nioCertificate = try NIOSSLCertificate(bytes: pinnedCertificate, format: .pem)
         
     
@@ -163,5 +109,5 @@ private func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8],
     
     let channel: GRPCChannel = clientConnection.connect(host: host, port: port)
         
-    return WarpClient(channel: channel)
+    return WarpAsyncClient(channel: channel)
 }

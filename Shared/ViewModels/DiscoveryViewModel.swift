@@ -18,11 +18,10 @@ class DiscoveryViewModel: ObservableObject {
         
         fileprivate let remote: Remote
         
-        func ping() async {
+        func onTapFunc() async {
+            print("ontap \(self.title)")
             
-            await remote.requestCertificate()
-            
-            print("ping: \(try? await remote.ping(remote: remote))")
+            try? await self.remote.ping()
         }
     }
     
@@ -32,10 +31,19 @@ class DiscoveryViewModel: ObservableObject {
         warp.remoteRegistration.addOnRemoteChangedListener { remotes in
             print("DiscoveryViewModel: onRemotesChangedListener")
             
-            self.remotes = remotes.map({ remote in
-                VMRemote(id: remote.name, title: "\(remote.mdnsPeer.txtRecord["hostname"] ?? ""): \(remote.name)", peer: remote.mdnsPeer, remote: remote)
-            })
+            Task {
+                self.setRemotes(remotes: remotes.map({ remote in
+                    VMRemote(id: remote.name, title: "\(remote.mdnsPeer.txtRecord["hostname"] ?? ""): \(remote.name)", peer: remote.mdnsPeer, remote: remote)
+                }))
+            }
         }
+    }
+    
+    func setRemotes(remotes: Array<VMRemote>) {
+        DispatchQueue.main.async {
+            self.remotes = remotes
+        }
+        
     }
     
 }

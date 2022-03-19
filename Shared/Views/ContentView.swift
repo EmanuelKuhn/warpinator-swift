@@ -63,7 +63,7 @@ struct ContentView: View {
                         Button("Remote: \(remote.title)") {
                             
                             Task {
-                                await remote.ping()
+                                await remote.onTapFunc()
                             }
                             
                             

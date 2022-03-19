@@ -31,7 +31,7 @@ class RemoteRegistration {
         if let oldRemote = self.remotesDict[mdnsPeer.name] {
             await oldRemote.update(with: mdnsPeer)
         } else {
-            let newRemote = await Remote.from(mdnsPeer: mdnsPeer, actor: RemoteActor(auth: auth))
+            let newRemote = await Remote.from(mdnsPeer: mdnsPeer, auth: auth)
             
             await self.remotesDict[newRemote.name] = newRemote
             
