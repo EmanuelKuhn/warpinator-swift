@@ -101,12 +101,19 @@ struct ContentView: View {
                 }
                 
                 
-                Button("start cert v2 server", action: {
-                    let server = CertServerV2(auth: auth)
+                Button("start servers (certv2 and warpserver)", action: {
+                    let certServer = CertServerV2(auth: auth)
+                                        
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        try? certServer.run()
+                    }
+                    
+                    let warpServer = WarpServer(auth: auth)
                     
                     DispatchQueue.global(qos: .userInitiated).async {
-                        try? server.run()
+                        try? warpServer.run()
                     }
+                    
                 })
                 
                 Button("start discovery", action: {

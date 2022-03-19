@@ -26,8 +26,6 @@
 		4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CE27B3FB8A004EDA61 /* warp.proto */; };
 		4C4E20A127E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
 		4C4E20A227E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
-		4C4E20A427E5FE56001695FC /* WarpServicer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A327E5FE56001695FC /* WarpServicer.swift */; };
-		4C4E20A527E5FE56001695FC /* WarpServicer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A327E5FE56001695FC /* WarpServicer.swift */; };
 		4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56B827B40DE100A9B537 /* CGRPCZlib */; };
 		4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56BA27B40DE100A9B537 /* GRPC */; };
 		4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */; };
@@ -99,7 +97,6 @@
 		4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.grpc.swift; sourceTree = "<group>"; };
 		4C4A73CE27B3FB8A004EDA61 /* warp.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = warp.proto; sourceTree = "<group>"; };
 		4C4E20A027E5FD25001695FC /* WarpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServer.swift; sourceTree = "<group>"; };
-		4C4E20A327E5FE56001695FC /* WarpServicer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServicer.swift; sourceTree = "<group>"; };
 		4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateServerV2.swift; sourceTree = "<group>"; };
 		4CDD56C027B4108F00A9B537 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpRegistrationProvider.swift; sourceTree = "<group>"; };
@@ -253,7 +250,6 @@
 				4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */,
 				4CDD56FF27B93F2600A9B537 /* WarpClient.swift */,
 				4C4E20A027E5FD25001695FC /* WarpServer.swift */,
-				4C4E20A327E5FE56001695FC /* WarpServicer.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -507,7 +503,6 @@
 				4CDD56E927B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
 				4CDD56C127B4108F00A9B537 /* Auth.swift in Sources */,
 				4CDD56DE27B6808D00A9B537 /* BonjourResolver.swift in Sources */,
-				4C4E20A427E5FE56001695FC /* WarpServicer.swift in Sources */,
 				4C4E20A127E5FD25001695FC /* WarpServer.swift in Sources */,
 				4C4A73D327B3FB8A004EDA61 /* warp.proto in Sources */,
 				4C4A73AB27B3D2D6004EDA61 /* warpinator_projectApp.swift in Sources */,
@@ -532,7 +527,6 @@
 				4CDD56EA27B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
 				4CDD56C227B4108F00A9B537 /* Auth.swift in Sources */,
 				4CDD56DF27B6808D00A9B537 /* BonjourResolver.swift in Sources */,
-				4C4E20A527E5FE56001695FC /* WarpServicer.swift in Sources */,
 				4C4E20A227E5FD25001695FC /* WarpServer.swift in Sources */,
 				4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */,
 				4C4A73AC27B3D2D6004EDA61 /* warpinator_projectApp.swift in Sources */,
