@@ -27,6 +27,10 @@ struct MDNSPeer {
     let type: String
     let name: String
     
+    var hostName: String {
+        return txtRecord["hostname"] ?? "0.0.0.0"
+    }
+    
 //    let resolvedDNSName: String
     
     /// I noticed that when caching the result of resolving the dns name, and trying to use it some time later,
