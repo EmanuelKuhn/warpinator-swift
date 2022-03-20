@@ -2,12 +2,57 @@
   "object": {
     "pins": [
       {
+        "package": "BigInt",
+        "repositoryURL": "https://github.com/attaswift/BigInt.git",
+        "state": {
+          "branch": null,
+          "revision": "0ed110f7555c34ff468e72e1686e59721f2b0da6",
+          "version": "5.3.0"
+        }
+      },
+      {
         "package": "grpc-swift",
         "repositoryURL": "https://github.com/grpc/grpc-swift",
         "state": {
           "branch": null,
           "revision": "30fd564c464984b93eca9ca688a998a4f84c9d89",
           "version": null
+        }
+      },
+      {
+        "package": "OrderedDictionary",
+        "repositoryURL": "https://github.com/lukaskubanek/OrderedDictionary.git",
+        "state": {
+          "branch": null,
+          "revision": "acb62df76052bef95a918d26f12bf4996b8587ea",
+          "version": "2.4.0"
+        }
+      },
+      {
+        "package": "PotentCodables",
+        "repositoryURL": "https://github.com/outfoxx/PotentCodables.git",
+        "state": {
+          "branch": null,
+          "revision": "ecb7a18343162c616cf03372ebb1bb822bd580f4",
+          "version": "2.2.0"
+        }
+      },
+      {
+        "package": "Regex",
+        "repositoryURL": "https://github.com/sharplet/Regex.git",
+        "state": {
+          "branch": null,
+          "revision": "76c2b73d4281d77fc3118391877efd1bf972f515",
+          "version": "2.1.1"
+        }
+      },
+      {
+        "package": "Shield",
+        "repositoryURL": "https://github.com/outfoxx/Shield",
+        "state": {
+          "branch": null,
+          "revision": "dd14ac926a78f62d0a5d3cd289785dd31c8c395c",
+          "version": "2.1.2"
         }
       },
       {
@@ -24,8 +69,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "154f1d32366449dcccf6375a173adf4ed2a74429",
-          "version": "2.38.0"
+          "revision": "51c3fc2e4a0fcdf4a25089b288dd65b73df1b0ef",
+          "version": "2.37.0"
         }
       },
       {
@@ -42,8 +87,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
         "state": {
           "branch": null,
-          "revision": "000ca94f9de92c95b9ac85d44600b7b0fe25a3e5",
-          "version": "1.19.2"
+          "revision": "ac2a5afce3dbb6795b4f78ec3f19726dc28f5617",
+          "version": "1.20.0"
         }
       },
       {

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C1443B327E728F400F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B227E728F400F87557 /* Shield */; };
+		4C1443B527E7290000F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B427E7290000F87557 /* Shield */; };
 		4C4A739C27B3D2D6004EDA61 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739B27B3D2D6004EDA61 /* Tests_iOS.swift */; };
 		4C4A739E27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739D27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift */; };
 		4C4A73A827B3D2D6004EDA61 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */; };
@@ -123,6 +125,7 @@
 				4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */,
 				4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */,
 				4CDD56FC27B90AC200A9B537 /* Sodium in Frameworks */,
+				4C1443B527E7290000F87557 /* Shield in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C1443B327E728F400F87557 /* Shield in Frameworks */,
 				4C4A73C727B3E2E2004EDA61 /* CGRPCZlib in Frameworks */,
 				4C4A73CB27B3E2E2004EDA61 /* protoc-gen-grpc-swift in Frameworks */,
 				4C4A73C927B3E2E2004EDA61 /* GRPC in Frameworks */,
@@ -306,6 +310,7 @@
 				4CDD56B827B40DE100A9B537 /* CGRPCZlib */,
 				4CDD56BA27B40DE100A9B537 /* GRPC */,
 				4CDD56FB27B90AC200A9B537 /* Sodium */,
+				4C1443B427E7290000F87557 /* Shield */,
 			);
 			productName = "warpinator-project (iOS)";
 			productReference = 4C4A738A27B3D2D5004EDA61 /* warpinator-project.app */;
@@ -329,6 +334,7 @@
 				4C4A73C827B3E2E2004EDA61 /* GRPC */,
 				4C4A73CA27B3E2E2004EDA61 /* protoc-gen-grpc-swift */,
 				4CDD56FD27B90AD700A9B537 /* Sodium */,
+				4C1443B227E728F400F87557 /* Shield */,
 			);
 			productName = "warpinator-project (macOS)";
 			productReference = 4C4A739027B3D2D5004EDA61 /* warpinator-project.app */;
@@ -430,6 +436,7 @@
 			packageReferences = (
 				4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */,
 				4CDD56FA27B90AC100A9B537 /* XCRemoteSwiftPackageReference "swift-sodium" */,
+				4C1443B127E728F400F87557 /* XCRemoteSwiftPackageReference "Shield" */,
 			);
 			productRefGroup = 4C4A738B27B3D2D5004EDA61 /* Products */;
 			projectDirPath = "";
@@ -989,6 +996,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4C1443B127E728F400F87557 /* XCRemoteSwiftPackageReference "Shield" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/outfoxx/Shield";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/grpc/grpc-swift";
@@ -1008,6 +1023,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4C1443B227E728F400F87557 /* Shield */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C1443B127E728F400F87557 /* XCRemoteSwiftPackageReference "Shield" */;
+			productName = Shield;
+		};
+		4C1443B427E7290000F87557 /* Shield */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C1443B127E728F400F87557 /* XCRemoteSwiftPackageReference "Shield" */;
+			productName = Shield;
+		};
 		4C4A73C627B3E2E2004EDA61 /* CGRPCZlib */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4C4A73C527B3E2E2004EDA61 /* XCRemoteSwiftPackageReference "grpc-swift" */;
