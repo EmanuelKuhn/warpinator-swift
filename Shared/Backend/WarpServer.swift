@@ -13,6 +13,7 @@ import GRPC
 import NIOCore
 import NIOPosix
 
+import NIOSSL
 
 class WarpServer: WarpAsyncProvider {
     
@@ -44,10 +45,16 @@ class WarpServer: WarpAsyncProvider {
         // The provider that implements the WarpAsyncProvider protocol
         let provider = self
 
-//        let grpcTLSConfig = GRPCTLSConfiguration.makeServerConfigurationBackedByNetworkFramework(identity: SecIdentity)
+        let certificateDer = auth.serverIdentity.certificate.derEncoded.bytes
+        let certificate = try NIOSSLCertificate(bytes: certificateDer, format: .der)
+        
+        let privateKeyDer = try auth.serverIdentity.keyPair.encodedPrivateKey().bytes
+        let privateKey = try NIOSSLPrivateKey(bytes: privateKeyDer, format: .der)
+        
+        let grpcTLSConfig = GRPCTLSConfiguration.makeServerConfigurationBackedByNIOSSL(certificateChain: [.certificate(certificate)], privateKey: .privateKey(privateKey))
         
         // Start the server and print its address once it has started.
-        let server = Server.insecure(group: group)
+        let server = Server.usingTLS(with: grpcTLSConfig, on: group)
             .withServiceProviders([provider])
             .bind(host: self.address, port: self.port)
 
@@ -128,7 +135,7 @@ class WarpServer: WarpAsyncProvider {
     func ping(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> VoidType {
         print("ping(\(request)")
         
-        throw ServerError.notImplemented
+        return VoidType()
     }
 }
 
