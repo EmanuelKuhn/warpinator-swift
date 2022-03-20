@@ -11,9 +11,7 @@ import Network
 class NetworkConfig {
     
     var hostname: String {
-        get {
-            return ProcessInfo().hostName
-        }
+        return ProcessInfo().hostName
     }
     
     var ipAddresses: [IPAddress] {

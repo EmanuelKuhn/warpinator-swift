@@ -15,35 +15,7 @@ import NIOTransportServices
 
 import NIOSSL
 
-//func warpRPCCall<I, O>(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String, rpcCall: WarpRPCCallFunc<I, O>) throws -> O? {
-//    let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-//    defer {
-//      try? group.syncShutdownGracefully()
-//    }
-//    
-//    NSLog("rpc call created group")
-//
-//    // Make a client, make sure we close it when we're done.
-//    let client = try makeWarpClient(host: host, port: port, pinnedCertificate: pinnedCertificate, hostnameOverride: hostnameOverride, group: group)
-//    defer {
-//      try? client.channel.close().wait()
-//    }
-//    
-//    NSLog("rpc call created  client")
-//        
-//    let call = rpcCall(client)
-//    
-//    NSLog("rpc call waiting for response")
-//    
-//    let res = try? call.response.wait()
-//    
-//    NSLog("Got result")
-//    
-//    return res
-//}
-
 let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-
 
 func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String, group: EventLoopGroup=eventLoopGroup) throws -> WarpAsyncClient {
     
@@ -103,9 +75,6 @@ func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnam
       )
         
     let clientConnection = ClientConnection.usingTLS(with: tlsConfig, on: group)
-//        .withTLSCustomVerificationCallback()
-    
-
     
     let channel: GRPCChannel = clientConnection.connect(host: host, port: port)
         

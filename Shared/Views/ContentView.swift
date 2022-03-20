@@ -16,9 +16,6 @@ import NIOPosix
 import GRPC
 
 
-
-//let address = Foundation.ProcessInfo().hostName
-
 struct ContentView: View {
     
     @State var string = "certificate"
@@ -59,36 +56,6 @@ struct ContentView: View {
                                 await remote.onTapFunc()
                             }
                             
-                            
-//                            DispatchQueue.global(qos: .default).async {
-//                                Task {
-//                                    let resolveResult = try? await remote.peer.resolveDNSName()
-//
-//                                    guard let (host, _) = resolveResult else {
-//                                        print("failed to resolve")
-//                                        return
-//                                    }
-//
-//                                    print("sucessfully resolved: \(host)")
-//
-//                                    DispatchQueue.global(qos: .background).async {
-//                                        let result = try? fetchCertV2(host: host, auth_port: 42001, regRequest: RegRequest.with({
-//                                            $0.hostname = warp.remoteRegistration.discovery.config.hostname
-//                                        }))
-//
-//                                        print("Got result: \(result?.lockedCert ?? "nil")")
-//
-//                                        Task { @MainActor in
-//                                            if let lockedCert = result?.lockedCert {
-//                                                self.string = lockedCert
-//                                            } else {
-//                                                self.string = "failed"
-//                                            }
-//                                        }
-//
-//                                    }
-//                                }
-//                            }
                         }
                     }
                 }
@@ -120,16 +87,6 @@ struct ContentView: View {
                         
                         print("setup browser")
                     }
-                })
-                
-                Button("print peers", action: {
-//                    for remote in warp.remoteRegistration.discovery.remotes {
-//                        print("\n")
-//
-//                        print(remote)
-//
-//                        //                        let socketAddress = try? SocketAddress.makeAddressResolvingHost(remote.resolvedDNSName, port: Int(remote.txtRecord["auth-port"] ?? "") ?? 42001)
-//                    }
                 })
             }
         }

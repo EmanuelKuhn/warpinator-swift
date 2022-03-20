@@ -16,7 +16,7 @@ struct warpinator_projectApp: App {
     init() {
         let networkConfig = NetworkConfig()
         
-        auth = try! Auth(networkConfig: networkConfig)
+        auth = Auth(networkConfig: networkConfig)
         
         warp = WarpBackend.from(
             discoveryConfig: .init(identity: auth.identity, api_version: "2", auth_port: 42001, hostname: networkConfig.hostname),

@@ -30,24 +30,11 @@ struct MDNSPeer {
     var hostName: String {
         return txtRecord["hostname"] ?? "0.0.0.0"
     }
-    
-//    let resolvedDNSName: String
-    
+        
     /// I noticed that when caching the result of resolving the dns name, and trying to use it some time later,
     /// the name would not resolve to an ip address when using it to connect with .hostandport untill a new
     /// `dns-sd -L` type lookup query is send. Thus it is easier to always resolve the domain, type, name combination to a
-    /// dns name host and immidiatly use the result to start a network connection.
-//    func resolveDNSName(callback: @escaping (Result<(String, Int), Error>) -> Void) {
-//        
-//        DispatchQueue.main.async {
-//            BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name)) { result in
-//                DispatchQueue.global().async {
-//                    callback(result)
-//                }
-//            }
-//        }
-//    }
-    
+    /// dns name host and immediately use the result to start a network connection.
     func resolveDNSName() async throws -> (String, Int) {
         return try await BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name))
     }
@@ -59,10 +46,6 @@ struct MDNSPeer {
     var authPort: Int? {
         return Int(txtRecord.dictionary["auth_port"] ?? "nil")
     }
-    
-//    func computeKey() -> String {
-//        return "\(domain) \(type) \(name)"
-//    }
 }
 
 
@@ -72,13 +55,7 @@ class Discovery {
     
     private var listener: NWListener?
     private var browser: NWBrowser?
-    
-//    var remotes: Array<MDNSPeer> {
-//        return Array(self.peers.values)
-//    }
-//    
-//    private var peers: Dictionary<String, MDNSPeer>
-    
+        
     enum RemoteChanged {
         case added(peer: MDNSPeer)
         case removed(name: String)

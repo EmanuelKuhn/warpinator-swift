@@ -9,6 +9,16 @@
 /* Begin PBXBuildFile section */
 		4C1443B327E728F400F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B227E728F400F87557 /* Shield */; };
 		4C1443B527E7290000F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B427E7290000F87557 /* Shield */; };
+		4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
+		4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
+		4C3F86AC27E7AFE000555A83 /* Tests_Shared__iOS_.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */; };
+		4C3F86B327E7B0D300555A83 /* NetworkConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */; };
+		4C3F86B427E7B0D400555A83 /* NetworkConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */; };
+		4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
+		4C3F86B727E7B87700555A83 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B627E7B87700555A83 /* NetworkUtils.swift */; };
+		4C3F86B827E7B87800555A83 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B627E7B87700555A83 /* NetworkUtils.swift */; };
+		4C3F86BA27E7B93200555A83 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B927E7B93200555A83 /* Utils.swift */; };
+		4C3F86BB27E7B93200555A83 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B927E7B93200555A83 /* Utils.swift */; };
 		4C4A739C27B3D2D6004EDA61 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739B27B3D2D6004EDA61 /* Tests_iOS.swift */; };
 		4C4A739E27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739D27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift */; };
 		4C4A73A827B3D2D6004EDA61 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */; };
@@ -60,6 +70,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4C1443BD27E7A7CE00F87557 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C4A738927B3D2D5004EDA61;
+			remoteInfo = "warpinator-project (iOS)";
+		};
+		4C3F86AD27E7AFE000555A83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C4A738927B3D2D5004EDA61;
+			remoteInfo = "warpinator-project (iOS)";
+		};
 		4C4A739827B3D2D6004EDA61 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
@@ -84,6 +108,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4C1443B627E7A2E600F87557 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
+		4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfigTests.swift; sourceTree = "<group>"; };
+		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_Shared__iOS_.swift; sourceTree = "<group>"; };
+		4C3F86B627E7B87700555A83 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
+		4C3F86B927E7B93200555A83 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		4C4A738327B3D2D4004EDA61 /* warpinator_projectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = warpinator_projectApp.swift; sourceTree = "<group>"; };
 		4C4A738427B3D2D4004EDA61 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4C4A738527B3D2D5004EDA61 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -118,6 +148,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4C3F86A627E7AFE000555A83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C4A738727B3D2D5004EDA61 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -165,6 +202,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C3F86AA27E7AFE000555A83 /* Tests Shared (iOS) */ = {
+			isa = PBXGroup;
+			children = (
+				4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */,
+			);
+			path = "Tests Shared (iOS)";
+			sourceTree = "<group>";
+		};
 		4C4A737D27B3D2D4004EDA61 = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +220,7 @@
 				4C4A739A27B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A627B3D2D6004EDA61 /* Tests macOS */,
 				4CDD570A27B982CA00A9B537 /* warpinator-projectTests */,
+				4C3F86AA27E7AFE000555A83 /* Tests Shared (iOS) */,
 				4C4A738B27B3D2D5004EDA61 /* Products */,
 				4C4A73C027B3DDFA004EDA61 /* Frameworks */,
 			);
@@ -204,6 +250,7 @@
 				4C4A739727B3D2D6004EDA61 /* Tests iOS.xctest */,
 				4C4A73A327B3D2D6004EDA61 /* Tests macOS.xctest */,
 				4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */,
+				4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -254,6 +301,7 @@
 				4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */,
 				4CDD56FF27B93F2600A9B537 /* WarpClient.swift */,
 				4C4E20A027E5FD25001695FC /* WarpServer.swift */,
+				4C1443B627E7A2E600F87557 /* NetworkConfig.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -278,6 +326,8 @@
 			isa = PBXGroup;
 			children = (
 				4CDD56DD27B6808D00A9B537 /* BonjourResolver.swift */,
+				4C3F86B627E7B87700555A83 /* NetworkUtils.swift */,
+				4C3F86B927E7B93200555A83 /* Utils.swift */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -286,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				4CDD571227B9842600A9B537 /* AuthTests.swift */,
+				4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */,
 			);
 			path = "warpinator-projectTests";
 			sourceTree = "<group>";
@@ -293,6 +344,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4C3F86A827E7AFE000555A83 /* Tests Shared (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C3F86AF27E7AFE000555A83 /* Build configuration list for PBXNativeTarget "Tests Shared (iOS)" */;
+			buildPhases = (
+				4C3F86A527E7AFE000555A83 /* Sources */,
+				4C3F86A627E7AFE000555A83 /* Frameworks */,
+				4C3F86A727E7AFE000555A83 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C3F86AE27E7AFE000555A83 /* PBXTargetDependency */,
+			);
+			name = "Tests Shared (iOS)";
+			productName = "Tests Shared (iOS)";
+			productReference = 4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4C4A738927B3D2D5004EDA61 /* warpinator-project (iOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4C4A73B327B3D2D6004EDA61 /* Build configuration list for PBXNativeTarget "warpinator-project (iOS)" */;
@@ -388,6 +457,7 @@
 			);
 			dependencies = (
 				4CDD570E27B982CA00A9B537 /* PBXTargetDependency */,
+				4C1443BE27E7A7CE00F87557 /* PBXTargetDependency */,
 			);
 			name = "warpinator-projectTests";
 			productName = "warpinator-projectTests";
@@ -404,6 +474,10 @@
 				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
+					4C3F86A827E7AFE000555A83 = {
+						CreatedOnToolsVersion = 13.2.1;
+						TestTargetID = 4C4A738927B3D2D5004EDA61;
+					};
 					4C4A738927B3D2D5004EDA61 = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
@@ -447,11 +521,19 @@
 				4C4A739627B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A227B3D2D6004EDA61 /* Tests macOS */,
 				4CDD570827B982CA00A9B537 /* warpinator-projectTests */,
+				4C3F86A827E7AFE000555A83 /* Tests Shared (iOS) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4C3F86A727E7AFE000555A83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C4A738827B3D2D5004EDA61 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -492,6 +574,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4C3F86A527E7AFE000555A83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C3F86B427E7B0D400555A83 /* NetworkConfigTests.swift in Sources */,
+				4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */,
+				4C3F86AC27E7AFE000555A83 /* Tests_Shared__iOS_.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C4A738627B3D2D5004EDA61 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -504,11 +596,14 @@
 				4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */,
 				4CDD570027B93F2600A9B537 /* WarpClient.swift in Sources */,
 				4CDD56C427B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */,
 				4C4A73CF27B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AD27B3D2D6004EDA61 /* ContentView.swift in Sources */,
 				4CDD56E627B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
+				4C3F86B727E7B87700555A83 /* NetworkUtils.swift in Sources */,
 				4CDD56E927B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
 				4CDD56C127B4108F00A9B537 /* Auth.swift in Sources */,
+				4C3F86BA27E7B93200555A83 /* Utils.swift in Sources */,
 				4CDD56DE27B6808D00A9B537 /* BonjourResolver.swift in Sources */,
 				4C4E20A127E5FD25001695FC /* WarpServer.swift in Sources */,
 				4C4A73D327B3FB8A004EDA61 /* warp.proto in Sources */,
@@ -528,11 +623,14 @@
 				4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */,
 				4CDD570127B93F2600A9B537 /* WarpClient.swift in Sources */,
 				4CDD56C527B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */,
 				4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AE27B3D2D6004EDA61 /* ContentView.swift in Sources */,
 				4CDD56E727B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
+				4C3F86B827E7B87800555A83 /* NetworkUtils.swift in Sources */,
 				4CDD56EA27B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
 				4CDD56C227B4108F00A9B537 /* Auth.swift in Sources */,
+				4C3F86BB27E7B93200555A83 /* Utils.swift in Sources */,
 				4CDD56DF27B6808D00A9B537 /* BonjourResolver.swift in Sources */,
 				4C4E20A227E5FD25001695FC /* WarpServer.swift in Sources */,
 				4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */,
@@ -562,6 +660,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3F86B327E7B0D300555A83 /* NetworkConfigTests.swift in Sources */,
 				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -569,6 +668,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4C1443BE27E7A7CE00F87557 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C4A738927B3D2D5004EDA61 /* warpinator-project (iOS) */;
+			targetProxy = 4C1443BD27E7A7CE00F87557 /* PBXContainerItemProxy */;
+		};
+		4C3F86AE27E7AFE000555A83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C4A738927B3D2D5004EDA61 /* warpinator-project (iOS) */;
+			targetProxy = 4C3F86AD27E7AFE000555A83 /* PBXContainerItemProxy */;
+		};
 		4C4A739927B3D2D6004EDA61 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4C4A738927B3D2D5004EDA61 /* warpinator-project (iOS) */;
@@ -587,6 +696,47 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4C3F86B027E7AFE000555A83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6THNG9YB47;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.Tests-Shared--iOS-";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/warpinator-project.app/warpinator-project";
+			};
+			name = Debug;
+		};
+		4C3F86B127E7AFE000555A83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6THNG9YB47;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.Tests-Shared--iOS-";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/warpinator-project.app/warpinator-project";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		4C4A73B127B3D2D6004EDA61 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -939,6 +1089,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C3F86AF27E7AFE000555A83 /* Build configuration list for PBXNativeTarget "Tests Shared (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C3F86B027E7AFE000555A83 /* Debug */,
+				4C3F86B127E7AFE000555A83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4C4A738127B3D2D4004EDA61 /* Build configuration list for PBXProject "warpinator-project" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
