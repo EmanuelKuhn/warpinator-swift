@@ -8,30 +8,55 @@
 import XCTest
 @testable import warpinator_project
 
-import Sodium
-
 import NIOSSL
+import Network
+
+class NetworkConfigMock: NetworkConfig {
+    
+    let _hostname: String
+    let _ipAddresses: [IPAddress]
+    
+    init(hostname: String, ipAddresses: [IPAddress]) {
+        self._hostname = hostname
+        self._ipAddresses = ipAddresses
+    }
+    
+    override var hostname: String {
+        return _hostname
+    }
+    
+    override var ipAddresses: [IPAddress] {
+        return _ipAddresses
+    }
+}
 
 class AuthTests: XCTestCase {
-
+    
+    var networkConfig: NetworkConfig = NetworkConfigMock.init(hostname: "hostname", ipAddresses: [IPv4Address("192.168.12.100")!])
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    func getAuth(
+        hostname: String="hostname",
+        ipAddresses: [IPAddress]=[IPv4Address("192.168.12.100")!]
+    ) -> Auth {
+        return Auth(networkConfig: NetworkConfigMock(hostname: hostname, ipAddresses: ipAddresses))
+    }
 
     func testDefaultGroupCode() throws {
-        
-        let auth = try Auth(hostName: "hostname")
+        let auth = Auth(networkConfig: networkConfig)
         
         XCTAssert(auth.groupCode == "Warpinator")
     }
 
     func testSetGroupCode() throws {
         
-        let auth = try Auth(hostName: "hostname")
+        let auth = Auth(networkConfig: networkConfig)
         
         auth.groupCode = "MyGroupCode"
         
@@ -39,7 +64,7 @@ class AuthTests: XCTestCase {
     }
     
     func testCanOpenLockCert() throws {
-        let auth = try Auth(hostName: "host", groupCode: "Warpinator")
+        let auth = getAuth()
         
         let lockedCert = """
         1A/Jd9taZO2vk0dPS2hVx8XuMm5tkM8jGqZg9c1CJhJJK9hb61hpkziN8jvtESAzrDfrPdfaNBo8
@@ -72,12 +97,8 @@ class AuthTests: XCTestCase {
     }
         
     func testProcessRemoteCertificateThrowsAuthError() throws {
-        let auth = try Auth(hostName: "hostname")
-        
-//        let res = try auth.processRemoteCertificate(lockedCertificate: "‹£€€£‹°")
-//
-//        print(res)
-        
+        let auth = getAuth()
+                
         XCTAssertThrowsError(
             try auth.processRemoteCertificate(lockedCertificate: "‹£€€£‹°")
         ) { error in
@@ -93,7 +114,7 @@ class AuthTests: XCTestCase {
     }
 
     func testPemEncodingDoesNotIncludeCarriageReturns() throws {
-        let auth = try Auth(hostName: "host", groupCode: "Warpinator")
+        let auth = getAuth()
         
         let pem = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
         
@@ -103,7 +124,7 @@ class AuthTests: XCTestCase {
     func testPemEncodingIsValid() throws {
         let hostName = "host"
         
-        let auth = try Auth(hostName: hostName, groupCode: "Warpinator")
+        let auth = getAuth(hostname: hostName)
         
         let pem = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
                         
@@ -113,13 +134,13 @@ class AuthTests: XCTestCase {
         
         let publicKey = try nioCertificate.extractPublicKey().toSPKIBytes()
         
-        XCTAssert(try nioCertificate.extractPublicKey().toSPKIBytes().count > 1)
+        XCTAssert(publicKey.count > 1)
     }
     
     func testPemEncodedCertificateSubjectSetToHostName() throws {
         let hostName = "host"
         
-        let auth = try Auth(hostName: hostName, groupCode: "Warpinator")
+        let auth = getAuth(hostname: hostName)
         
         let pem = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
         let pemBytes = pem.bytes
@@ -133,7 +154,7 @@ class AuthTests: XCTestCase {
         
         // Arrange
         
-        let auth = try Auth(hostName: "hostname", groupCode: "Warpinator")
+        let auth = getAuth()
                 
         let expectedUnlockedCert = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
         

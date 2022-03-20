@@ -49,12 +49,12 @@ class Auth {
         
         self.groupCode = groupCode
         
-        self.serverIdentity = try makeServerKeys()
+        self.serverIdentity = makeServerKeys()
     }
     
-    func makeServerKeys() throws -> ServerIdentity {
+    func makeServerKeys() -> ServerIdentity {
                 
-        let secKeyPair = try ShieldSecurity.SecKeyPair.Builder(type: .rsa, keySize: 2048).generate()
+        let secKeyPair = try! ShieldSecurity.SecKeyPair.Builder(type: .rsa, keySize: 2048).generate()
         
         let subjectName = try! NameBuilder().add(networkConfig.hostname, forTypeName: "CN").name
         let issuerName = try! NameBuilder().add(networkConfig.hostname, forTypeName: "CN").name
@@ -65,7 +65,7 @@ class Auth {
         let altSubjectNames = networkConfig.ipAddresses
             .map({GeneralName.ipAddress($0.rawValue)})
         
-        let certificate = try ShieldX509.Certificate.Builder()
+        let certificate = try! ShieldX509.Certificate.Builder()
             .subject(name: subjectName)
             .issuer(name: issuerName)
             .valid(from: validity.start, to: validity.end)
@@ -73,12 +73,8 @@ class Auth {
             .publicKey(publicKey: secKeyPair.publicKey, usage: nil)
             .subjectAlternativeNames(names: altSubjectNames)
             .build(signingKey: secKeyPair.privateKey, digestAlgorithm: .sha256)
-        
-        print(certificate.tbsCertificate.subject)
-        
-        print(Auth.pemEncoded(certificate: try certificate.sec()!))
-        
-        let secCertificate = try certificate.sec()!
+                
+        let secCertificate = try! certificate.sec()!
         
         return .init(certificate: secCertificate, keyPair: secKeyPair)
     }
