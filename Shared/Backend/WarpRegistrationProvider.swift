@@ -12,7 +12,8 @@ import NIOConcurrencyHelpers
 import NIOCore
 
 
-class WarpRegistrationServicer: WarpRegistrationProvider {
+class WarpRegistrationServicer: WarpRegistrationAsyncProvider {
+
     
     let auth: Auth
     
@@ -22,20 +23,19 @@ class WarpRegistrationServicer: WarpRegistrationProvider {
     
     var interceptors: WarpRegistrationServerInterceptorFactoryProtocol?
     
-    func requestCertificate(request: RegRequest, context: StatusOnlyCallContext) -> EventLoopFuture<RegResponse> {
+    func requestCertificate(request: RegRequest, context: GRPCAsyncServerCallContext) async throws -> RegResponse {
         
         print("server: reqcert")
         print(request)
         print(context)
-        
-        print(context.headers)
-        
-        
-        let response = RegResponse.with({
-            $0.lockedCert = auth.getCert()
+
+        print(context.initialResponseMetadata)
+
+        let response = try RegResponse.with({
+            $0.lockedCert = try auth.getLockedCertificate()
         })
         
-        return context.eventLoop.makeSucceededFuture(response)
+        return response
     }
     
     
