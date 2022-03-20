@@ -10,6 +10,9 @@ import Foundation
 import CryptoKit
 import Sodium
 
+import Shield
+import ShieldSecurity
+
 let DEFAULT_GROUP_CODE = "Warpinator"
 
 enum AuthError: Error {
@@ -18,7 +21,17 @@ enum AuthError: Error {
     case failedToOpenSecretBox
 }
 
+let hour_in_seconds: TimeInterval = TimeInterval(3600)
+let day_in_seconds = 24 * hour_in_seconds
+
 class Auth {
+    
+    struct ServerIdentity {
+        let certificate: SecCertificate
+        let keyPair: SecKeyPair
+    }
+    
+    let expire_time = 30 * day_in_seconds
     
     let hostName: String
         
@@ -28,14 +41,65 @@ class Auth {
     
     var groupCode: String
     
-    init(hostName: String, groupCode: String = DEFAULT_GROUP_CODE) {
+    var serverIdentity: ServerIdentity!
+    
+    init(hostName: String, groupCode: String = DEFAULT_GROUP_CODE) throws {
         self.hostName = hostName
         
         self.groupCode = groupCode
+        
+        self.serverIdentity = try makeServerKeys()
     }
     
-    func getCert() -> String {
-        return "dummy cert \(Foundation.ProcessInfo().hostName)"
+    func makeServerKeys() throws -> ServerIdentity {
+                
+        let secKeyPair = try ShieldSecurity.SecKeyPair.Builder(type: .rsa, keySize: 2048).generate()
+        
+        let subjectName = try NameBuilder().add(self.hostName, forTypeName: "CN").name
+        let issuerName = try NameBuilder().add(self.hostName, forTypeName: "CN").name
+        
+        let validity = DateInterval.init(start: Date.init(timeIntervalSinceNow: -day_in_seconds), duration: expire_time + day_in_seconds)
+        
+        let certificate = try ShieldX509.Certificate.Builder()
+            .subject(name: subjectName)
+            .issuer(name: issuerName)
+            .valid(from: validity.start, to: validity.end)
+            .serialNumber(ShieldX509.Certificate.Builder.randomSerialNumber())
+            .publicKey(publicKey: secKeyPair.publicKey, usage: nil)
+            //TODO: If neeeded add ipv4 address as altname
+            .build(signingKey: secKeyPair.privateKey, digestAlgorithm: .sha256)
+        
+        print(certificate.tbsCertificate.subject)
+        
+        print(Auth.pemEncoded(certificate: try certificate.sec()!))
+        
+        let secCertificate = try certificate.sec()!
+        
+        return .init(certificate: secCertificate, keyPair: secKeyPair)
+    }
+    
+    static func pemEncoded(certificate: SecCertificate) -> String {
+        let begin = "-----BEGIN CERTIFICATE-----\n"
+        let end = "\n-----END CERTIFICATE-----\n"
+        
+        let derBytes: Data = certificate.derEncoded
+        
+        let base64Encoded = derBytes.base64EncodedString(options: [.lineLength64Characters,  .endLineWithLineFeed])
+        
+        return begin + base64Encoded + end
+    }
+    
+    func getLockedCertificate() throws -> String {
+                
+        let pemEncodedCert = Auth.pemEncoded(certificate: self.serverIdentity.certificate)
+        
+        let groupKey = try SecretBox.Key(deriveGroupKey())
+        
+        let sodium = Sodium()
+        
+        let sealedCertificate = Data(sodium.secretBox.seal(message: pemEncodedCert.bytes, secretKey: groupKey)!)
+                
+        return sealedCertificate.base64EncodedString()
     }
     
     private func computeIdentity(hostName: String) -> String {

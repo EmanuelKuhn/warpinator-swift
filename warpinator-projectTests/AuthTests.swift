@@ -10,7 +10,7 @@ import XCTest
 
 import Sodium
 
-//@testable import
+import NIOSSL
 
 class AuthTests: XCTestCase {
 
@@ -24,14 +24,14 @@ class AuthTests: XCTestCase {
 
     func testDefaultGroupCode() throws {
         
-        let auth = Auth(hostName: "")
+        let auth = try Auth(hostName: "hostname")
         
         XCTAssert(auth.groupCode == "Warpinator")
     }
 
     func testSetGroupCode() throws {
         
-        let auth = Auth(hostName: "")
+        let auth = try Auth(hostName: "hostname")
         
         auth.groupCode = "MyGroupCode"
         
@@ -39,7 +39,7 @@ class AuthTests: XCTestCase {
     }
     
     func testCanOpenLockCert() throws {
-        let auth = Auth(hostName: "host", groupCode: "Warpinator")
+        let auth = try Auth(hostName: "host", groupCode: "Warpinator")
         
         let lockedCert = """
         1A/Jd9taZO2vk0dPS2hVx8XuMm5tkM8jGqZg9c1CJhJJK9hb61hpkziN8jvtESAzrDfrPdfaNBo8
@@ -65,14 +65,14 @@ class AuthTests: XCTestCase {
         """
         
         let result = try auth.processRemoteCertificate(lockedCertificate: lockedCert)
-        
+                
         XCTAssert(result.utf8String!.contains("-----BEGIN CERTIFICATE"))
         
         XCTAssert(result.utf8String!.contains("END CERTIFICATE-----"))
     }
-    
+        
     func testProcessRemoteCertificateThrowsAuthError() throws {
-        let auth = Auth(hostName: "")
+        let auth = try Auth(hostName: "hostname")
         
 //        let res = try auth.processRemoteCertificate(lockedCertificate: "‹£€€£‹°")
 //
@@ -92,4 +92,58 @@ class AuthTests: XCTestCase {
         
     }
 
+    func testPemEncodingDoesNotIncludeCarriageReturns() throws {
+        let auth = try Auth(hostName: "host", groupCode: "Warpinator")
+        
+        let pem = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
+        
+        XCTAssertFalse(pem.contains("\r"))
+    }
+    
+    func testPemEncodingIsValid() throws {
+        let hostName = "host"
+        
+        let auth = try Auth(hostName: hostName, groupCode: "Warpinator")
+        
+        let pem = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
+                        
+        let pemBytes = pem.bytes
+        
+        let nioCertificate = try NIOSSLCertificate(bytes: pemBytes, format: .pem)
+        
+        let publicKey = try nioCertificate.extractPublicKey().toSPKIBytes()
+        
+        XCTAssert(try nioCertificate.extractPublicKey().toSPKIBytes().count > 1)
+    }
+    
+    func testPemEncodedCertificateSubjectSetToHostName() throws {
+        let hostName = "host"
+        
+        let auth = try Auth(hostName: hostName, groupCode: "Warpinator")
+        
+        let pem = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
+        let pemBytes = pem.bytes
+        
+        let nioCertificate = try NIOSSLCertificate(bytes: pemBytes, format: .pem)
+        
+        XCTAssert(nioCertificate.description.contains("common_name=\(hostName)"))
+    }
+    
+    func testUnlockLockedCertificate() throws {
+        
+        // Arrange
+        
+        let auth = try Auth(hostName: "hostname", groupCode: "Warpinator")
+                
+        let expectedUnlockedCert = Auth.pemEncoded(certificate: auth.serverIdentity.certificate)
+        
+        // Act
+        
+        let lockedCert = try auth.getLockedCertificate()
+        let unlockedCert = try auth.processRemoteCertificate(lockedCertificate: lockedCert)
+        
+        // Assert
+
+        XCTAssertEqual(expectedUnlockedCert, unlockedCert.utf8String)
+    }
 }
