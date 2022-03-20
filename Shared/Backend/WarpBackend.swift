@@ -9,9 +9,13 @@ import Foundation
 
 class WarpBackend {
     
+    let auth: Auth
+    
     let remoteRegistration: RemoteRegistration
         
     init(discovery: Discovery, auth: Auth) {
+        self.auth = auth
+        
         self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth)
     }
 

@@ -26,22 +26,15 @@ struct ContentView: View {
     @State var clientAddress = "192.168.0.100"
     
     let auth: Auth
-    
     let warp: WarpBackend
     
     @ObservedObject var discoveryViewModel: DiscoveryViewModel
     
     
-    init() {
+    init(warp: WarpBackend) {
         
-        let hostName = Foundation.ProcessInfo().hostName
-        
-        auth = Auth(hostName: hostName)
-        
-        warp = WarpBackend.from(
-            discoveryConfig: .init(identity: auth.identity, api_version: "2", auth_port: 42001, hostname: hostName),
-            auth: auth
-        )
+        self.auth = warp.auth
+        self.warp = warp
         
         discoveryViewModel = .init(warp: warp)
         
@@ -145,11 +138,11 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}
 
 
 
