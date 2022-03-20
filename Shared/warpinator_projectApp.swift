@@ -14,12 +14,12 @@ struct warpinator_projectApp: App {
     let warp: WarpBackend
     
     init() {
-        let hostName = Foundation.ProcessInfo().hostName
+        let networkConfig = NetworkConfig()
         
-        auth = try! Auth(hostName: hostName)
+        auth = try! Auth(networkConfig: networkConfig)
         
         warp = WarpBackend.from(
-            discoveryConfig: .init(identity: auth.identity, api_version: "2", auth_port: 42001, hostname: hostName),
+            discoveryConfig: .init(identity: auth.identity, api_version: "2", auth_port: 42001, hostname: networkConfig.hostname),
             auth: auth
         )
     }

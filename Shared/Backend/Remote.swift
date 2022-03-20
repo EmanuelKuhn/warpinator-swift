@@ -254,7 +254,7 @@ class Remote {
         var lookupName: LookupName {
             LookupName.with {
                 $0.id = auth.identity
-                $0.readableName = auth.hostName
+                $0.readableName = auth.networkConfig.hostname
             }
         }
 

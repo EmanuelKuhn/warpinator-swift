@@ -12,6 +12,7 @@ import Sodium
 
 import Shield
 import ShieldSecurity
+import Network
 
 let DEFAULT_GROUP_CODE = "Warpinator"
 
@@ -33,18 +34,18 @@ class Auth {
     
     let expire_time = 30 * day_in_seconds
     
-    let hostName: String
+    let networkConfig: NetworkConfig
         
     private(set) lazy var identity: String = {
-        computeIdentity(hostName: self.hostName)
+        computeIdentity(hostName: self.networkConfig.hostname)
     }()
     
     var groupCode: String
     
     var serverIdentity: ServerIdentity!
     
-    init(hostName: String, groupCode: String = DEFAULT_GROUP_CODE) throws {
-        self.hostName = hostName
+    init(networkConfig: NetworkConfig, groupCode: String = DEFAULT_GROUP_CODE) {
+        self.networkConfig = networkConfig
         
         self.groupCode = groupCode
         
@@ -55,10 +56,14 @@ class Auth {
                 
         let secKeyPair = try ShieldSecurity.SecKeyPair.Builder(type: .rsa, keySize: 2048).generate()
         
-        let subjectName = try NameBuilder().add(self.hostName, forTypeName: "CN").name
-        let issuerName = try NameBuilder().add(self.hostName, forTypeName: "CN").name
+        let subjectName = try! NameBuilder().add(networkConfig.hostname, forTypeName: "CN").name
+        let issuerName = try! NameBuilder().add(networkConfig.hostname, forTypeName: "CN").name
         
         let validity = DateInterval.init(start: Date.init(timeIntervalSinceNow: -day_in_seconds), duration: expire_time + day_in_seconds)
+    
+        // IpAddress altnames needed as warpinator seems to use these for the tls connection
+        let altSubjectNames = networkConfig.ipAddresses
+            .map({GeneralName.ipAddress($0.rawValue)})
         
         let certificate = try ShieldX509.Certificate.Builder()
             .subject(name: subjectName)
@@ -66,7 +71,7 @@ class Auth {
             .valid(from: validity.start, to: validity.end)
             .serialNumber(ShieldX509.Certificate.Builder.randomSerialNumber())
             .publicKey(publicKey: secKeyPair.publicKey, usage: nil)
-            //TODO: If neeeded add ipv4 address as altname
+            .subjectAlternativeNames(names: altSubjectNames)
             .build(signingKey: secKeyPair.privateKey, digestAlgorithm: .sha256)
         
         print(certificate.tbsCertificate.subject)
