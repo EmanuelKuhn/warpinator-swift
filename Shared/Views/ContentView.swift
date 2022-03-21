@@ -68,7 +68,7 @@ struct ContentView: View {
                         try? certServer.run()
                     }
                     
-                    let warpServer = WarpServer(auth: auth)
+                    let warpServer = WarpServer(auth: auth, remoteRegistration: warp.remoteRegistration)
                     
                     DispatchQueue.global(qos: .userInitiated).async {
                         try? warpServer.run()

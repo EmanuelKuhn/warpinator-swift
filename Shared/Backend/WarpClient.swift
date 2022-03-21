@@ -17,12 +17,19 @@ import NIOSSL
 
 let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
 
-func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnameOverride: String, group: EventLoopGroup=eventLoopGroup) throws -> WarpAsyncClient {
+func makeWarpClient(
+    host: String,
+    port: Int,
+    pinnedCertificate: [UInt8],
+    hostnameOverride: String,
+    group: EventLoopGroup=eventLoopGroup,
+    connectivityStateDelegate: ConnectivityStateDelegate?=nil
+) throws -> WarpAsyncClient {
     
     print("makeWarpClient(\(host), \(port), \(hostnameOverride)")
     
     let nioCertificate = try NIOSSLCertificate(bytes: pinnedCertificate, format: .pem)
-        
+    
     
     let pinnedPublicKey = try nioCertificate.extractPublicKey().toSPKIBytes()
     
@@ -38,12 +45,12 @@ func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnam
             
             
             NSLog("inside of customVerificationCallback")
-                                    
+            
             // Extract the leaf certificate's public key,
             // then compare it to the one you have.
             if let leaf = cert.first,
                let publicKey = try? leaf.extractPublicKey() {
-
+                
                 guard let certSPKI = try? publicKey.toSPKIBytes() else {
                     print("unable to extract spkibytes unableToValidateCertificate custom verification")
                     
@@ -72,11 +79,13 @@ func makeWarpClient(host: String, port: Int, pinnedCertificate: [UInt8], hostnam
                 eventLoopVerification.fail(NIOSSLError.noCertificateToValidate)
             }
         }
-      )
-        
-    let clientConnection = ClientConnection.usingTLS(with: tlsConfig, on: group)
+    )
+    
+    let clientConnection: ClientConnection.Builder = ClientConnection.usingTLS(with: tlsConfig, on: group)
+    
+    clientConnection.withConnectivityStateDelegate(connectivityStateDelegate)
     
     let channel: GRPCChannel = clientConnection.connect(host: host, port: port)
-        
+    
     return WarpAsyncClient(channel: channel)
 }

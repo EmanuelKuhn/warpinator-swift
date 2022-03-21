@@ -19,14 +19,19 @@ class WarpServer: WarpAsyncProvider {
     
     private enum ServerError: Error {
         case notImplemented
+        case remoteNotFound
     }
     
     let auth: Auth
+    let remoteRegistration: RemoteRegistration
+    
     let address: String
     let port: Int
     
-    init(auth: Auth) {
+    init(auth: Auth, remoteRegistration: RemoteRegistration) {
         self.auth = auth
+        self.remoteRegistration = remoteRegistration
+        
         self.address = "::"
         self.port = 42000
     }
@@ -86,14 +91,37 @@ class WarpServer: WarpAsyncProvider {
     func waitingForDuplex(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> HaveDuplex {
         print("waitingForDuplex(\(request)")
         
-        throw ServerError.notImplemented
-
+        // TODO: Retry after some time, as maybe the remote was faster in getting mdns name
+        guard let remote = remoteRegistration[id: request.id] else {
+            print("waitingForDuplex: RemoteNotFound")
+            
+            print("remotes: \(remoteRegistration.keys)")
+            
+            print("Did not find: \(request.id)")
+            
+            throw ServerError.remoteNotFound
+        }
+        
+        print("waitingForDuplex (\(remote.id)): starting waitForConnected")
+        
+        await remote.remoteState.waitForConnected()
+        
+        print("waitingForDuplex (\(remote.id)): finished waitForConnected")
+        
+        return HaveDuplex.with({
+            $0.response = true
+        })
     }
     
     func getRemoteMachineInfo(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> RemoteMachineInfo {
         print("getRemoteMachineInfo(\(request)")
         
-        throw ServerError.notImplemented
+        let processInfo = ProcessInfo()
+        
+        return RemoteMachineInfo.with({
+            $0.displayName = "processInfo.fullUserName"
+            $0.userName = "processInfo.userName"
+        })
     }
     
     func getRemoteMachineAvatar(request: LookupName, responseStream: GRPCAsyncResponseStreamWriter<RemoteMachineAvatar>, context: GRPCAsyncServerCallContext) async throws {

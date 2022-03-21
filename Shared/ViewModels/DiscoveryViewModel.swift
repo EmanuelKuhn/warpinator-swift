@@ -33,7 +33,7 @@ class DiscoveryViewModel: ObservableObject {
             
             Task {
                 self.setRemotes(remotes: remotes.map({ remote in
-                    VMRemote(id: remote.name, title: "\(remote.mdnsPeer.txtRecord["hostname"] ?? ""): \(remote.name)", peer: remote.mdnsPeer, remote: remote)
+                    VMRemote(id: remote.id, title: "\(remote.mdnsPeer.txtRecord["hostname"] ?? ""): \(remote.id)", peer: remote.mdnsPeer, remote: remote)
                 }))
             }
         }

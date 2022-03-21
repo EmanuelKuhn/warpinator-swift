@@ -17,6 +17,15 @@ class RemoteRegistration {
     
     private var remotesDict: Dictionary<String, Remote>
     
+    subscript(id id: String) -> Remote? {
+        get { return remotesDict[id] }
+    }
+    
+    var keys: Array<String> {
+        Array(remotesDict.keys)
+    }
+
+    
     init(discovery: Discovery, auth: Auth) {
         self.discovery = discovery
         
@@ -33,7 +42,7 @@ class RemoteRegistration {
         } else {
             let newRemote = await Remote.from(mdnsPeer: mdnsPeer, auth: auth)
             
-            self.remotesDict[newRemote.name] = newRemote
+            self.remotesDict[newRemote.id] = newRemote
         }
     }
     
