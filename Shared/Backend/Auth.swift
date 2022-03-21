@@ -72,6 +72,7 @@ class Auth {
             .serialNumber(ShieldX509.Certificate.Builder.randomSerialNumber())
             .publicKey(publicKey: secKeyPair.publicKey, usage: nil)
             .subjectAlternativeNames(names: altSubjectNames)
+            .addSubjectAlternativeNames(names: .dnsName(networkConfig.hostname))
             .build(signingKey: secKeyPair.privateKey, digestAlgorithm: .sha256)
                 
         let secCertificate = try! certificate.sec()!
