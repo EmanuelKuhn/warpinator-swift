@@ -108,12 +108,16 @@ class WarpServerProvider: WarpAsyncProvider {
                         
         transferOp.state = .started
         
+        let backpressure = context.userInfo.backpressure
         
         for chunk in transferOp.getFileChunks() {
             print("Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
                         
             try! await responseStream.send(chunk)
             
+            
+            /// Wait until previous chunks have been transmitted over the network
+            await backpressure.waitForCompleted()
         }
                 
         print("done sending chunks!")

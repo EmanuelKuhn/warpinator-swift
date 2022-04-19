@@ -17,6 +17,11 @@ import NIOSSL
 
 class WarpServer {
         
+    var interceptors: WarpServerInterceptorFactoryProtocol? = WarpServerInterceptorFactory()
+    
+    var warpInterceptors: WarpServerInterceptorFactory {
+        return interceptors as! WarpServerInterceptorFactory
+    }
     
     let auth: Auth
     

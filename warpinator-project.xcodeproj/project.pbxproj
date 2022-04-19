@@ -11,14 +11,17 @@
 		4C1443B527E7290000F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B427E7290000F87557 /* Shield */; };
 		4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
 		4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
+		4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
+		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
+		4C39E80927E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
 		4C3F86AC27E7AFE000555A83 /* Tests_Shared__iOS_.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */; };
-		4C3F86B327E7B0D300555A83 /* NetworkConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */; };
-		4C3F86B427E7B0D400555A83 /* NetworkConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */; };
 		4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
 		4C3F86B727E7B87700555A83 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B627E7B87700555A83 /* NetworkUtils.swift */; };
 		4C3F86B827E7B87800555A83 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B627E7B87700555A83 /* NetworkUtils.swift */; };
 		4C3F86BA27E7B93200555A83 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B927E7B93200555A83 /* Utils.swift */; };
 		4C3F86BB27E7B93200555A83 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B927E7B93200555A83 /* Utils.swift */; };
+		4C418C352801C98700E01D60 /* FileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C418C342801C98700E01D60 /* FileProvider.swift */; };
+		4C418C362801C98700E01D60 /* FileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C418C342801C98700E01D60 /* FileProvider.swift */; };
 		4C4A739C27B3D2D6004EDA61 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739B27B3D2D6004EDA61 /* Tests_iOS.swift */; };
 		4C4A739E27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739D27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift */; };
 		4C4A73A827B3D2D6004EDA61 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */; };
@@ -38,6 +41,15 @@
 		4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CE27B3FB8A004EDA61 /* warp.proto */; };
 		4C4E20A127E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
 		4C4E20A227E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
+		4C7E832A27EB2ED400E393B5 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
+		4CA343772802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
+		4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
+		4CA9E5B0280D808F0044CE1F /* WarpProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5AE280D80890044CE1F /* WarpProviderTests.swift */; };
+		4CA9E5B1280D808F0044CE1F /* WarpProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5AE280D80890044CE1F /* WarpProviderTests.swift */; };
+		4CA9E5B5280D89DD0044CE1F /* WarpServerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */; };
+		4CA9E5B6280D89DD0044CE1F /* WarpServerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */; };
+		4CA9E5B8280F02220044CE1F /* WarpServerInterceptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */; };
+		4CA9E5B9280F02220044CE1F /* WarpServerInterceptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */; };
 		4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56B827B40DE100A9B537 /* CGRPCZlib */; };
 		4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56BA27B40DE100A9B537 /* GRPC */; };
 		4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */; };
@@ -109,11 +121,12 @@
 
 /* Begin PBXFileReference section */
 		4C1443B627E7A2E600F87557 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
-		4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfigTests.swift; sourceTree = "<group>"; };
+		4C39E80727E8C89F000F0ACD /* TransferOp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOp.swift; sourceTree = "<group>"; };
 		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_Shared__iOS_.swift; sourceTree = "<group>"; };
 		4C3F86B627E7B87700555A83 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		4C3F86B927E7B93200555A83 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		4C418C342801C98700E01D60 /* FileProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProvider.swift; sourceTree = "<group>"; };
 		4C4A738327B3D2D4004EDA61 /* warpinator_projectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = warpinator_projectApp.swift; sourceTree = "<group>"; };
 		4C4A738427B3D2D4004EDA61 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4C4A738527B3D2D5004EDA61 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -129,6 +142,11 @@
 		4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.grpc.swift; sourceTree = "<group>"; };
 		4C4A73CE27B3FB8A004EDA61 /* warp.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = warp.proto; sourceTree = "<group>"; };
 		4C4E20A027E5FD25001695FC /* WarpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServer.swift; sourceTree = "<group>"; };
+		4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		4CA343762802D32F00702DD6 /* Backpressure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backpressure.swift; sourceTree = "<group>"; };
+		4CA9E5AE280D80890044CE1F /* WarpProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WarpProviderTests.swift; path = "warpinator-projectTests/WarpProviderTests.swift"; sourceTree = SOURCE_ROOT; };
+		4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServerProvider.swift; sourceTree = "<group>"; };
+		4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServerInterceptors.swift; sourceTree = "<group>"; };
 		4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateServerV2.swift; sourceTree = "<group>"; };
 		4CDD56C027B4108F00A9B537 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpRegistrationProvider.swift; sourceTree = "<group>"; };
@@ -202,6 +220,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C39E80D27E8E7A6000F0ACD /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
 		4C3F86AA27E7AFE000555A83 /* Tests Shared (iOS) */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,6 +242,7 @@
 				4CDD56C927B6774000A9B537 /* warpinator-project--iOS--Info.plist */,
 				4C4A738227B3D2D4004EDA61 /* Shared */,
 				4C4A739127B3D2D5004EDA61 /* macOS */,
+				4C39E80D27E8E7A6000F0ACD /* iOS */,
 				4C4A739A27B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A627B3D2D6004EDA61 /* Tests macOS */,
 				4CDD570A27B982CA00A9B537 /* warpinator-projectTests */,
@@ -233,6 +259,7 @@
 				4CDD56F827B83C3400A9B537 /* lib */,
 				4CDD56E427B798D800A9B537 /* ViewModels */,
 				4CDD56E327B7985C00A9B537 /* Views */,
+				4C418C342801C98700E01D60 /* FileProvider.swift */,
 				4CDD56BF27B4105800A9B537 /* Backend */,
 				4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */,
 				4CDD56F227B7B85900A9B537 /* warp.pb.swift */,
@@ -296,12 +323,15 @@
 				4CDD56C627B6672D00A9B537 /* Discovery.swift */,
 				4CDD56EE27B7A5B100A9B537 /* RemoteRegistration.swift */,
 				4CDD570227B93F9E00A9B537 /* Remote.swift */,
+				4C39E80727E8C89F000F0ACD /* TransferOp.swift */,
 				4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */,
 				4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */,
 				4CDD56E527B79A3700A9B537 /* CertificateClientV2.swift */,
 				4CDD56FF27B93F2600A9B537 /* WarpClient.swift */,
 				4C4E20A027E5FD25001695FC /* WarpServer.swift */,
+				4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */,
 				4C1443B627E7A2E600F87557 /* NetworkConfig.swift */,
+				4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -310,6 +340,7 @@
 			isa = PBXGroup;
 			children = (
 				4C4A738427B3D2D4004EDA61 /* ContentView.swift */,
+				4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -328,6 +359,7 @@
 				4CDD56DD27B6808D00A9B537 /* BonjourResolver.swift */,
 				4C3F86B627E7B87700555A83 /* NetworkUtils.swift */,
 				4C3F86B927E7B93200555A83 /* Utils.swift */,
+				4CA343762802D32F00702DD6 /* Backpressure.swift */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -335,8 +367,8 @@
 		4CDD570A27B982CA00A9B537 /* warpinator-projectTests */ = {
 			isa = PBXGroup;
 			children = (
+				4CA9E5AE280D80890044CE1F /* WarpProviderTests.swift */,
 				4CDD571227B9842600A9B537 /* AuthTests.swift */,
-				4C1443B927E7A46700F87557 /* NetworkConfigTests.swift */,
 			);
 			path = "warpinator-projectTests";
 			sourceTree = "<group>";
@@ -578,8 +610,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C3F86B427E7B0D400555A83 /* NetworkConfigTests.swift in Sources */,
 				4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */,
+				4CA9E5B0280D808F0044CE1F /* WarpProviderTests.swift in Sources */,
 				4C3F86AC27E7AFE000555A83 /* Tests_Shared__iOS_.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,11 +624,17 @@
 				4CDD56C727B6672D00A9B537 /* Discovery.swift in Sources */,
 				4CDD56EF27B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
 				4CDD570327B93F9E00A9B537 /* Remote.swift in Sources */,
+				4C7E832A27EB2ED400E393B5 /* DocumentPicker.swift in Sources */,
+				4CA9E5B8280F02220044CE1F /* WarpServerInterceptors.swift in Sources */,
 				4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
 				4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */,
 				4CDD570027B93F2600A9B537 /* WarpClient.swift in Sources */,
+				4C418C352801C98700E01D60 /* FileProvider.swift in Sources */,
 				4CDD56C427B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */,
+				4CA343772802D32F00702DD6 /* Backpressure.swift in Sources */,
 				4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */,
+				4CA9E5B5280D89DD0044CE1F /* WarpServerProvider.swift in Sources */,
 				4C4A73CF27B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4C4A73AD27B3D2D6004EDA61 /* ContentView.swift in Sources */,
 				4CDD56E627B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
@@ -620,14 +658,20 @@
 				4CDD56F027B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
 				4CDD570427B93F9E00A9B537 /* Remote.swift in Sources */,
 				4CDD56BE27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
+				4CA9E5B9280F02220044CE1F /* WarpServerInterceptors.swift in Sources */,
 				4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */,
 				4CDD570127B93F2600A9B537 /* WarpClient.swift in Sources */,
 				4CDD56C527B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4C418C362801C98700E01D60 /* FileProvider.swift in Sources */,
+				4C39E80927E8C89F000F0ACD /* TransferOp.swift in Sources */,
 				4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */,
+				4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */,
 				4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
+				4CA9E5B6280D89DD0044CE1F /* WarpServerProvider.swift in Sources */,
 				4C4A73AE27B3D2D6004EDA61 /* ContentView.swift in Sources */,
 				4CDD56E727B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
 				4C3F86B827E7B87800555A83 /* NetworkUtils.swift in Sources */,
+				4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */,
 				4CDD56EA27B79B5100A9B537 /* DiscoveryViewModel.swift in Sources */,
 				4CDD56C227B4108F00A9B537 /* Auth.swift in Sources */,
 				4C3F86BB27E7B93200555A83 /* Utils.swift in Sources */,
@@ -660,8 +704,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C3F86B327E7B0D300555A83 /* NetworkConfigTests.swift in Sources */,
 				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
+				4CA9E5B1280D808F0044CE1F /* WarpProviderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,6 +833,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -843,6 +888,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -861,12 +907,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "warpinator-project--iOS--Info.plist";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -892,12 +939,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "warpinator-project--iOS--Info.plist";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
