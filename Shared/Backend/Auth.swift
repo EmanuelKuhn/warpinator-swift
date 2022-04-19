@@ -37,7 +37,15 @@ class Auth {
     let networkConfig: NetworkConfig
         
     private(set) lazy var identity: String = {
-        computeIdentity(hostName: self.networkConfig.hostname)
+        
+        let key = "identity"
+        
+        if UserDefaults.standard.string(forKey: key) == nil {
+            let newIdentity = computeIdentity(hostName: self.networkConfig.hostname)
+            UserDefaults.standard.set(newIdentity, forKey: key)
+        }
+        
+        return UserDefaults.standard.string(forKey: key)!
     }()
     
     var groupCode: String
