@@ -68,10 +68,12 @@ class Auth {
         let issuerName = try! NameBuilder().add(networkConfig.hostname, forTypeName: "CN").name
         
         let validity = DateInterval.init(start: Date.init(timeIntervalSinceNow: -day_in_seconds), duration: expire_time + day_in_seconds)
-    
+        
         // IpAddress altnames needed as warpinator seems to use these for the tls connection
-        let altSubjectNames = networkConfig.ipAddresses
+        var altSubjectNames: [GeneralName] = networkConfig.ipAddresses
             .map({GeneralName.ipAddress($0.rawValue)})
+        
+        altSubjectNames.append(.dnsName(networkConfig.hostname))
         
         let certificate = try! ShieldX509.Certificate.Builder()
             .subject(name: subjectName)
@@ -80,7 +82,6 @@ class Auth {
             .serialNumber(ShieldX509.Certificate.Builder.randomSerialNumber())
             .publicKey(publicKey: secKeyPair.publicKey, usage: nil)
             .subjectAlternativeNames(names: altSubjectNames)
-            .addSubjectAlternativeNames(names: .dnsName(networkConfig.hostname))
             .build(signingKey: secKeyPair.privateKey, digestAlgorithm: .sha256)
                 
         let secCertificate = try! certificate.sec()!
