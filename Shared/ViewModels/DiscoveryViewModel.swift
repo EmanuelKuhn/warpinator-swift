@@ -18,10 +18,10 @@ class DiscoveryViewModel: ObservableObject {
         
         fileprivate let remote: Remote
         
-        func onTapFunc() async {
+        func onTapFunc(urls: [URL]) async {
             print("ontap \(self.title)")
             
-            try? await self.remote.ping()
+            try? await self.remote.requestTransfer(urls: urls)
         }
     }
     

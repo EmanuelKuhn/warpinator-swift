@@ -15,6 +15,9 @@ import NIOCore
 import NIOPosix
 import GRPC
 
+#if !canImport(UIKit)
+import AppKit
+#endif
 
 struct ContentView: View {
     
@@ -38,6 +41,12 @@ struct ContentView: View {
         print("running with config: \(warp.remoteRegistration.discovery.config)")
     }
     
+    @State private var showingSheet = false
+    
+    @State private var urls: [URL] = []
+
+    @State private var currentRemote: DiscoveryViewModel.VMRemote? = nil
+
     
     var body: some View {
         
@@ -51,12 +60,44 @@ struct ContentView: View {
                 VStack {
                     ForEach(discoveryViewModel.remotes) { remote in
                         Button("Remote: \(remote.title)") {
-                            
+                            #if canImport(UIKit)
+
+                            showingSheet.toggle()
+
+                            #else
+                            let panel = NSOpenPanel()
+                            panel.allowsMultipleSelection = true
+                            panel.canChooseDirectories = false
+                            if panel.runModal() == .OK {
+                                self.urls = panel.urls
+                            }
+
                             Task {
-                                await remote.onTapFunc()
+                                await currentRemote?.onTapFunc(urls: urls)
                             }
                             
+                            #endif
+                            
+                            currentRemote = remote
+                            
                         }
+                        .sheet(isPresented: $showingSheet, onDismiss: {
+                            print("sheet dismissed")
+                            
+                            Task {
+                                await currentRemote?.onTapFunc(urls: urls)
+                            }
+                            
+                        }, content: {
+                            #if canImport(UIKit)
+                            DocumentPicker(urls: $urls)
+                            #else
+                            Text("Can't use DocumentPicker")
+                            Button("Dismiss") {
+                                showingSheet.toggle()
+                            }
+                            #endif
+                        })
                     }
                 }
                 
