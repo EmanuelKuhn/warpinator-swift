@@ -100,6 +100,9 @@ class Remote {
         }
     }
     
+    var transfersToRemote: Dictionary<UInt64, TransferToRemote> = .init()
+    var transfersFromRemote: Dictionary<UInt64, TransferFromRemote> = .init()
+    
     init(id: String, mdnsPeer: MDNSPeer, auth: Auth) async {
         self.id = id
         self.mdnsPeer = mdnsPeer
@@ -250,5 +253,93 @@ class Remote {
         }
     }
     
+    func requestTransfer(urls: [URL]) async throws {
+        
+        let url = urls[0]
+        
+        var transferOperation = try TransferToRemote.fromUrl(url: url)
+        
+        self.transfersToRemote[transferOperation.timestamp] = transferOperation
+        
+        let opInfo = OpInfo.with({
+            $0.ident = auth.identity
+            $0.timestamp = transferOperation.timestamp
+            $0.readableName = auth.networkConfig.hostname
+
+        })
+        
+        let request = TransferOpRequest.with({
+            $0.info = opInfo
+            $0.senderName = auth.networkConfig.hostname
+            $0.receiver = self.id
+            $0.size = UInt64(url.fileSize() ?? 10000)
+            $0.count = UInt64(1)
+            $0.nameIfSingle = url.lastPathComponent
+            $0.mimeIfSingle = url.mime()?.identifier ?? "application/octet-stream"
+            $0.topDirBasenames = [url.lastPathComponent]
+        })
+        
+        print("requestTransfer: created:\n \(request)")
+        
+        let result = try? await client.processTransferOpRequest(request)
+        
+        print("client.processTransferOpRequest(request) result: \(result)")
+        
+        if result != nil {
+            transferOperation.state = .requested
+        } else {
+            transferOperation.state = .failed
+        }
+    }
     
+    func startTransfer(timestamp: UInt64) async throws {
+        
+        print("startTransfer")
+
+        let transferOp = transfersFromRemote[timestamp]!
+
+        print("startTransfer: \(transferOp)")
+
+        
+        let opInfo = OpInfo.with({
+            $0.timestamp = transferOp.timestamp
+            $0.ident = auth.identity
+            $0.readableName = auth.networkConfig.hostname
+        })
+        
+        let response = try! await client.startTransfer(opInfo)
+        
+        for try await chunk in response {
+            print("new chunk")
+            
+            do {
+            
+                var newChunk = chunk
+                
+                newChunk.chunk = Data()
+                
+                print(newChunk)
+                
+                let fileUrl = URL.init(fileURLWithPath: chunk.relativePath, relativeTo: try getDocumentsDirectory())
+                                        
+                if chunk.hasTime {
+                    let time = chunk.time
+                    
+                    try chunk.chunk.write(to: fileUrl, options: .atomic)
+                    
+                    // Timestamp is mtime seconds + mtimeUsec microseconds
+                    let timestamp: NSDate = NSDate(timeIntervalSince1970: .init(time.mtime))
+                        .addingTimeInterval(.init(time.mtimeUsec) * 10e-6)
+                    
+                    try! FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
+                } else {
+                    try chunk.chunk.append(fileURL: fileUrl)
+                }
+            } catch {
+                print(error)
+            }
+        }
+        
+        print("done transfering")
+    }
 }

@@ -12,3 +12,31 @@ extension Data {
         return [UInt8](self)
     }
 }
+
+extension Data {
+    @discardableResult
+    func append(fileURL: URL) throws -> Bool {
+        if let fileHandle = FileHandle(forWritingAtPath: fileURL.path) {
+            defer {
+                fileHandle.closeFile()
+            }
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(self)
+            
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+func getDocumentsDirectory() throws -> URL {
+        let rootFolderURL = try FileManager.default.url(
+                    for: .documentDirectory,
+                    in: .userDomainMask,
+                    appropriateFor: nil,
+                    create: false
+                )
+
+        return rootFolderURL
+    }

@@ -15,22 +15,20 @@ import NIOPosix
 
 import NIOSSL
 
-class WarpServer: WarpAsyncProvider {
-    
-    private enum ServerError: Error {
-        case notImplemented
-        case remoteNotFound
-    }
+class WarpServer {
+        
     
     let auth: Auth
-    let remoteRegistration: RemoteRegistration
     
     let address: String
     let port: Int
     
+    // The provider that implements the WarpAsyncProvider protocol
+    let provider: WarpAsyncProvider
+    
     init(auth: Auth, remoteRegistration: RemoteRegistration) {
         self.auth = auth
-        self.remoteRegistration = remoteRegistration
+        self.provider = WarpServerProvider(remoteRegistration: remoteRegistration)
         
         self.address = "::"
         self.port = 42000
@@ -47,9 +45,6 @@ class WarpServer: WarpAsyncProvider {
         try! group.syncShutdownGracefully()
         }
 
-        // The provider that implements the WarpAsyncProvider protocol
-        let provider = self
-
         let certificateDer = auth.serverIdentity.certificate.derEncoded.bytes
         let certificate = try NIOSSLCertificate(bytes: certificateDer, format: .der)
         
@@ -62,18 +57,19 @@ class WarpServer: WarpAsyncProvider {
         let server = Server.usingTLS(with: grpcTLSConfig, on: group)
             .withServiceProviders([provider])
             .bind(host: self.address, port: self.port)
-
+        
         server.map {
             $0.channel.localAddress
         }.whenSuccess { address in
             print("server started on port \(address!.port!)")
         }
-        
+                
         server.map {
             $0.channel.localAddress
         }.whenFailure({ error in
             print("server failed to start \(error)")
         })
+        
         
 
         // Wait on the server's `onClose` future to stop the program from exiting.
@@ -82,88 +78,4 @@ class WarpServer: WarpAsyncProvider {
         }.wait()
     }
     
-    func checkDuplexConnection(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> HaveDuplex {
-        print("checkDuplexConnection(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func waitingForDuplex(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> HaveDuplex {
-        print("waitingForDuplex(\(request)")
-        
-        // TODO: Retry after some time, as maybe the remote was faster in getting mdns name
-        guard let remote = remoteRegistration[id: request.id] else {
-            print("waitingForDuplex: RemoteNotFound")
-            
-            print("remotes: \(remoteRegistration.keys)")
-            
-            print("Did not find: \(request.id)")
-            
-            throw ServerError.remoteNotFound
-        }
-        
-        print("waitingForDuplex (\(remote.id)): starting waitForConnected")
-        
-        await remote.remoteState.waitForConnected()
-        
-        print("waitingForDuplex (\(remote.id)): finished waitForConnected")
-        
-        return HaveDuplex.with({
-            $0.response = true
-        })
-    }
-    
-    func getRemoteMachineInfo(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> RemoteMachineInfo {
-        print("getRemoteMachineInfo(\(request)")
-        
-        let processInfo = ProcessInfo()
-        
-        return RemoteMachineInfo.with({
-            $0.displayName = "processInfo.fullUserName"
-            $0.userName = "processInfo.userName"
-        })
-    }
-    
-    func getRemoteMachineAvatar(request: LookupName, responseStream: GRPCAsyncResponseStreamWriter<RemoteMachineAvatar>, context: GRPCAsyncServerCallContext) async throws {
-        print("getRemoteMachineAvatar(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func processTransferOpRequest(request: TransferOpRequest, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("processTransferOpRequest(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func pauseTransferOp(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("pauseTransferOp(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func startTransfer(request: OpInfo, responseStream: GRPCAsyncResponseStreamWriter<FileChunk>, context: GRPCAsyncServerCallContext) async throws {
-        print("startTransfer(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func cancelTransferOpRequest(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("cancelTransferOpRequest(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func stopTransfer(request: StopInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("stopTransfer(\(request)")
-        
-        throw ServerError.notImplemented
-    }
-    
-    func ping(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("ping(\(request)")
-        
-        return VoidType()
-    }
 }
-
