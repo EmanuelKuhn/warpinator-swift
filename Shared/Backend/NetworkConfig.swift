@@ -18,7 +18,7 @@ class NetworkConfig {
         let ifAddresses = getIFAddresses()
         
         return ifAddresses
-            .filter({$0.interfaceName.starts(with: "en")})
+            .filter({$0.interfaceName.starts(with: "en") || $0.interfaceName.starts(with: "bridge")})
             .map({$0.ipAddress})
     }
     
