@@ -11,6 +11,12 @@ import GRPC
 
 class WarpServerProvider: WarpAsyncProvider {
     
+    var interceptors: WarpServerInterceptorFactoryProtocol? = WarpServerInterceptorFactory()
+    
+    var warpInterceptors: WarpServerInterceptorFactory {
+        return interceptors as! WarpServerInterceptorFactory
+    }
+    
     private enum ServerError: Error {
         case notImplemented
         case remoteNotFound
