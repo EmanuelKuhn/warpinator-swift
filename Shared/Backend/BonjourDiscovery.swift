@@ -19,9 +19,7 @@ struct DiscoveryConfig {
     let hostname: String
 }
 
-struct MDNSPeer {
-    /// The resolved DNS name
-//    var resolvedDNSName: String
+struct MDNSPeer: Peer {
     
     let domain: String
     let type: String
@@ -35,7 +33,7 @@ struct MDNSPeer {
     /// the name would not resolve to an ip address when using it to connect with .hostandport untill a new
     /// `dns-sd -L` type lookup query is send. Thus it is easier to always resolve the domain, type, name combination to a
     /// dns name host and immediately use the result to start a network connection.
-    func resolveDNSName() async throws -> (String, Int) {
+    func resolve() async throws -> (String, Int) {
         return try await BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name))
     }
     
@@ -46,22 +44,24 @@ struct MDNSPeer {
     var authPort: Int? {
         return Int(txtRecord.dictionary["auth_port"] ?? "nil")
     }
+    
+    var fetchCertInfo: FetchCertInfo? {
+        guard let port = Int(txtRecord.dictionary["auth_port"] ?? "nil") else {
+            return nil
+        }
+        
+        return .authPort(port)
+    }
+
 }
 
 
-class Discovery {
+class BonjourDiscovery: PeerDiscovery {
     
     let config: DiscoveryConfig
     
     private var listener: NWListener?
     private var browser: NWBrowser?
-        
-    enum RemoteChanged {
-        case added(peer: MDNSPeer)
-        case removed(name: String)
-    }
-    
-    typealias RemoteChangeListener = (RemoteChanged) -> Void
     
     private var onRemoteChangedListeners: Array<RemoteChangeListener> = []
 

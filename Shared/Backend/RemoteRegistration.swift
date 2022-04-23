@@ -7,11 +7,12 @@
 
 import Foundation
 import Sodium
+import NIOCore
 
 
 class RemoteRegistration {
     
-    let discovery: Discovery
+    let discovery: PeerDiscovery
     
     private let auth: Auth
     
@@ -25,32 +26,35 @@ class RemoteRegistration {
         Array(remotesDict.keys)
     }
 
+    let eventLoopGroup: EventLoopGroup
     
-    init(discovery: Discovery, auth: Auth) {
+    init(discovery: PeerDiscovery, auth: Auth, clientEventLoopGroup: EventLoopGroup) {
         self.discovery = discovery
         
         self.auth = auth
+        
+        self.eventLoopGroup = clientEventLoopGroup
         
         self.remotesDict = .init()
         
         self.discovery.addOnRemoteChangedListener(self.onRemoteChangedListener)
     }
     
-    func addPeer(mdnsPeer: MDNSPeer) async {
-        if let oldRemote = self.remotesDict[mdnsPeer.name] {
-            oldRemote.update(with: mdnsPeer)
+    func addPeer(peer: Peer) async {
+        if let oldRemote = self.remotesDict[peer.name] {
+            oldRemote.update(with: peer)
         } else {
-            let newRemote = await Remote.from(mdnsPeer: mdnsPeer, auth: auth)
+            let newRemote = await Remote.from(peer: peer, auth: auth, eventLoopGroup: self.eventLoopGroup)
             
             self.remotesDict[newRemote.id] = newRemote
         }
     }
     
-    private func onRemoteChangedListener(change: Discovery.RemoteChanged) {
+    private func onRemoteChangedListener(change: RemoteChanged) {
         Task {
             switch(change) {
             case .added(let peer):
-                await self.addPeer(mdnsPeer: peer)
+                await self.addPeer(peer: peer)
             case .removed(let name):
                 self.remotesDict[name]?.setActive(false)
             }

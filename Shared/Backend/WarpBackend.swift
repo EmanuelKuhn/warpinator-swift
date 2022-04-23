@@ -6,17 +6,24 @@
 //
 
 import Foundation
+import NIOCore
+import GRPC
 
 class WarpBackend {
     
-    let auth: Auth
+    let eventLoopGroup: EventLoopGroup
     
+    let auth: Auth
+    let discovery: BonjourDiscovery
     let remoteRegistration: RemoteRegistration
+    
+    init(discovery: BonjourDiscovery, auth: Auth) {
+        self.eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 2)
         
-    init(discovery: Discovery, auth: Auth) {
+        self.discovery = discovery
         self.auth = auth
         
-        self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth)
+        self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth, clientEventLoopGroup: eventLoopGroup)
     }
 
     static func from(discoveryConfig: DiscoveryConfig, auth: Auth) -> WarpBackend {

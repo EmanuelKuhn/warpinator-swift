@@ -15,14 +15,14 @@ import NIOTransportServices
 
 import NIOSSL
 
-let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+//let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: System.coreCount)
 
 func makeWarpClient(
     host: String,
     port: Int,
     pinnedCertificate: [UInt8],
     hostnameOverride: String,
-    group: EventLoopGroup=eventLoopGroup,
+    group: EventLoopGroup,
     connectivityStateDelegate: ConnectivityStateDelegate?=nil
 ) throws -> WarpAsyncClient {
     

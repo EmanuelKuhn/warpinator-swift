@@ -36,26 +36,18 @@ class Auth {
     
     let networkConfig: NetworkConfig
         
-    private(set) lazy var identity: String = {
-        
-        let key = "identity"
-        
-        if UserDefaults.standard.string(forKey: key) == nil {
-            let newIdentity = computeIdentity(hostName: self.networkConfig.hostname)
-            UserDefaults.standard.set(newIdentity, forKey: key)
-        }
-        
-        return UserDefaults.standard.string(forKey: key)!
-    }()
+    let identity: String
     
     var groupCode: String
     
     var serverIdentity: ServerIdentity!
     
-    init(networkConfig: NetworkConfig, groupCode: String = DEFAULT_GROUP_CODE) {
+    init(networkConfig: NetworkConfig, identity: String, groupCode: String = DEFAULT_GROUP_CODE) {
         self.networkConfig = networkConfig
         
         self.groupCode = groupCode
+        
+        self.identity = identity
         
         self.serverIdentity = makeServerKeys()
     }
@@ -113,7 +105,7 @@ class Auth {
         return sealedCertificate.base64EncodedString()
     }
     
-    private func computeIdentity(hostName: String) -> String {
+    static func computeIdentity(hostName: String) -> String {
         return "\(hostName.uppercased())-\(UUID().uuidString)"
     }
     

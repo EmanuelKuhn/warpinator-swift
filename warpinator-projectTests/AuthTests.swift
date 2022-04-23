@@ -45,18 +45,18 @@ class AuthTests: XCTestCase {
         hostname: String="hostname",
         ipAddresses: [IPAddress]=[IPv4Address("192.168.12.100")!]
     ) -> Auth {
-        return Auth(networkConfig: NetworkConfigMock(hostname: hostname, ipAddresses: ipAddresses))
+        return Auth(networkConfig: NetworkConfigMock(hostname: hostname, ipAddresses: ipAddresses), identity: "identity")
     }
 
     func testDefaultGroupCode() throws {
-        let auth = Auth(networkConfig: networkConfig)
+        let auth = Auth(networkConfig: networkConfig, identity: "identity")
         
         XCTAssert(auth.groupCode == "Warpinator")
     }
 
     func testSetGroupCode() throws {
         
-        let auth = Auth(networkConfig: networkConfig)
+        let auth = Auth(networkConfig: networkConfig, identity: "identity")
         
         auth.groupCode = "MyGroupCode"
         

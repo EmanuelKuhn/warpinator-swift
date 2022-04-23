@@ -22,33 +22,38 @@ class WarpServer {
     var warpInterceptors: WarpServerInterceptorFactory {
         return interceptors as! WarpServerInterceptorFactory
     }
-    
+        
     let auth: Auth
     
     let address: String
     let port: Int
     
     // The provider that implements the WarpAsyncProvider protocol
-    let provider: WarpAsyncProvider
+    let provider: WarpServerProvider
     
-    init(auth: Auth, remoteRegistration: RemoteRegistration) {
+    private var server: EventLoopFuture<Server>! = nil
+    
+    init(auth: Auth, remoteRegistration: RemoteRegistration, port: Int = 42000) {
         self.auth = auth
         self.provider = WarpServerProvider(remoteRegistration: remoteRegistration)
         
         self.address = "::"
-        self.port = 42000
+        self.port = port
     }
     
+    var stateCallbacks: [(SocketAddress?) -> Void] = []
     
-    func run() throws {
+    func run(eventLoopGroup: EventLoopGroup, callback: (()->Void)?=nil) throws {
+        
+        assert(server == nil)
         
         print("run()")
         
-        // Create an event loop group for the server to run on.
-        let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-        defer {
-        try! group.syncShutdownGracefully()
-        }
+//        // Create an event loop group for the server to run on.
+//        let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+//        defer {
+//            try! group.syncShutdownGracefully()
+//        }
 
         let certificateDer = auth.serverIdentity.certificate.derEncoded.bytes
         let certificate = try NIOSSLCertificate(bytes: certificateDer, format: .der)
@@ -59,7 +64,7 @@ class WarpServer {
         let grpcTLSConfig = GRPCTLSConfiguration.makeServerConfigurationBackedByNIOSSL(certificateChain: [.certificate(certificate)], privateKey: .privateKey(privateKey))
         
         // Start the server and print its address once it has started.
-        let server = Server.usingTLS(with: grpcTLSConfig, on: group)
+        server = Server.usingTLS(with: grpcTLSConfig, on: eventLoopGroup)
             .withServiceProviders([provider])
             .bind(host: self.address, port: self.port)
         
@@ -67,6 +72,12 @@ class WarpServer {
             $0.channel.localAddress
         }.whenSuccess { address in
             print("server started on port \(address!.port!)")
+
+            if let callback = callback {
+                callback()
+            }
+
+            print("server started called callbacks")
         }
                 
         server.map {
@@ -83,4 +94,10 @@ class WarpServer {
         }.wait()
     }
     
+    func close() throws {
+        try server?.map({
+            $0.channel.close()
+            $0.initiateGracefulShutdown()
+        }).wait()
+    }
 }

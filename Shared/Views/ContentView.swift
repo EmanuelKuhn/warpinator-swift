@@ -38,7 +38,7 @@ struct ContentView: View {
         
         discoveryViewModel = .init(warp: warp)
         
-        print("running with config: \(warp.remoteRegistration.discovery.config)")
+        print("running with config: \(warp.discovery.config)")
     }
     
     @State private var showingSheet = false
@@ -106,13 +106,13 @@ struct ContentView: View {
                     let certServer = CertServerV2(auth: auth)
                                         
                     DispatchQueue.global(qos: .userInitiated).async {
-                        try? certServer.run()
+                        try? certServer.run(eventLoopGroup: warp.eventLoopGroup)
                     }
                     
                     let warpServer = WarpServer(auth: auth, remoteRegistration: warp.remoteRegistration)
                     
                     DispatchQueue.global(qos: .userInitiated).async {
-                        try? warpServer.run()
+                        try? warpServer.run(eventLoopGroup: warp.eventLoopGroup)
                     }
                     
                 })
@@ -120,11 +120,11 @@ struct ContentView: View {
                 Button("start discovery", action: {
                     
                     DispatchQueue.global(qos: .userInitiated).async {
-                        warp.remoteRegistration.discovery.setupListener()
+                        warp.discovery.setupListener()
                         
                         print("setup listener done")
                         
-                        warp.remoteRegistration.discovery.setupBrowser()
+                        warp.discovery.setupBrowser()
                         
                         print("setup browser")
                     }

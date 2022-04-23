@@ -12,14 +12,14 @@ import NIOCore
 import NIOPosix
 
 
-func fetchCertV2(host: String, auth_port port: Int, regRequest: RegRequest) async throws -> RegResponse? {
-    let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-    defer {
-      try? group.syncShutdownGracefully()
-    }
+func fetchCertV2(host: String, auth_port port: Int, regRequest: RegRequest, eventLoopGroup: EventLoopGroup) async throws -> RegResponse? {
+//    let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+//    defer {
+//      try? group.syncShutdownGracefully()
+//    }
 
     // Make a client, make sure we close it when we're done.
-    let client = try makeClient(host: host, port: port, group: group)
+    let client = try makeClient(host: host, port: port, group: eventLoopGroup)
     defer {
       try? client.channel.close().wait()
     }

@@ -20,27 +20,30 @@ class CertServerV2 {
     let address: String
     let auth_port: Int
     
-    init(auth: Auth) {
+    private var server: EventLoopFuture<Server>! = nil
+    
+    init(auth: Auth, auth_port: Int=42001) {
         self.auth = auth
         self.address = "::"
-        self.auth_port = 42001
+        self.auth_port = auth_port
     }
     
+    var stateCallbacks: [(SocketAddress?) -> Void] = []
     
-    func run() throws {
+    func run(eventLoopGroup: EventLoopGroup, callback: (()->Void)?=nil) throws {
         
         print("run()")
         
-        // Create an event loop group for the server to run on.
-        let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-        defer {
-        try! group.syncShutdownGracefully()
-        }
+//        // Create an event loop group for the server to run on.
+//        let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+//        defer {
+//        try! group.syncShutdownGracefully()
+//        }
 
         let provider = WarpRegistrationServicer(auth: self.auth)
 
         // Start the server and print its address once it has started.
-        let server = Server.insecure(group: group)
+        let server = Server.insecure(group: eventLoopGroup)
             .withServiceProviders([provider])
             .bind(host: self.address, port: self.auth_port)
 
@@ -48,6 +51,12 @@ class CertServerV2 {
             $0.channel.localAddress
         }.whenSuccess { address in
             print("server started on port \(address!.port!)")
+
+            if let callback = callback {
+                callback()
+            }
+            
+            print("certserver started called callbacks")
         }
         
         server.map {
@@ -62,4 +71,12 @@ class CertServerV2 {
             $0.onClose
         }.wait()
     }
+    
+    func close() throws {
+        try server?.map({
+            $0.channel.close()
+            $0.initiateGracefulShutdown()
+        }).wait()
+    }
+
 }

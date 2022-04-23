@@ -14,14 +14,14 @@ class DiscoveryViewModel: ObservableObject {
         let id: String
         let title: String
         
-        let peer: MDNSPeer
+        let peer: Peer
         
         fileprivate let remote: Remote
         
         func onTapFunc(urls: [URL]) async {
             print("ontap \(self.title)")
             
-            try? await self.remote.requestTransfer(urls: urls)
+            try? await self.remote.requestTransfer(url: urls[0])
         }
     }
     
@@ -33,7 +33,7 @@ class DiscoveryViewModel: ObservableObject {
             
             Task {
                 self.setRemotes(remotes: remotes.map({ remote in
-                    VMRemote(id: remote.id, title: "\(remote.mdnsPeer.txtRecord["hostname"] ?? ""): \(remote.id)", peer: remote.mdnsPeer, remote: remote)
+                    VMRemote(id: remote.id, title: "\(remote.peer.hostName): \(remote.id)", peer: remote.peer, remote: remote)
                 }))
             }
         }

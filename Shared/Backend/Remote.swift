@@ -75,7 +75,7 @@ class Remote {
     
     let id: String
     
-    let mdnsPeer: MDNSPeer
+    let peer: Peer
     
     var isActive = true
     
@@ -103,11 +103,15 @@ class Remote {
     var transfersToRemote: Dictionary<UInt64, TransferToRemote> = .init()
     var transfersFromRemote: Dictionary<UInt64, TransferFromRemote> = .init()
     
-    init(id: String, mdnsPeer: MDNSPeer, auth: Auth) async {
+    let eventLoopGroup: EventLoopGroup
+    
+    init(id: String, peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) async {
         self.id = id
-        self.mdnsPeer = mdnsPeer
+        self.peer = peer
         
         self.auth = auth
+        
+        self.eventLoopGroup = eventLoopGroup
         
         Task {
             do {
@@ -115,7 +119,7 @@ class Remote {
             } catch {
                 remoteState.state = .unreachable
                 
-                print("Could not setup remote: \(self.mdnsPeer.name)")
+                print("Could not setup remote: \(self.peer.name)")
             }
         }
     }
@@ -127,7 +131,7 @@ class Remote {
     }
     
     func initClient() async throws {
-        guard let (host, port) = try? await self.mdnsPeer.resolveDNSName() else {
+        guard let (host, port) = try? await self.peer.resolve() else {
             print("failed to resolvednsname")
             throw InitClientError.failedToResolveMDNS
         }
@@ -135,7 +139,8 @@ class Remote {
         self._client = try? makeWarpClient(host: host,
                                            port: port,
                                            pinnedCertificate: self.certificate!,
-                                           hostnameOverride: self.mdnsPeer.hostName,
+                                           hostnameOverride: self.peer.hostName,
+                                           group: self.eventLoopGroup,
                                            connectivityStateDelegate: self.remoteState)
         
         print("initClient: \(String(describing: _client))")
@@ -170,16 +175,16 @@ class Remote {
         
     }
     
-    static func from(mdnsPeer: MDNSPeer, auth: Auth) async -> Remote {
-        return await .init(id: mdnsPeer.name, mdnsPeer: mdnsPeer, auth: auth)
+    static func from(peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) async -> Remote {
+        return await .init(id: peer.name, peer: peer, auth: auth, eventLoopGroup: eventLoopGroup)
     }
     
     func setActive(_ active: Bool) {
         self.isActive = active
     }
     
-    func update(with mdnsPeer: MDNSPeer) {
-        assert(mdnsPeer.name == self.id)
+    func update(with peer: Peer) {
+        assert(peer.name == self.id)
         
         
         print("TODO: update with peer")
@@ -189,14 +194,18 @@ class Remote {
         
         print("\(self.id): requestCertificate: start")
         
-        guard let (host, _) = try? await self.mdnsPeer.resolveDNSName() else {
+        guard let (host, _) = try? await self.peer.resolve() else {
             print("failed to resolve")
             return false
         }
         
         let regRequest = RegRequest.with {$0.hostname = ProcessInfo().hostName}
         
-        guard let response = try? await fetchCertV2(host: host, auth_port: self.mdnsPeer.authPort ?? 42001, regRequest: regRequest) else {
+        guard case let .authPort(authPort) = self.peer.fetchCertInfo else {
+            return false
+        }
+        
+        guard let response = try? await fetchCertV2(host: host, auth_port: authPort, regRequest: regRequest, eventLoopGroup: eventLoopGroup) else {
             print("requestCertificate: failed fetchCertV2")
             
             return false
@@ -253,11 +262,9 @@ class Remote {
         }
     }
     
-    func requestTransfer(urls: [URL]) async throws {
-        
-        let url = urls[0]
-        
-        var transferOperation = try TransferToRemote.fromUrl(url: url)
+    func requestTransfer(url: URL) async throws {
+                
+        var transferOperation = try TransferToRemote.fromUrls(urls: [url])
         
         self.transfersToRemote[transferOperation.timestamp] = transferOperation
         
@@ -343,3 +350,4 @@ class Remote {
         print("done transfering")
     }
 }
+
