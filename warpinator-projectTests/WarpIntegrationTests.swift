@@ -100,5 +100,35 @@ final class WarpIntegrationTests: XCTestCase {
         await waitForExpectations(timeout: 5, handler: nil)
         
     }
+
+    func testWaitingForDuplexWhenDiscoveredAfter() async throws {
+        // Given
+        
+        let otherWarp = await setupWarpInstance("otherWarp", port: getPort(), authPort: getPort())
+        
+        let sot = await setupWarpInstance("sot", port: getPort(), authPort: getPort())
+        let client = try await sot.connect()
+        
+        // When
+        
+        let resultExpectation = self.expectation(description: "got_result")
+                
+        Task {
+            let result = try await client.waitingForDuplex(otherWarp.lookupName, callOptions: nil)
+            
+            XCTAssertEqual(result.response, true)
+            
+            resultExpectation.fulfill()
+        }
+        
+        try await Task.sleep(nanoseconds: .nanoseconds(milliseconds: 500))
+        
+        sot.addPeer(otherWarp.getPeer())
+                
+        // Assert
+        
+        await waitForExpectations(timeout: 5, handler: nil)
+        
+    }
     
 }
