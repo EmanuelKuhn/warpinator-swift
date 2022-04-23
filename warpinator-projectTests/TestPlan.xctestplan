@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "9AE92CE2-BBF8-4A80-BC86-C95B3BAAC16F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:warpinator-project.xcodeproj",
+        "identifier" : "4CDD570827B982CA00A9B537",
+        "name" : "warpinator-projectTests"
+      }
+    }
+  ],
+  "version" : 1
+}

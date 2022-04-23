@@ -54,6 +54,9 @@
 		4CA9E5BE280F11390044CE1F /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5BD280F11390044CE1F /* Peer.swift */; };
 		4CA9E5BF280F11740044CE1F /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5BD280F11390044CE1F /* Peer.swift */; };
 		4CA9E5C1280F127A0044CE1F /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5BB280F11040044CE1F /* Discovery.swift */; };
+		4CA9E5C5281447A90044CE1F /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
+		4CA9E5C7281448060044CE1F /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
+		4CA9E5C9281449460044CE1F /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56B827B40DE100A9B537 /* CGRPCZlib */; };
 		4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56BA27B40DE100A9B537 /* GRPC */; };
 		4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */; };
@@ -154,6 +157,9 @@
 		4CA9E5BB280F11040044CE1F /* Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery.swift; sourceTree = "<group>"; };
 		4CA9E5BD280F11390044CE1F /* Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peer.swift; sourceTree = "<group>"; };
 		4CA9E5C2281444310044CE1F /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDiscovery.swift; sourceTree = "<group>"; };
+		4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWarpInstance.swift; sourceTree = "<group>"; };
+		4CA9E5C8281449460044CE1F /* helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpers.swift; sourceTree = "<group>"; };
 		4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateServerV2.swift; sourceTree = "<group>"; };
 		4CDD56C027B4108F00A9B537 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		4CDD56C327B412A900A9B537 /* WarpRegistrationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpRegistrationProvider.swift; sourceTree = "<group>"; };
@@ -331,6 +337,15 @@
 			path = model;
 			sourceTree = "<group>";
 		};
+		4CA9E5C3281447570044CE1F /* WarpHelpers */ = {
+			isa = PBXGroup;
+			children = (
+				4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */,
+				4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */,
+			);
+			path = WarpHelpers;
+			sourceTree = "<group>";
+		};
 		4CDD56BF27B4105800A9B537 /* Backend */ = {
 			isa = PBXGroup;
 			children = (
@@ -384,9 +399,11 @@
 		4CDD570A27B982CA00A9B537 /* warpinator-projectTests */ = {
 			isa = PBXGroup;
 			children = (
+				4CA9E5C3281447570044CE1F /* WarpHelpers */,
 				4CA9E5C2281444310044CE1F /* TestPlan.xctestplan */,
 				4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */,
 				4CDD571227B9842600A9B537 /* AuthTests.swift */,
+				4CA9E5C8281449460044CE1F /* helpers.swift */,
 			);
 			path = "warpinator-projectTests";
 			sourceTree = "<group>";
@@ -726,8 +743,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CA9E5C7281448060044CE1F /* TestWarpInstance.swift in Sources */,
 				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
 				4CA9E5B1280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */,
+				4CA9E5C5281447A90044CE1F /* TestDiscovery.swift in Sources */,
+				4CA9E5C9281449460044CE1F /* helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
