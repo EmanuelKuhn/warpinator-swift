@@ -44,9 +44,13 @@ actor Backpresure {
         
         numberOfInitiatedMessages += 1
         
+        if numberOfCompletedMessages + self.cacheMessages > currentIndex {
+            return
+        }
+        
         return await withCheckedContinuation { continuation in
                 callbacks.append { completedIndex in
-                    if (completedIndex + self.cacheMessages >= currentIndex) {
+                    if (completedIndex + self.cacheMessages > currentIndex) {
                         continuation.resume()
                         
                         return false
