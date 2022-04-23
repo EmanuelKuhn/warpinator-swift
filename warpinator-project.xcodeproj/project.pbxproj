@@ -14,7 +14,6 @@
 		4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
 		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
 		4C39E80927E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
-		4C3F86AC27E7AFE000555A83 /* Tests_Shared__iOS_.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */; };
 		4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
 		4C3F86B727E7B87700555A83 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B627E7B87700555A83 /* NetworkUtils.swift */; };
 		4C3F86B827E7B87800555A83 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B627E7B87700555A83 /* NetworkUtils.swift */; };
@@ -57,6 +56,9 @@
 		4CA9E5C5281447A90044CE1F /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
 		4CA9E5C7281448060044CE1F /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
 		4CA9E5C9281449460044CE1F /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
+		4CA9E5CA281468C30044CE1F /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
+		4CA9E5CB281468C50044CE1F /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
+		4CA9E5CC281468CC0044CE1F /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4CDD56B927B40DE100A9B537 /* CGRPCZlib in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56B827B40DE100A9B537 /* CGRPCZlib */; };
 		4CDD56BB27B40DE100A9B537 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 4CDD56BA27B40DE100A9B537 /* GRPC */; };
 		4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD56BC27B40FAC00A9B537 /* CertificateServerV2.swift */; };
@@ -130,7 +132,6 @@
 		4C1443B627E7A2E600F87557 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
 		4C39E80727E8C89F000F0ACD /* TransferOp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOp.swift; sourceTree = "<group>"; };
 		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_Shared__iOS_.swift; sourceTree = "<group>"; };
 		4C3F86B627E7B87700555A83 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		4C3F86B927E7B93200555A83 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		4C418C342801C98700E01D60 /* FileProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProvider.swift; sourceTree = "<group>"; };
@@ -243,7 +244,6 @@
 		4C3F86AA27E7AFE000555A83 /* Tests Shared (iOS) */ = {
 			isa = PBXGroup;
 			children = (
-				4C3F86AB27E7AFE000555A83 /* Tests_Shared__iOS_.swift */,
 			);
 			path = "Tests Shared (iOS)";
 			sourceTree = "<group>";
@@ -647,7 +647,9 @@
 			files = (
 				4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */,
 				4CA9E5B0280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */,
-				4C3F86AC27E7AFE000555A83 /* Tests_Shared__iOS_.swift in Sources */,
+				4CA9E5CA281468C30044CE1F /* TestDiscovery.swift in Sources */,
+				4CA9E5CB281468C50044CE1F /* TestWarpInstance.swift in Sources */,
+				4CA9E5CC281468CC0044CE1F /* helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

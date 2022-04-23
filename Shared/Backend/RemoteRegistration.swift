@@ -10,7 +10,7 @@ import Sodium
 import NIOCore
 
 
-class RemoteRegistration {
+actor RemoteRegistration {
     
     let discovery: PeerDiscovery
     
@@ -18,8 +18,44 @@ class RemoteRegistration {
     
     private var remotesDict: Dictionary<String, Remote>
     
-    subscript(id id: String) -> Remote? {
-        get { return remotesDict[id] }
+    private var remoteAddedCallbacks: Dictionary<UUID, (String)->Void> = .init()
+    
+    func addRemoteAddedCallback(uuid: UUID, callback: @escaping (String)->Void) {
+        self.remoteAddedCallbacks[uuid] = callback
+    }
+    
+    private func waitForRemoteAdded(remote id: String, timeout: TimeInterval) async {
+        let callbackUUID = UUID()
+        
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let timer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
+                self.remoteAddedCallbacks.removeValue(forKey: callbackUUID)
+
+                continuation.resume()
+            }
+            
+            self.addRemoteAddedCallback(uuid: callbackUUID) { addedID in
+                if addedID == id {
+                    timer.invalidate()
+                    self.remoteAddedCallbacks.removeValue(forKey: callbackUUID)
+
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
+    subscript(id id: String, timeout timeout: TimeInterval = 5) -> Remote? {
+        get async {
+
+            if remotesDict.keys.contains(id) {
+                return remotesDict[id]
+            }
+            
+            await self.waitForRemoteAdded(remote: id, timeout: timeout)
+
+            return remotesDict[id]
+        }
     }
     
     var keys: Array<String> {
@@ -47,6 +83,10 @@ class RemoteRegistration {
             let newRemote = await Remote.from(peer: peer, auth: auth, eventLoopGroup: self.eventLoopGroup)
             
             self.remotesDict[newRemote.id] = newRemote
+        }
+        
+        self.remoteAddedCallbacks.values.forEach {
+            $0(peer.name)
         }
     }
     

@@ -28,13 +28,15 @@ class DiscoveryViewModel: ObservableObject {
     @Published var remotes: Array<VMRemote> = []
     
     init(warp: WarpBackend) {
-        warp.remoteRegistration.addOnRemoteChangedListener { remotes in
-            print("DiscoveryViewModel: onRemotesChangedListener")
-            
-            Task {
-                self.setRemotes(remotes: remotes.map({ remote in
-                    VMRemote(id: remote.id, title: "\(remote.peer.hostName): \(remote.id)", peer: remote.peer, remote: remote)
-                }))
+        Task {
+            await warp.remoteRegistration.addOnRemoteChangedListener { remotes in
+                print("DiscoveryViewModel: onRemotesChangedListener")
+                
+                Task {
+                    self.setRemotes(remotes: remotes.map({ remote in
+                        VMRemote(id: remote.id, title: "\(remote.peer.hostName): \(remote.id)", peer: remote.peer, remote: remote)
+                    }))
+                }
             }
         }
     }

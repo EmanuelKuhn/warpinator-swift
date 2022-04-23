@@ -32,11 +32,11 @@ class WarpServerProvider: WarpAsyncProvider {
     func waitingForDuplex(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> HaveDuplex {
         print("waitingForDuplex(\(request)")
         
-        // TODO: Retry after some time, as maybe the remote was faster in getting mdns name
-        guard let remote = remoteRegistration[id: request.id] else {
+        // remoteRegistration[id, timeout: 5] waits upto 5 seconds to discover the remote.
+        guard let remote = await remoteRegistration[id: request.id, timeout: 5] else {
             print("waitingForDuplex: RemoteNotFound")
             
-            print("remotes: \(remoteRegistration.keys)")
+            print("remotes: \(await remoteRegistration.keys)")
             
             print("Did not find: \(request.id)")
             
@@ -72,7 +72,7 @@ class WarpServerProvider: WarpAsyncProvider {
     func processTransferOpRequest(request: TransferOpRequest, context: GRPCAsyncServerCallContext) async throws -> VoidType {
         print("processTransferOpRequest(\(request)")
         
-        guard let remote = remoteRegistration[id: request.info.ident] else {
+        guard let remote = await remoteRegistration[id: request.info.ident] else {
             throw ServerError.remoteNotFound
         }
         
@@ -98,7 +98,7 @@ class WarpServerProvider: WarpAsyncProvider {
     func startTransfer(request: OpInfo, responseStream: GRPCAsyncResponseStreamWriter<FileChunk>, context: GRPCAsyncServerCallContext) async throws {
         print("startTransfer(\(request)")
         
-        guard let remote = remoteRegistration[id: request.ident] else {
+        guard let remote = await remoteRegistration[id: request.ident] else {
             throw ServerError.remoteNotFound
         }
         
@@ -126,7 +126,7 @@ class WarpServerProvider: WarpAsyncProvider {
     func cancelTransferOpRequest(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
         print("cancelTransferOpRequest(\(request)")
         
-        guard let remote = remoteRegistration[id: request.ident] else {
+        guard let remote = await remoteRegistration[id: request.ident] else {
             throw ServerError.remoteNotFound
         }
         
