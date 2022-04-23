@@ -42,11 +42,11 @@ struct MDNSPeer: Peer {
     var active = true
     
     var authPort: Int? {
-        return Int(txtRecord.dictionary["auth_port"] ?? "nil")
+        return Int(txtRecord.dictionary["auth-port"] ?? "nil")
     }
     
     var fetchCertInfo: FetchCertInfo? {
-        guard let port = Int(txtRecord.dictionary["auth_port"] ?? "nil") else {
+        guard let port = authPort else {
             return nil
         }
         
