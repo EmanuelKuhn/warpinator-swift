@@ -108,6 +108,9 @@ actor RemoteRegistration {
     
     func addOnRemoteChangedListener(_ listener: @escaping (Array<Remote>) -> Void) {
         self.onRemotesChangedListeners.append(listener)
+        
+        // Call listener with current values
+        listener(Array(self.remotesDict.values))
     }
     
     private func onRemotesChanged() {
