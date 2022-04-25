@@ -11,10 +11,11 @@ import GRPC
 
 class WarpBackend {
     
-    let eventLoopGroup: EventLoopGroup
+    private let eventLoopGroup: EventLoopGroup
     
-    let auth: Auth
-    let discovery: BonjourDiscovery
+    private let auth: Auth
+    private let discovery: BonjourDiscovery
+    
     let remoteRegistration: RemoteRegistration
     
     init(discovery: BonjourDiscovery, auth: Auth) {
@@ -28,6 +29,33 @@ class WarpBackend {
 
     static func from(discoveryConfig: DiscoveryConfig, auth: Auth) -> WarpBackend {
         return .init(discovery: .init(config: discoveryConfig), auth: auth)
+    }
+    
+    func start() {
+        
+        // Start servers
+        let certServer = CertServerV2(auth: auth)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            try? certServer.run(eventLoopGroup: self.eventLoopGroup)
+        }
+        
+        let warpServer = WarpServer(auth: auth, remoteRegistration: self.remoteRegistration)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            try? warpServer.run(eventLoopGroup: self.eventLoopGroup)
+        }
+        
+        // Start bonjour discovery
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.discovery.setupListener()
+            
+            print("setup listener done")
+            
+            self.discovery.setupBrowser()
+            
+            print("setup browser")
+        }
     }
     
 }

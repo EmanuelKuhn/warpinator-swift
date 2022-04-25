@@ -25,7 +25,6 @@ struct ContentView: View {
     
     @State var clientAddress = "192.168.0.100"
     
-    let auth: Auth
     let warp: WarpBackend
     
     @ObservedObject var discoveryViewModel: DiscoveryViewModel
@@ -33,12 +32,10 @@ struct ContentView: View {
     
     init(warp: WarpBackend) {
         
-        self.auth = warp.auth
         self.warp = warp
         
         discoveryViewModel = .init(warp: warp)
         
-        print("running with config: \(warp.discovery.config)")
     }
     
     @State private var showingSheet = false
@@ -102,33 +99,10 @@ struct ContentView: View {
                 }
                 
                 
-                Button("start servers (certv2 and warpserver)", action: {
-                    let certServer = CertServerV2(auth: auth)
-                                        
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        try? certServer.run(eventLoopGroup: warp.eventLoopGroup)
-                    }
-                    
-                    let warpServer = WarpServer(auth: auth, remoteRegistration: warp.remoteRegistration)
-                    
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        try? warpServer.run(eventLoopGroup: warp.eventLoopGroup)
-                    }
-                    
+                Button("start warp", action: {
+                    warp.start()
                 })
-                
-                Button("start discovery", action: {
-                    
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        warp.discovery.setupListener()
-                        
-                        print("setup listener done")
-                        
-                        warp.discovery.setupBrowser()
-                        
-                        print("setup browser")
-                    }
-                })
+
             }
         }
         
