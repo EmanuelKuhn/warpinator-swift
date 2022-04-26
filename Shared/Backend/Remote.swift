@@ -100,8 +100,27 @@ class Remote {
         }
     }
     
-    var transfersToRemote: Dictionary<UInt64, TransferToRemote> = .init()
-    var transfersFromRemote: Dictionary<UInt64, TransferFromRemote> = .init()
+    var transfers: CurrentValueSubject<Array<TransferOp>, Never> = .init([])
+    
+    var transfersToRemote: Dictionary<UInt64, TransferToRemote> = .init() {
+        willSet {
+            
+            var merged: [TransferOp] = Array(newValue.values)
+            merged.append(contentsOf: Array(transfersFromRemote.values))
+            
+            transfers.value = merged
+        }
+    }
+    
+    var transfersFromRemote: Dictionary<UInt64, TransferFromRemote> = .init() {
+        willSet {
+            
+            var merged: [TransferOp] = Array(newValue.values)
+            merged.append(contentsOf: Array(transfersToRemote.values))
+            
+            transfers.value = merged
+        }
+    }
     
     let eventLoopGroup: EventLoopGroup
     
