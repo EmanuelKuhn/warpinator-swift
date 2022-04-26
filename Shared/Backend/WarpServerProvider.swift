@@ -84,7 +84,7 @@ class WarpServerProvider: WarpAsyncProvider {
         
         let transferOp = TransferFromRemote.createFromRemote(timestamp: request.info.timestamp)
         
-        remote.transfersFromRemote.value[request.info.timestamp] = transferOp
+        remote.transfersFromRemote[request.info.timestamp] = transferOp
         
         // TODO: Currently auto accepts and starts a transfer request
         Task {
@@ -108,7 +108,7 @@ class WarpServerProvider: WarpAsyncProvider {
             throw ServerError.remoteNotFound
         }
         
-        guard var transferOp = remote.transfersToRemote.value[request.timestamp] else {
+        guard var transferOp = remote.transfersToRemote[request.timestamp] else {
             throw ServerError.transferOpToRemoteNotFound
         }
                         
@@ -136,7 +136,7 @@ class WarpServerProvider: WarpAsyncProvider {
             throw ServerError.remoteNotFound
         }
         
-        guard var transferOp = remote.transfersToRemote.value[request.timestamp] else {
+        guard var transferOp = remote.transfersToRemote[request.timestamp] else {
             throw ServerError.transferOpToRemoteNotFound
         }
         

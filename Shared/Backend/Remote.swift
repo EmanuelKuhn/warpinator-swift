@@ -100,21 +100,8 @@ class Remote {
         }
     }
     
-    var transfersToRemote: CurrentValueSubject<Dictionary<UInt64, TransferToRemote>, Never> = .init(.init())
-    var transfersFromRemote: CurrentValueSubject<Dictionary<UInt64, TransferFromRemote>, Never> = .init(.init())
-    
-    var transfers: AnyPublisher<Array<TransferOp>, Never> {
-        
-        let transfersFrom = transfersFromRemote.map {
-            Array($0.values) as [TransferOp]
-        }
-        
-        let transfersTo = transfersToRemote.map {
-            Array($0.values) as [TransferOp]
-        }
-        
-        return Publishers.Merge(transfersFrom, transfersTo).eraseToAnyPublisher()
-    }
+    var transfersToRemote: Dictionary<UInt64, TransferToRemote> = .init()
+    var transfersFromRemote: Dictionary<UInt64, TransferFromRemote> = .init()
     
     let eventLoopGroup: EventLoopGroup
     
@@ -279,7 +266,7 @@ class Remote {
                 
         var transferOperation = try TransferToRemote.fromUrls(urls: [url])
         
-        self.transfersToRemote.value[transferOperation.timestamp] = transferOperation
+        self.transfersToRemote[transferOperation.timestamp] = transferOperation
         
         let opInfo = OpInfo.with({
             $0.ident = auth.identity
@@ -316,7 +303,7 @@ class Remote {
         
         print("startTransfer")
 
-        let transferOp = transfersFromRemote.value[timestamp]!
+        let transferOp = transfersFromRemote[timestamp]!
 
         print("startTransfer: \(transferOp)")
 
