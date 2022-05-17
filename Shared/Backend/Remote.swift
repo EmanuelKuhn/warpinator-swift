@@ -259,10 +259,13 @@ class Remote {
         
         NSLog("ended waitingForDuplex rpc call \(String(describing: response))")
         
-        remoteState.state = .online
+        if response.response {
+
+            remoteState.state = .online
+        }
     }
     
-    func ping() async throws -> Bool {
+    func ping() async -> Bool {
         NSLog("starting ping rpccall")
         
         let response = try? await client.ping(self.lookupName)

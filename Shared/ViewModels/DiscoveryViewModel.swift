@@ -8,44 +8,79 @@
 import Foundation
 
 
+extension RemoteState {
+    var systemImageName: String {
+        switch self {
+        case .initial:
+            return "wave.3.right"
+        case .waitingForDuplex:
+            return "dot.radiowaves.right"
+        case .online:
+            return "wifi"
+        case .transientFailure:
+            return "wifi.slash"
+        case .unreachable:
+            return "wifi.exclamationmark"
+        }
+    }
+}
+
+@MainActor
 class DiscoveryViewModel: ObservableObject {
 
-    struct VMRemote: Identifiable {
+    class RemoteItem: Identifiable, ObservableObject {
+        
         let id: String
+        
         let title: String
         
-        let peer: Peer
+        private let remote: Remote
         
-        fileprivate let remote: Remote
+        @Published
+        var connectivityImageSystemName: String = RemoteState.initial.systemImageName
         
-        func onTapFunc(urls: [URL]) async {
-            print("ontap \(self.title)")
+        var token: Any? = nil
+        
+        init(remote: Remote) {
+            self.id = remote.id
+            self.title = remote.peer.hostName
             
-            try? await self.remote.requestTransfer(url: urls[0])
+            self.remote = remote
+            
+            token = remote.remoteState.stateSubject.sink { newState in
+                DispatchQueue.main.async {
+                    self.connectivityImageSystemName = newState.systemImageName
+                }
+            }
+        }
+
+        
+        func getRemoteDetailVM() -> RemoteDetailView.ViewModel {
+            return .init(remote: remote)
         }
     }
     
-    @Published var remotes: Array<VMRemote> = []
+    @Published var remotes: Array<RemoteItem> = []
     
     init(warp: WarpBackend) {
         Task {
             await warp.remoteRegistration.addOnRemoteChangedListener { remotes in
                 print("DiscoveryViewModel: onRemotesChangedListener")
                 
-                Task {
-                    self.setRemotes(remotes: remotes.map({ remote in
-                        VMRemote(id: remote.id, title: "\(remote.peer.hostName): \(remote.id)", peer: remote.peer, remote: remote)
-                    }))
-                }
+                self.setRemotes(remotes: remotes)
             }
         }
     }
     
-    func setRemotes(remotes: Array<VMRemote>) {
-        DispatchQueue.main.async {
-            self.remotes = remotes
-        }
+    private func setRemotes(remotes: Array<Remote>) {
         
+        let remoteItems = remotes.map({ remote in
+            RemoteItem(remote: remote)
+        })
+        
+        DispatchQueue.main.async {
+            self.remotes = remoteItems
+        }
     }
     
 }

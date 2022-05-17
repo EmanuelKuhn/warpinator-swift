@@ -40,6 +40,9 @@ struct warpinator_projectApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(warp: warp)
+        }.commands {
+            SidebarCommands() // 1
         }
+
     }
 }

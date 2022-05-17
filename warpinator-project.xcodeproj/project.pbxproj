@@ -88,6 +88,8 @@
 		4CDD570327B93F9E00A9B537 /* Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD570227B93F9E00A9B537 /* Remote.swift */; };
 		4CDD570427B93F9E00A9B537 /* Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD570227B93F9E00A9B537 /* Remote.swift */; };
 		4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
+		4CFCBAED2816E7C200D154AB /* RemoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */; };
+		4CFCBAEE2816EDA500D154AB /* RemoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -177,6 +179,7 @@
 		4CDD570227B93F9E00A9B537 /* Remote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Remote.swift; sourceTree = "<group>"; };
 		4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "warpinator-projectTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CDD571227B9842600A9B537 /* AuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTests.swift; sourceTree = "<group>"; };
+		4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -373,6 +376,7 @@
 			children = (
 				4C4A738427B3D2D4004EDA61 /* ContentView.swift */,
 				4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */,
+				4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -675,6 +679,7 @@
 				4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */,
 				4CA9E5B5280D89DD0044CE1F /* WarpServerProvider.swift in Sources */,
 				4C4A73CF27B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
+				4CFCBAEE2816EDA500D154AB /* RemoteDetailView.swift in Sources */,
 				4C4A73AD27B3D2D6004EDA61 /* ContentView.swift in Sources */,
 				4CDD56E627B79A3700A9B537 /* CertificateClientV2.swift in Sources */,
 				4C3F86B727E7B87700555A83 /* NetworkUtils.swift in Sources */,
@@ -706,6 +711,7 @@
 				4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */,
 				4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */,
 				4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
+				4CFCBAED2816E7C200D154AB /* RemoteDetailView.swift in Sources */,
 				4CA9E5C1280F127A0044CE1F /* Discovery.swift in Sources */,
 				4CA9E5B6280D89DD0044CE1F /* WarpServerProvider.swift in Sources */,
 				4C4A73AE27B3D2D6004EDA61 /* ContentView.swift in Sources */,

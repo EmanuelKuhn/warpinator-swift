@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-//import WarpGRPC
-
 import Foundation
 
 import NIOCore
@@ -20,101 +18,97 @@ import AppKit
 #endif
 
 struct ContentView: View {
-    
-    @State var string = "certificate"
-    
-    @State var clientAddress = "192.168.0.100"
-    
     let warp: WarpBackend
     
-    @ObservedObject var discoveryViewModel: DiscoveryViewModel
-    
-    
     init(warp: WarpBackend) {
-        
         self.warp = warp
-        
-        discoveryViewModel = .init(warp: warp)
-        
     }
     
-    @State private var showingSheet = false
-    
-    @State private var urls: [URL] = []
-
-    @State private var currentRemote: DiscoveryViewModel.VMRemote? = nil
-
+//    // File picker
+//    @State private var showingSheet = false
+//    @State private var urls: [URL] = []
+//    @State private var currentRemote: DiscoveryViewModel.VMRemote? = nil
     
     var body: some View {
-        
-        ScrollView {
+        NavigationView {
             VStack {
-                TextField("client: ", text: $clientAddress)
-                
-                Text(string)
-                    .padding()
-                
-                VStack {
-                    ForEach(discoveryViewModel.remotes) { remote in
-                        Button("Remote: \(remote.title)") {
-                            #if canImport(UIKit)
-
-                            showingSheet.toggle()
-
-                            #else
-                            let panel = NSOpenPanel()
-                            panel.allowsMultipleSelection = true
-                            panel.canChooseDirectories = false
-                            if panel.runModal() == .OK {
-                                self.urls = panel.urls
-                            }
-
-                            Task {
-                                await currentRemote?.onTapFunc(urls: urls)
-                            }
-                            
-                            #endif
-                            
-                            currentRemote = remote
-                            
-                        }
-                        .sheet(isPresented: $showingSheet, onDismiss: {
-                            print("sheet dismissed")
-                            
-                            Task {
-                                await currentRemote?.onTapFunc(urls: urls)
-                            }
-                            
-                        }, content: {
-                            #if canImport(UIKit)
-                            DocumentPicker(urls: $urls)
-                            #else
-                            Text("Can't use DocumentPicker")
-                            Button("Dismiss") {
-                                showingSheet.toggle()
-                            }
-                            #endif
-                        })
-                    }
+                RemoteListView(discoveryViewModel: .init(warp: warp))
+            }
+            VStack {
+                Text(":)")
+            }
+        }.onAppear {
+            warp.start()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigation){
+                Button {
+                    toggleSidebar()
+                } label: {
+                    Image(systemName: "sidebar.leading")
                 }
-                
-                
-                Button("start warp", action: {
-                    warp.start()
-                })
-
             }
         }
-        
-        
+        #if os(macOS)
+        .presentedWindowToolbarStyle(.unifiedCompact(showsTitle: true))
+        #endif
+    }
+    
+    private func toggleSidebar() {
+        #if os(macOS)
+//        NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+        #endif
     }
 }
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
+
+
+
+
+//struct ItemCard: View {
+//
+//    let title: String
+//
+//    var body: some View {
+//     }
 //}
 
 
 
+struct RemoteListView: View {
+    
+    @ObservedObject var discoveryViewModel: DiscoveryViewModel
+    
+    var body: some View {
+        List(discoveryViewModel.remotes) { remote in
+            NavigationLink(destination: RemoteDetailView(viewModel: remote.getRemoteDetailVM()))
+            {
+                RemoteListViewItem(remote: remote)
+            }
+        }.frame(minWidth: 300)
+    }
+}
+
+struct RemoteListViewItem: View {
+    
+    @ObservedObject var remote: DiscoveryViewModel.RemoteItem
+    
+    var body: some View {
+        HStack {
+            VStack (alignment: .leading) {
+                HStack {
+                    Image(systemName: remote.connectivityImageSystemName)
+                    VStack (alignment: .leading) {
+                        Text(remote.title)
+                            .fontWeight(.bold)
+                            .padding(5)
+                        Text(remote.title)
+                            .padding(5)
+                    }
+                }.padding()
+            }
+             Spacer()
+         }
+
+    }
+}

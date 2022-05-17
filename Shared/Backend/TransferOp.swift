@@ -16,8 +16,14 @@ enum TransferOpState {
     case canceled
 }
 
+enum Direction {
+    case upload
+    case download
+}
+
 /// Protocol for incoming and outgoing transfers to conform to.
 protocol TransferOp {
+    var direction: Direction { get }
     
     /// Timestamp for uniquely identifying the transferop.
     var timestamp: UInt64 { get }
@@ -29,6 +35,7 @@ protocol TransferOp {
 
 /// An incoming transfer operation.
 struct TransferFromRemote: TransferOp {
+    let direction: Direction = .download
     
     let timestamp: UInt64
     
@@ -47,6 +54,7 @@ struct TransferFromRemote: TransferOp {
 
 /// An outgoing transfer operation.
 struct TransferToRemote: TransferOp {
+    let direction: Direction = .upload
     
     let timestamp: UInt64
     
