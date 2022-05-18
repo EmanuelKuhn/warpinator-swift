@@ -135,6 +135,9 @@ class Remote {
         
         guard let (host, _) = try? await peer.resolve() else {
             print("failed to resolve")
+            
+            await connectionLifeCycle.mdnsOffline()
+            
             return nil
         }
         
@@ -165,6 +168,9 @@ class Remote {
     ) async -> WarpAsyncClient? {
         guard let (host, port) = try? await peer.resolve() else {
             print("failed to resolvednsname")
+            
+            await connectionLifeCycle.mdnsOffline()
+            
             return nil
         }
         
