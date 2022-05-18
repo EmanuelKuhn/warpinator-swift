@@ -11,15 +11,15 @@ import Foundation
 extension RemoteState {
     var systemImageName: String {
         switch self {
-        case .initial:
+        case .mdnsDiscovered:
             return "wave.3.right"
         case .waitingForDuplex:
             return "dot.radiowaves.right"
         case .online:
             return "wifi"
-        case .transientFailure:
+        case .mdnsOffline:
             return "wifi.slash"
-        case .unreachable:
+        case .failure:
             return "wifi.exclamationmark"
         }
     }
@@ -37,19 +37,21 @@ class DiscoveryViewModel: ObservableObject {
         private let remote: Remote
         
         @Published
-        var connectivityImageSystemName: String = RemoteState.initial.systemImageName
+        var connectivityImageSystemName: String = RemoteState.mdnsOffline.systemImageName
         
         var token: Any? = nil
         
         init(remote: Remote) {
             self.id = remote.id
-            self.title = remote.peer.hostName
+            self.title = remote.peer?.hostName ?? "hostname"
             
             self.remote = remote
             
-            token = remote.remoteState.stateSubject.sink { newState in
-                DispatchQueue.main.async {
-                    self.connectivityImageSystemName = newState.systemImageName
+            Task {
+                token = await remote.statePublisher.sink { newState in
+                    DispatchQueue.main.async {
+                        self.connectivityImageSystemName = newState.systemImageName
+                    }
                 }
             }
         }

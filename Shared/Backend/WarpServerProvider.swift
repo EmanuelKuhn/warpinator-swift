@@ -51,7 +51,7 @@ class WarpServerProvider: WarpAsyncProvider {
         
         print("waitingForDuplex (\(remote.id)): starting waitForConnected")
         
-        await remote.remoteState.waitForConnected()
+        await remote.waitForConnected()
         
         print("waitingForDuplex (\(remote.id)): finished waitForConnected")
         

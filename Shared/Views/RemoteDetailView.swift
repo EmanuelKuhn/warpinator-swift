@@ -131,7 +131,7 @@ extension RemoteDetailView {
         init(remote: Remote) {
             self.remote = remote
             
-            self.title = remote.peer.hostName
+            self.title = remote.peer?.hostName ?? "hostname"
             
             token = remote.transfers.sink { transfers in
                 let transferVMS: [TransferOpView.ViewModel] = transfers.map {
