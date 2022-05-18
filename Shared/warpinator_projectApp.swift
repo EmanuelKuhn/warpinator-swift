@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct warpinator_projectApp: App {
+    @Environment(\.scenePhase) var scenePhase
     
     var auth: Auth
     let warp: WarpBackend
@@ -43,6 +44,17 @@ struct warpinator_projectApp: App {
         }.commands {
             SidebarCommands() // 1
         }
-
+        .onChange(of: scenePhase, perform: { phase in
+            switch(phase) {
+            case .background:
+                return
+            case .inactive:
+                return
+            case .active:
+                warp.resetupListener()
+            @unknown default:
+                return
+            }
+        })
     }
 }

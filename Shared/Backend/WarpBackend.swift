@@ -58,4 +58,13 @@ class WarpBackend {
         }
     }
     
+    func resetupListener() {
+        // Start bonjour discovery
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.discovery.setupListener()
+            
+            print("setup listener done")
+        }
+    }
+    
 }
