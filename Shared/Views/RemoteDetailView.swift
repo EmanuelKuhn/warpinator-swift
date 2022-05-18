@@ -10,6 +10,10 @@ import SwiftUI
 
 import Combine
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 struct RemoteDetailView: View {
     
     @ObservedObject
@@ -36,7 +40,11 @@ struct RemoteDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Send files") {
+                        #if canImport(UIKIT)
                         showingSheet.toggle()
+                        #else
+                        openFilesMac(urls: $urls, onDismiss: sendFiles)
+                        #endif
                     }
                 }
                 
@@ -46,19 +54,40 @@ struct RemoteDetailView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingSheet) {
-                if urls.count > 0 {
-                    viewModel.sendFiles(urls: urls)
-                }
-            } content: {
+            .sheet(isPresented: $showingSheet, onDismiss: sendFiles, content: {
                 #if canImport(UIKIT)
                 DocumentPicker(urls: $urls)
                 #else
                 Text("mac")
                 #endif
-            }
-
+            })
     }
+    
+    func sendFiles() {
+        if urls.count > 0 {
+            viewModel.sendFiles(urls: urls)
+        }
+    }
+    
+    #if canImport(AppKit)
+    func openFilesMac(urls: Binding<[URL]>, onDismiss: @escaping ()->()) {
+        let openPanel = NSOpenPanel()
+        openPanel.prompt = "Select Files"
+        openPanel.allowsMultipleSelection = true
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.canChooseFiles = true
+        
+        openPanel.begin { (result) -> Void in
+            if result.rawValue == NSApplication.ModalResponse.OK.rawValue {
+                urls.wrappedValue = openPanel.urls
+            }
+            
+            onDismiss()
+        }
+    }
+    #endif
+
 }
 
 extension Direction {
