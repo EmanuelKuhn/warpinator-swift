@@ -66,11 +66,11 @@ actor RemoteConnectionLifeCycle: ConnectivityStateDelegate {
                     try await remote.createConnection()
                     // GRPC channel only tries to connect when the first call happens
                     try await remote.waitingForDuplex()
+                    
+                    state = .online
                 } catch {
                     state = .failure
                 }
-                
-                state = .online
             }
             
             return .mdnsDiscovered
