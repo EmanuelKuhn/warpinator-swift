@@ -21,6 +21,10 @@ extension RemoteState {
             return "wifi.slash"
         case .failure:
             return "wifi.exclamationmark"
+        case .channelFailure:
+            return "fiberchannel"
+        case .retry:
+            return "arrow.counterclockwise.circle"
         }
     }
 }

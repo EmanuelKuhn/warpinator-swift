@@ -78,6 +78,7 @@ class WarpServer {
             $0.channel.localAddress
         }.whenFailure({ error in
             print("server failed to start \(error)")
+            fatalError("warpserver failed to start")
         })
         
         

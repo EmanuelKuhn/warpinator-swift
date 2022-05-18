@@ -19,6 +19,8 @@ enum RemoteState {
     case waitingForDuplex
     case online
     case failure
+    case channelFailure
+    case retry
 }
 
 
@@ -26,7 +28,7 @@ actor RemoteConnectionLifeCycle: ConnectivityStateDelegate {
     
     weak var remote: Remote?
     
-    private var errorCounter = 0
+    private var retryCounter = 0
     
     init(remote: Remote) {
         self.remote = remote
@@ -58,7 +60,7 @@ actor RemoteConnectionLifeCycle: ConnectivityStateDelegate {
         case .mdnsOffline:
             remote.deinitClient()
             
-            self.errorCounter = 0
+            self.retryCounter = 0
             return .mdnsOffline
         case .mdnsDiscovered:
             Task {
@@ -77,12 +79,44 @@ actor RemoteConnectionLifeCycle: ConnectivityStateDelegate {
         case .waitingForDuplex:
             return .waitingForDuplex
         case .online:
-            self.errorCounter = 0
+            self.retryCounter = 0
             return .online
-        case .failure:
-            self.errorCounter += 1
+        case .failure, .channelFailure:
+            
+            print("\(newState): \(retryCounter)")
+            
+            let backoff = backoff
+            
+            DispatchQueue.main.async {
+                Timer.scheduledTimer(withTimeInterval: backoff, repeats: false) {_ in
+                    print("retry timer fired")
+
+                    Task {
+                    
+                        await self.updateState(.retry)
+                    }
+                }
+            }
+            
             return .failure
+        case .retry:
+            print("retry: \(retryCounter)")
+            
+            if oldState == .failure {
+                remote.deinitClient()
+                
+                self.retryCounter += 1
+                state = .mdnsDiscovered
+                return .retry
+            } else {
+                return oldState
+            }
+            
         }
+    }
+    
+    var backoff: Double {
+        10.0 * (Double(retryCounter) + 1.0)
     }
     
     /// The current connection state. When set to a new value, handleTransition is called to execute transition actions, and compute the next state.
@@ -100,7 +134,7 @@ actor RemoteConnectionLifeCycle: ConnectivityStateDelegate {
             
             _statePublisher.value = nextState
             
-            print("RemoteState update \(oldValue) -> \(newValue) --> \(nextState)")
+            print("RemoteState \(remote?.id) update \(oldValue) -> \(newValue) --> \(nextState)")
         }
     }
     
@@ -127,11 +161,11 @@ actor RemoteConnectionLifeCycle: ConnectivityStateDelegate {
             }
             
             if newState == .shutdown {
-                await updateState(.failure)
+                await updateState(.channelFailure)
             }
             
             if newState == .transientFailure {
-                await updateState(.failure)
+                await updateState(.channelFailure)
             }
         }
     }
