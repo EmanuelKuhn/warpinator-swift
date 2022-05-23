@@ -18,10 +18,7 @@ struct RemoteDetailView: View {
     
     @ObservedObject
     var viewModel: ViewModel
-    
-    @State
-    var urls: [URL] = []
-    
+        
     @State
     var showingSheet = false
     
@@ -53,7 +50,7 @@ struct RemoteDetailView: View {
                         #if canImport(UIKIT)
                         showingSheet.toggle()
                         #else
-                        openFilesMac(urls: $urls, onDismiss: sendFiles)
+                        openFilesMac(onPick: sendFiles)
                         #endif
                     }
                 }
@@ -64,23 +61,21 @@ struct RemoteDetailView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingSheet, onDismiss: sendFiles, content: {
-                #if canImport(UIKIT)
-                DocumentPicker(urls: $urls)
-                #else
-                Text("mac")
-                #endif
+            #if canImport(UIKIT)
+            .sheet(isPresented: $showingSheet, content: {
+                DocumentPicker(onPick: sendFiles)
             })
+            #endif
     }
     
-    func sendFiles() {
+    func sendFiles(urls: [URL]) {
         if urls.count > 0 {
             viewModel.sendFiles(urls: urls)
         }
     }
     
     #if canImport(AppKit)
-    func openFilesMac(urls: Binding<[URL]>, onDismiss: @escaping ()->()) {
+    func openFilesMac(onPick: @escaping ([URL])->()) {
         let openPanel = NSOpenPanel()
         openPanel.prompt = "Select Files"
         openPanel.allowsMultipleSelection = true
@@ -90,10 +85,8 @@ struct RemoteDetailView: View {
         
         openPanel.begin { (result) -> Void in
             if result.rawValue == NSApplication.ModalResponse.OK.rawValue {
-                urls.wrappedValue = openPanel.urls
+                onPick(openPanel.urls)
             }
-            
-            onDismiss()
         }
     }
     #endif

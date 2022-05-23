@@ -13,7 +13,7 @@ import UIKit
 
 struct DocumentPicker: UIViewControllerRepresentable {
     
-    @Binding var urls: [URL]
+    let onPick: ([URL]) -> Void
     
     typealias UIViewControllerType = UIDocumentPickerViewController
     
@@ -48,7 +48,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             print("documentPicker, did pick: \(urls)")
             
-            parent.urls = urls
+            parent.onPick(urls)
         }
         
         func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
