@@ -28,15 +28,24 @@ struct RemoteDetailView: View {
     var body: some View {
         VStack {
             VStack {
-                Text("Transfers: \(viewModel.transfers.count)").font(.title2)
                 
-                List(viewModel.transfers) { transfer in
-                    TransferOpView(viewModel: transfer)
-                }
-                
-                Spacer()
+                List {
+                    Section(content: {
+                        ForEach(viewModel.transfers) { transfer in
+                            TransferOpView(viewModel: transfer)
+                            #if os(macOS)
+                            Divider()
+                            #endif
+                            }
+                    }, header: {
+                        Text("Transfers")
+                    })
+                }.overlay(Group {
+                    if viewModel.transfers.isEmpty {
+                        Text("No transfers yet...")
+                    }
+                })
             }
-        }.navigationTitle(viewModel.title)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Send files") {
