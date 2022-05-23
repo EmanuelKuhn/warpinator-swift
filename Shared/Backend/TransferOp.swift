@@ -30,25 +30,54 @@ protocol TransferOp {
     
     var state: TransferOpState { get set }
     
-//    func cancel()
+    /// A title describing the files that will be transfered.
+    var title: String { get }
+    
+    /// Mimetype describing the files that will be transfered.
+    var mimeType: String { get }
+    
+    /// String indicating the size of the files that will be transfered.
+    var size: UInt64 { get }
+    
+    /// The number of files transfered
+    var count: UInt64 { get }
+    
+    /// The names of the top level directories.
+    var topDirBasenames: [String] { get }
+    
+}
 }
 
 /// An incoming transfer operation.
 struct TransferFromRemote: TransferOp {
+    
     let direction: Direction = .download
     
     let timestamp: UInt64
     
+    let title: String
+    let mimeType: String
+    let size: UInt64
+    var count: UInt64
+    var topDirBasenames: [String]
+
     var state: TransferOpState
-    
-    init(timestamp: UInt64, initialState: TransferOpState) {
-        self.timestamp = timestamp
-        self.state = initialState
+}
+
+extension TransferFromRemote {
+    static func createFromRequest(_ request: TransferOpRequest) -> TransferFromRemote {
+        
+        return .init(
+            timestamp: request.info.timestamp,
+            title: request.nameIfSingle,
+            mimeType: request.mimeIfSingle,
+            size: request.size,
+            count: request.count,
+            topDirBasenames: request.topDirBasenames,
+            state: .requested
+        )
     }
     
-    static func createFromRemote(timestamp: UInt64) -> TransferFromRemote {
-        return .init(timestamp: timestamp, initialState: .requested)
-    }
 }
 
 
@@ -62,6 +91,32 @@ struct TransferToRemote: TransferOp {
     
     /// The files to transfer.
     let fileProvider: FileProvider
+    
+    var title: String {
+        fileProvider.nameIfSingle
+    }
+    
+    var mimeType: String {
+        fileProvider.mimeIfSingle
+    }
+    
+    var size: UInt64 {
+        if let size = fileProvider.size {
+            return UInt64(size)
+        } else {
+            return 0
+        }
+    }
+    
+    var count: UInt64 {
+        return UInt64(fileProvider.count)
+    }
+    
+    var topDirBasenames: [String] {
+        return fileProvider.topDirBasenames
+    }
+
+
     
     init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider) {
         self.timestamp = timestamp

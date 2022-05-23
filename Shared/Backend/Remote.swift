@@ -270,11 +270,11 @@ class Remote {
             $0.info = opInfo
             $0.senderName = auth.networkConfig.hostname
             $0.receiver = self.id
-            $0.size = UInt64(url.fileSize() ?? 10000)
-            $0.count = UInt64(1)
-            $0.nameIfSingle = url.lastPathComponent
-            $0.mimeIfSingle = url.mime()?.identifier ?? "application/octet-stream"
-            $0.topDirBasenames = [url.lastPathComponent]
+            $0.size = transferOperation.size
+            $0.count = transferOperation.count
+            $0.nameIfSingle = transferOperation.title
+            $0.mimeIfSingle = transferOperation.mimeType
+            $0.topDirBasenames = transferOperation.topDirBasenames
         })
         
         print("requestTransfer: created:\n \(request)")

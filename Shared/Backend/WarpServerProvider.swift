@@ -82,7 +82,7 @@ class WarpServerProvider: WarpAsyncProvider {
             throw ServerError.remoteNotFound
         }
         
-        let transferOp = TransferFromRemote.createFromRemote(timestamp: request.info.timestamp)
+        let transferOp = TransferFromRemote.createFromRequest(request)
         
         remote.transfersFromRemote[request.info.timestamp] = transferOp
         
