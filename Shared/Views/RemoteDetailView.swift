@@ -46,6 +46,7 @@ struct RemoteDetailView: View {
                     }
                 })
             }
+        }.navigationTitle("\(viewModel.title) (\(viewModel.state))")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Send files") {
@@ -150,9 +151,12 @@ extension RemoteDetailView {
         @Published
         var transfers: Array<TransferOpView.ViewModel> = []
         
+        @Published
+        var state: String = ""
+        
         private let remote: Remote
         
-        private var token: AnyCancellable? = nil
+        private var tokens: [AnyCancellable] = []
         
         func sendFiles(urls: [URL]) {
             Task {
@@ -171,7 +175,7 @@ extension RemoteDetailView {
             
             self.title = remote.peer?.hostName ?? "hostname"
             
-            token = remote.transfers.sink { transfers in
+            tokens.append(remote.transfers.sink { transfers in
                 let transferVMS: [TransferOpView.ViewModel] = transfers.map {
                     .init(transferOp: $0)
                 }
@@ -179,6 +183,14 @@ extension RemoteDetailView {
                 DispatchQueue.main.async {
                     self.transfers = transferVMS
                 }
+            })
+            
+            Task {
+                tokens.append(await remote.statePublisher.sink { state in
+                    DispatchQueue.main.async {
+                        self.state = "\(state)"
+                    }
+                })
             }
             
         }
