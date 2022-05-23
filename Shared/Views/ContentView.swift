@@ -49,14 +49,11 @@ struct ContentView: View {
                 }
             }
         }
-        #if os(macOS)
-        .presentedWindowToolbarStyle(.unifiedCompact(showsTitle: true))
-        #endif
     }
     
     private func toggleSidebar() {
         #if os(macOS)
-//        NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+        NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
         #endif
     }
 }

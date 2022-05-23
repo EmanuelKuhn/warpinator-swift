@@ -44,6 +44,9 @@ struct warpinator_projectApp: App {
         }.commands {
             SidebarCommands() // 1
         }
+        #if os(macOS)
+        .windowToolbarStyle(.unifiedCompact)
+        #endif
         .onChange(of: scenePhase, perform: { phase in
             switch(phase) {
             case .background:
