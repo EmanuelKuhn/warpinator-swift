@@ -76,7 +76,7 @@ actor RemoteRegistration {
         self.discovery.addOnRemoteChangedListener(self.onRemoteChangedListener)
     }
     
-    func addPeer(peer: Peer) async {
+    func addOrUpdatePeer(peer: Peer) async {
         if let oldRemote = self.remotesDict[peer.name] {
             if await oldRemote.state == .mdnsOffline {
                 oldRemote.mdnsDiscovered(peer: peer)
@@ -96,7 +96,7 @@ actor RemoteRegistration {
         Task {
             switch(change) {
             case .added(let peer):
-                await self.addPeer(peer: peer)
+                await self.addOrUpdatePeer(peer: peer)
             case .removed(let name):
                 self.remotesDict[name]?.mdnsOffline()
             }

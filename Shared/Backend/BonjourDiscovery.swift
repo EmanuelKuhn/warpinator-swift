@@ -38,9 +38,7 @@ struct MDNSPeer: Peer {
     }
     
     let txtRecord: NWTXTRecord
-    
-    var active = true
-    
+        
     var authPort: Int? {
         return Int(txtRecord.dictionary["auth-port"] ?? "nil")
     }
@@ -52,9 +50,25 @@ struct MDNSPeer: Peer {
         
         return .authPort(port)
     }
-
 }
 
+extension MDNSPeer {
+    static func fromResult(_ result: NWBrowser.Result) -> MDNSPeer? {
+        precondition(Thread.isMainThread)
+        
+        guard case let .service(name, type, domain, _) = result.endpoint else {
+            return nil
+        }
+        
+        guard case let .bonjour(txtRecord) = result.metadata else {
+            return nil
+        }
+        
+        let peer = MDNSPeer(domain: domain, type: type, name: name, txtRecord: txtRecord)
+        
+        return peer
+    }
+}
 
 class BonjourDiscovery: PeerDiscovery {
     
@@ -79,8 +93,10 @@ class BonjourDiscovery: PeerDiscovery {
         self.config = config
     }
     
-    private func addPeer(peer: MDNSPeer) {
-        self.onRemotesChanged(.added(peer: peer))
+    private func addOrUpdatePeer(peer: MDNSPeer) {
+        if peer.txtRecord["type"] != "flush" {
+            self.onRemotesChanged(.added(peer: peer))
+        }
     }
     
     private func removePeer(name: String) {
@@ -125,24 +141,35 @@ class BonjourDiscovery: PeerDiscovery {
                 case .identical:
                     print("discovery .identical: consider handling")
                 case .added(let mdns_result):
-                    print("discovery .added \(mdns_result)")
-
-                    precondition(Thread.isMainThread)
+                    let peer = MDNSPeer.fromResult(mdns_result)
                     
-                    guard case let .service(name, type, domain, _) = mdns_result.endpoint else {
-                        print("Expected endpoint to be .service but was \(mdns_result.endpoint)")
+                    if let peer = peer {
+                        print("discovery .added addOrUpdate \(mdns_result)")
                         
-                        return
+                        self.addOrUpdatePeer(peer: peer)
+                    } else {
+                        print("discovery ignored .added \(mdns_result)")
                     }
                     
-                    guard case let .bonjour(txtRecord) = mdns_result.metadata else {
-                        print("could not get txtrecord")
-                        return
+                case .changed(old: let old, new: let new, flags: let flags):
+                    
+                    print("discovery .changed \(flags)")
+
+                    switch(flags) {
+                    case .metadataChanged:
+                        let peer = MDNSPeer.fromResult(new)
+                        
+                        if let peer = peer {
+                            print("discovery .change addOrUpdate \(new)")
+                            
+                            self.addOrUpdatePeer(peer: peer)
+                        } else {
+                            print("discovery ignored .changed \(new)")
+                        }
+                    default:
+                        print("discovery .changed ignored because of flags: \(flags)")
                     }
                     
-                    let peer = MDNSPeer(domain: domain, type: type, name: name, txtRecord: txtRecord)
-                    
-                    self.addPeer(peer: peer)
                     
                 case .removed(let removed_result):
                     print("discovery .removed: \(removed_result)")
@@ -155,8 +182,6 @@ class BonjourDiscovery: PeerDiscovery {
                     
                     self.removePeer(name: name)
                     
-                case .changed(old: let old, new: let new, flags: let flags):
-                    print("discovery .changed \(old), \(new), \(flags)")
                 @unknown default:
                     print("discovery unkown default")
                 }
