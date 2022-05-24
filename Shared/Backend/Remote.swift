@@ -26,7 +26,7 @@ class Remote {
     
     private var connectionLifeCycle: RemoteConnectionLifeCycle!
     
-    var peer: Peer?
+    var peer: Peer
     
     var statePublisher: AnyPublisher<RemoteState, Never> {
         get async {
@@ -101,6 +101,8 @@ class Remote {
         
         self.eventLoopGroup = eventLoopGroup
         
+        self.peer = peer
+        
         self.connectionLifeCycle = .init(remote: self)
         
         self.mdnsDiscovered(peer: peer)
@@ -129,10 +131,6 @@ class Remote {
     }
     
     func createConnection() async throws {
-        
-        guard let peer = peer else {
-            throw RemoteError.peerNotInitialised
-        }
         
         guard let certificate = await requestCertificate(peer: peer) else {
             throw RemoteError.failedToFetchCertificate

@@ -47,7 +47,7 @@ class DiscoveryViewModel: ObservableObject {
         
         init(remote: Remote) {
             self.id = remote.id
-            self.title = remote.peer?.hostName ?? "hostname"
+            self.title = remote.peer.hostName 
             
             self.remote = remote
             
