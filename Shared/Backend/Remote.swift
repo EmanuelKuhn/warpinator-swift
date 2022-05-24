@@ -79,6 +79,20 @@ class Remote {
         }
     }
     
+    func transferOps(forKey timestamp: UInt64) -> [TransferOp] {
+        var transferOps: [TransferOp] = []
+        
+        if let transferOp = transfersToRemote[timestamp] {
+            transferOps.append(transferOp)
+        }
+        
+        if let transferOp = transfersFromRemote[timestamp] {
+            transferOps.append(transferOp)
+        }
+        
+        return transferOps
+    }
+    
     let eventLoopGroup: EventLoopGroup
     
     init(id: String, peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) async {
@@ -255,7 +269,7 @@ class Remote {
             return
         }
         
-        var transferOperation = TransferToRemote.fromUrls(urls: [url])
+        var transferOperation = TransferToRemote.fromUrls(urls: [url], remote: self)
         
         self.transfersToRemote[transferOperation.timestamp] = transferOperation
         
@@ -290,17 +304,19 @@ class Remote {
         }
     }
     
-    func startTransfer(timestamp: UInt64) async throws {
+    func startTransfer(transferOp: TransferFromRemote) async throws {
+        
+        guard transferOp.state == .requested else {
+            throw TransferOpError.invalidStateToStartTransfer
+        }
         
         guard let client = client else {
             throw RemoteError.clientNotInitialized
         }
         
-        print("startTransfer")
-        
-        let transferOp = transfersFromRemote[timestamp]!
-        
         print("startTransfer: \(transferOp)")
+        
+        transferOp.state = .started
         
         let opInfo = OpInfo.with({
             $0.timestamp = transferOp.timestamp
@@ -338,10 +354,34 @@ class Remote {
                 }
             } catch {
                 print(error)
+                transferOp.state = .failed
             }
         }
         
+        transferOp.state = .completed
+        
         print("done transfering")
+    }
+    
+    func cancelTransferOpRequest(timestamp: UInt64) async throws {
+        try await client?.cancelTransferOpRequest(opInfo(for: timestamp))
+    }
+    
+    func stopTransfer(timestamp: UInt64, error: Bool=false) async throws {
+        let stopInfo: StopInfo = .with {
+            $0.info = opInfo(for: timestamp)
+            $0.error = error
+        }
+        
+        try await client?.stopTransfer(stopInfo)
+    }
+    
+    func opInfo(for timestamp: UInt64) -> OpInfo {
+        return OpInfo.with({
+            $0.timestamp = timestamp
+            $0.ident = auth.identity
+            $0.readableName = auth.networkConfig.hostname
+        })
     }
 }
 

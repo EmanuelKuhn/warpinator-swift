@@ -13,7 +13,9 @@ enum TransferOpState {
     case requested
     case started
     case failed
-    case canceled
+    case requestCanceled
+    case transferCanceled
+    case completed
 }
 
 enum Direction {
@@ -21,8 +23,12 @@ enum Direction {
     case download
 }
 
+enum TransferOpError: Error {
+    case invalidStateToStartTransfer
+}
+
 /// Protocol for incoming and outgoing transfers to conform to.
-protocol TransferOp {
+protocol TransferOp: AnyObject {
     var direction: Direction { get }
     
     /// Timestamp for uniquely identifying the transferop.
@@ -45,12 +51,34 @@ protocol TransferOp {
     
     /// The names of the top level directories.
     var topDirBasenames: [String] { get }
+        
+    /// Cancel the operation.
+    func cancel() async -> Void
+    
+    /// Remove the finished operation from the list of transfers.
+    func remove() -> Void
 }
 
 extension TransferOp {
     var state: TransferOpState {
         get { _state.wrappedValue }
         set { _state.wrappedValue = newValue }
+    }
+    
+    fileprivate func cancel(remote: Remote?) {
+        if state == .initialized || state == .requested {
+            state = .requestCanceled
+            
+            Task {
+                try? await remote?.cancelTransferOpRequest(timestamp: self.timestamp)
+            }
+        } else if state == .started {
+            state = .transferCanceled
+            
+            Task {
+                try? await remote?.stopTransfer(timestamp: self.timestamp)
+            }
+        }
     }
 }
 
@@ -72,15 +100,14 @@ extension TransferOp {
             }
         case .initialized, .started:
             return .cancel
-        case .canceled, .failed:
+        case .requestCanceled, .transferCanceled, .failed, .completed:
             return .remove
         }
     }
 }
 
 /// An incoming transfer operation.
-struct TransferFromRemote: TransferOp {
-    
+class TransferFromRemote: TransferOp {
     let direction: Direction = .download
     
     let timestamp: UInt64
@@ -92,10 +119,38 @@ struct TransferFromRemote: TransferOp {
     let topDirBasenames: [String]
     
     let _state: MutableObservableValue<TransferOpState>
+    
+    /// The associated remote. Needed to remove the transferop from the list of transfers.
+    private weak var remote: Remote?
+    
+    init(timestamp: UInt64, title: String, mimeType: String, size: UInt64, count: UInt64, topDirBasenames: [String], _state: MutableObservableValue<TransferOpState>, remote: Remote) {
+        self.timestamp = timestamp
+        self.title = title
+        self.mimeType = mimeType
+        self.size = size
+        self.count = count
+        self.topDirBasenames = topDirBasenames
+        self._state = _state
+        self.remote = remote
+    }
+    
+    func accept() async throws {
+        if state == .requested {
+            try await remote?.startTransfer(transferOp: self)
+        }
+    }
+    
+    func cancel() {
+        self.cancel(remote: self.remote)
+    }
+    
+    func remove() {
+        self.remote?.transfersFromRemote.removeValue(forKey: self.timestamp)
+    }
 }
 
 extension TransferFromRemote {
-    static func createFromRequest(_ request: TransferOpRequest) -> TransferFromRemote {
+    static func createFromRequest(_ request: TransferOpRequest, remote: Remote) -> TransferFromRemote {
         
         return .init(
             timestamp: request.info.timestamp,
@@ -104,7 +159,8 @@ extension TransferFromRemote {
             size: request.size,
             count: request.count,
             topDirBasenames: request.topDirBasenames,
-            _state: .init(.requested)
+            _state: .init(.requested),
+            remote: remote
         )
     }
     
@@ -112,7 +168,7 @@ extension TransferFromRemote {
 
 
 /// An outgoing transfer operation.
-struct TransferToRemote: TransferOp {
+class TransferToRemote: TransferOp {
     let direction: Direction = .upload
     
     let timestamp: UInt64
@@ -121,6 +177,8 @@ struct TransferToRemote: TransferOp {
     
     /// The files to transfer.
     let fileProvider: FileProvider
+    
+    weak var remote: Remote?
     
     var title: String {
         fileProvider.nameIfSingle
@@ -146,14 +204,23 @@ struct TransferToRemote: TransferOp {
         return fileProvider.topDirBasenames
     }
 
-    init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider) {
+    init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider, remote: Remote?) {
         self.timestamp = timestamp
         self._state = .init(initialState)
         self.fileProvider = fileProvider
+        self.remote = remote
     }
     
     func getFileChunks() -> FileChunkSequence {
         return fileProvider.getFileChunks()
+    }
+    
+    func cancel() {
+        self.cancel(remote: self.remote)
+    }
+
+    func remove() {
+        self.remote?.transfersToRemote.removeValue(forKey: timestamp)
     }
 }
 
@@ -161,14 +228,14 @@ struct TransferToRemote: TransferOp {
 extension TransferToRemote {
     
     /// Create an outgoing transfer operation from a single file url
-    static func fromUrls(urls: [URL], now: () -> DispatchTime = DispatchTime.now) -> TransferToRemote {
+    static func fromUrls(urls: [URL], remote: Remote, now: () -> DispatchTime = DispatchTime.now) -> TransferToRemote {
         let files = urls.map { url in
             File(url: url, relativePath: url.lastPathComponent)
         }
         
         let fileProvider = FileProvider(files: files)
         
-        return .init(timestamp: now().rawValue, initialState: .initialized, fileProvider: fileProvider)
+        return .init(timestamp: now().rawValue, initialState: .initialized, fileProvider: fileProvider, remote: remote)
     }
 }
 

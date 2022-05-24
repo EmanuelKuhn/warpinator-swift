@@ -56,13 +56,13 @@ struct TransferOpView: View {
         case .acceptOrCancel:
             return AnyView(HStack {
                 Button {
-                    print("reject")
+                    viewModel.cancel()
                 } label: {
                     Image(systemName: "xmark")
                 }//.buttonStyle(.borderless)
 
                 Button {
-                    print("accept")
+                    viewModel.accept()
                 } label: {
                     Image(systemName: "checkmark")
                 }//.buttonStyle(.borderless)
@@ -71,7 +71,7 @@ struct TransferOpView: View {
         case .cancel:
             return AnyView(
                 Button {
-                    print("cancel")
+                    viewModel.cancel()
                 } label: {
                     Image(systemName: "xmark")
                 }//.buttonStyle(.borderless)
@@ -79,7 +79,7 @@ struct TransferOpView: View {
         case .remove:
             return AnyView(
                 Button {
-                    print("remove")
+                    viewModel.remove()
                 } label: {
                     Image(systemName: "minus")
                 }.buttonStyle(.borderless)
@@ -114,6 +114,26 @@ extension TransferOpView {
             transferOp.availableActions
         }
         
+        func accept() {
+            
+            guard let transferOp = transferOp as? TransferFromRemote else {
+                preconditionFailure()
+            }
+            
+            Task {
+                try? await transferOp.accept()
+            }
+        }
+        
+        func cancel() {
+            Task {
+                await transferOp.cancel()
+            }
+        }
+        
+        func remove() {
+            transferOp.remove()
+        }
 
         var bag: Set<AnyCancellable> = .init()
 
