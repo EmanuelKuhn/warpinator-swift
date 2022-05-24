@@ -54,6 +54,28 @@ extension TransferOp {
     }
 }
 
+enum TransferOpAvailableActions {
+    case acceptOrCancel
+    case cancel
+    case remove
+}
+
+extension TransferOp {
+    /// Which actions are currently available.
+    var availableActions: TransferOpAvailableActions {
+        switch(self.state) {
+        case .requested:
+            if self.direction == .download {
+                return .acceptOrCancel
+            } else {
+                return .cancel
+            }
+        case .initialized, .started:
+            return .cancel
+        case .canceled, .failed:
+            return .remove
+        }
+    }
 }
 
 /// An incoming transfer operation.
