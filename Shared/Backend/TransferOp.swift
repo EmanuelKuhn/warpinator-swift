@@ -28,8 +28,9 @@ protocol TransferOp {
     /// Timestamp for uniquely identifying the transferop.
     var timestamp: UInt64 { get }
     
+    var _state: MutableObservableValue<TransferOpState> { get }
     var state: TransferOpState { get set }
-    
+
     /// A title describing the files that will be transfered.
     var title: String { get }
     
@@ -44,8 +45,15 @@ protocol TransferOp {
     
     /// The names of the top level directories.
     var topDirBasenames: [String] { get }
-    
 }
+
+extension TransferOp {
+    var state: TransferOpState {
+        get { _state.wrappedValue }
+        set { _state.wrappedValue = newValue }
+    }
+}
+
 }
 
 /// An incoming transfer operation.
@@ -58,10 +66,10 @@ struct TransferFromRemote: TransferOp {
     let title: String
     let mimeType: String
     let size: UInt64
-    var count: UInt64
-    var topDirBasenames: [String]
-
-    var state: TransferOpState
+    let count: UInt64
+    let topDirBasenames: [String]
+    
+    let _state: MutableObservableValue<TransferOpState>
 }
 
 extension TransferFromRemote {
@@ -74,7 +82,7 @@ extension TransferFromRemote {
             size: request.size,
             count: request.count,
             topDirBasenames: request.topDirBasenames,
-            state: .requested
+            _state: .init(.requested)
         )
     }
     
@@ -87,7 +95,7 @@ struct TransferToRemote: TransferOp {
     
     let timestamp: UInt64
     
-    var state: TransferOpState
+    let _state: MutableObservableValue<TransferOpState>
     
     /// The files to transfer.
     let fileProvider: FileProvider
@@ -116,11 +124,9 @@ struct TransferToRemote: TransferOp {
         return fileProvider.topDirBasenames
     }
 
-
-    
     init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider) {
         self.timestamp = timestamp
-        self.state = initialState
+        self._state = .init(initialState)
         self.fileProvider = fileProvider
     }
     
