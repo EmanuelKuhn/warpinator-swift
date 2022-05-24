@@ -31,7 +31,7 @@ extension RemoteState {
 
 @MainActor
 class DiscoveryViewModel: ObservableObject {
-
+    @MainActor
     class RemoteItem: Identifiable, ObservableObject {
         
         let id: String
@@ -52,10 +52,8 @@ class DiscoveryViewModel: ObservableObject {
             self.remote = remote
             
             Task {
-                token = await remote.statePublisher.sink { newState in
-                    DispatchQueue.main.async {
-                        self.connectivityImageSystemName = newState.systemImageName
-                    }
+                token = await remote.statePublisher.receive(on: DispatchQueue.main).sink { newState in
+                    self.connectivityImageSystemName = newState.systemImageName
                 }
             }
         }

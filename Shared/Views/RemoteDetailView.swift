@@ -96,6 +96,7 @@ struct RemoteDetailView: View {
 
 
 extension RemoteDetailView {
+    @MainActor
     class ViewModel: Identifiable, ObservableObject {
         
         let title: String
@@ -108,7 +109,7 @@ extension RemoteDetailView {
         
         private let remote: Remote
         
-        private var tokens: [AnyCancellable] = []
+        private var tokens: Set<AnyCancellable> = .init()
         
         func sendFiles(urls: [URL]) {
             Task {
@@ -127,7 +128,7 @@ extension RemoteDetailView {
             
             self.title = remote.peer.hostName
             
-            tokens.append(remote.transfers.sink { transfers in
+            remote.transfers.sink { transfers in
                 let transferVMS: [TransferOpView.ViewModel] = transfers.map {
                     .init(transferOp: $0)
                 }
@@ -135,14 +136,12 @@ extension RemoteDetailView {
                 DispatchQueue.main.async {
                     self.transfers = transferVMS
                 }
-            })
+            }.store(in: &tokens)
             
             Task {
-                tokens.append(await remote.statePublisher.sink { state in
-                    DispatchQueue.main.async {
-                        self.state = "\(state)"
-                    }
-                })
+                await remote.statePublisher.receive(on: DispatchQueue.main).sink { state in
+                    self.state = "\(state)"
+                }.store(in: &tokens)
             }
             
         }
