@@ -8,13 +8,19 @@
 import Foundation
 import SwiftUI
 
+import Combine
+
+#if canImport(AppKit)
+import AppKit
+#endif
+
 extension Direction {
     var imageSystemName: String {
         switch self {
         case .upload:
-            return "square.and.arrow.up"
+            return "chevron.up"
         case .download:
-            return "square.and.arrow.down"
+            return "chevron.down"
         }
     }
 }
@@ -27,27 +33,96 @@ struct TransferOpView: View {
     var body: some View {
         HStack {
             Image(systemName: viewModel.directionImageSystemName)
+            #if canImport(AppKit)
+            Image(nsImage: NSWorkspace.shared.icon(for: (.init(filenameExtension: "pdf") ?? .data)))
+            #endif
+
             Text(viewModel.title)
+                .frame(maxWidth: 250, alignment: .leading)
+
+            Text(viewModel.size).frame(maxWidth: 50, alignment: .leading)
+
+            Text(String(describing: viewModel.state)).frame(maxWidth: 250, alignment: .leading)
+
+            Spacer()
+
+            actionButtons
+
+        }
+    }
+
+    var actionButtons: some View {
+        switch(viewModel.availableActions) {
+        case .acceptOrCancel:
+            return AnyView(HStack {
+                Button {
+                    print("reject")
+                } label: {
+                    Image(systemName: "xmark")
+                }//.buttonStyle(.borderless)
+
+                Button {
+                    print("accept")
+                } label: {
+                    Image(systemName: "checkmark")
+                }//.buttonStyle(.borderless)
+
+            })
+        case .cancel:
+            return AnyView(
+                Button {
+                    print("cancel")
+                } label: {
+                    Image(systemName: "xmark")
+                }//.buttonStyle(.borderless)
+            )
+        case .remove:
+            return AnyView(
+                Button {
+                    print("remove")
+                } label: {
+                    Image(systemName: "minus")
+                }.buttonStyle(.borderless)
+            )
         }
     }
 }
 
 extension TransferOpView {
+    @MainActor
     class ViewModel: Identifiable, ObservableObject {
+
+        private var transferOp: TransferOp
+
+        var title: String {
+            transferOp.title
+        }
         
-        private let transferOp: TransferOp
+        var size: String {
+            ByteCountFormatter.string(fromByteCount: Int64(transferOp.size), countStyle: .file)
+        }
         
-        let title: String
+        var state: String {
+            String(describing: transferOp.state)
+        }
         
-        let directionImageSystemName: String
+        var directionImageSystemName: String {
+            transferOp.direction.imageSystemName
+        }
         
+        var availableActions: TransferOpAvailableActions {
+            transferOp.availableActions
+        }
+        
+
+        var bag: Set<AnyCancellable> = .init()
+
         init(transferOp: TransferOp) {
             self.transferOp = transferOp
-            
-            directionImageSystemName = transferOp.direction.imageSystemName
-            
-            title = "Some transfer"
+
+            transferOp._state.objectWillChange.receive(on: DispatchQueue.main).sink(receiveValue: {
+                self.objectWillChange.send()
+            }).store(in: &bag)
         }
     }
 }
-
