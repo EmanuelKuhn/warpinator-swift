@@ -59,13 +59,13 @@ struct TransferOpView: View {
                     viewModel.cancel()
                 } label: {
                     Image(systemName: "xmark")
-                }//.buttonStyle(.borderless)
+                }.buttonStyle(.borderless)
 
                 Button {
                     viewModel.accept()
                 } label: {
                     Image(systemName: "checkmark")
-                }//.buttonStyle(.borderless)
+                }.buttonStyle(.borderless)
 
             })
         case .cancel:
@@ -74,7 +74,7 @@ struct TransferOpView: View {
                     viewModel.cancel()
                 } label: {
                     Image(systemName: "xmark")
-                }//.buttonStyle(.borderless)
+                }.buttonStyle(.borderless)
             )
         case .remove:
             return AnyView(
