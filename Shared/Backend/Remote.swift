@@ -65,6 +65,8 @@ class Remote {
             var merged: [TransferOp] = Array(newValue.values)
             merged.append(contentsOf: Array(transfersFromRemote.values))
             
+            merged.sort { $0.localTimestamp < $1.localTimestamp }
+            
             transfers.value = merged
         }
     }
@@ -74,6 +76,8 @@ class Remote {
             
             var merged: [TransferOp] = Array(newValue.values)
             merged.append(contentsOf: Array(transfersToRemote.values))
+            
+            merged.sort { $0.localTimestamp < $1.localTimestamp }
             
             transfers.value = merged
         }

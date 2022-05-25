@@ -31,6 +31,8 @@ enum TransferOpError: Error {
 protocol TransferOp: AnyObject {
     var direction: Direction { get }
     
+    var localTimestamp: Date { get }
+    
     /// Timestamp for uniquely identifying the transferop.
     var timestamp: UInt64 { get }
     
@@ -110,6 +112,8 @@ extension TransferOp {
 class TransferFromRemote: TransferOp {
     let direction: Direction = .download
     
+    let localTimestamp: Date = Date(timeIntervalSinceNow: 0)
+    
     let timestamp: UInt64
     
     let title: String
@@ -170,6 +174,8 @@ extension TransferFromRemote {
 /// An outgoing transfer operation.
 class TransferToRemote: TransferOp {
     let direction: Direction = .upload
+    
+    let localTimestamp: Date = Date(timeIntervalSinceNow: 0)
     
     let timestamp: UInt64
     
