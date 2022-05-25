@@ -59,6 +59,8 @@ protocol TransferOp: AnyObject {
     
     /// Remove the finished operation from the list of transfers.
     func remove() -> Void
+    
+    var progress: TransferOpMetrics { get }
 }
 
 extension TransferOp {
@@ -124,6 +126,8 @@ class TransferFromRemote: TransferOp {
     
     let _state: MutableObservableValue<TransferOpState>
     
+    let progress: TransferOpMetrics
+    
     /// The associated remote. Needed to remove the transferop from the list of transfers.
     private weak var remote: Remote?
     
@@ -136,6 +140,8 @@ class TransferFromRemote: TransferOp {
         self.topDirBasenames = topDirBasenames
         self._state = _state
         self.remote = remote
+        
+        self.progress = .init(totalBytesCount: Int(size))
     }
     
     func accept() async throws {
@@ -186,6 +192,8 @@ class TransferToRemote: TransferOp {
     
     weak var remote: Remote?
     
+    let progress: TransferOpMetrics
+    
     var title: String {
         fileProvider.nameIfSingle
     }
@@ -215,6 +223,8 @@ class TransferToRemote: TransferOp {
         self._state = .init(initialState)
         self.fileProvider = fileProvider
         self.remote = remote
+        
+        self.progress = .init(totalBytesCount: fileProvider.size ?? 0)
     }
     
     func getFileChunks() -> FileChunkSequence {

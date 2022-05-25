@@ -39,7 +39,10 @@ actor Backpresure {
         }
     }
     
-    func waitForCompleted() async {
+    /// Method that suspends until previous messages have been transmitted. If waitForAll == false,
+    /// continues after fewer than `cacheMessages` still need to be transmitted. If waitForAll == true,
+    /// suspends until all messages have been transmitted.
+    func waitForCompleted(waitForAll: Bool) async {
         let currentIndex = numberOfInitiatedMessages
         
         numberOfInitiatedMessages += 1

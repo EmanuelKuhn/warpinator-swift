@@ -116,6 +116,8 @@ class WarpServerProvider: WarpAsyncProvider {
         
         let backpressure = context.userInfo.backpressure
         
+        context.userInfo.filechunkMetrics = transferOp.progress
+        
         for chunk in transferOp.getFileChunks() {
             
             if transferOp.state != .started {
@@ -127,9 +129,12 @@ class WarpServerProvider: WarpAsyncProvider {
             try! await responseStream.send(chunk)
             
             
-            /// Wait until previous chunks have been transmitted over the network
-            await backpressure.waitForCompleted()
+            // Suspend until enough previous chunks have been transmitted over the network.
+            await backpressure.waitForCompleted(waitForAll: false)
         }
+        
+        // Suspend until all chunks have been transmitted.
+        await backpressure.waitForCompleted(waitForAll: true)
         
         transferOp.state = .completed
         

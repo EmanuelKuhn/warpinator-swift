@@ -92,6 +92,8 @@
 		4CDD570327B93F9E00A9B537 /* Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD570227B93F9E00A9B537 /* Remote.swift */; };
 		4CDD570427B93F9E00A9B537 /* Remote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD570227B93F9E00A9B537 /* Remote.swift */; };
 		4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
+		4CF7544C283E3ACB00020D90 /* TransferOpMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF7544B283E3ACB00020D90 /* TransferOpMetrics.swift */; };
+		4CF7544D283E3ACB00020D90 /* TransferOpMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF7544B283E3ACB00020D90 /* TransferOpMetrics.swift */; };
 		4CFB76572833C88100B36438 /* RemoteLifeCycleStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB76562833C88100B36438 /* RemoteLifeCycleStateMachine.swift */; };
 		4CFB76582833C88100B36438 /* RemoteLifeCycleStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB76562833C88100B36438 /* RemoteLifeCycleStateMachine.swift */; };
 		4CFCBAED2816E7C200D154AB /* RemoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */; };
@@ -187,6 +189,7 @@
 		4CDD570227B93F9E00A9B537 /* Remote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Remote.swift; sourceTree = "<group>"; };
 		4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "warpinator-projectTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CDD571227B9842600A9B537 /* AuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTests.swift; sourceTree = "<group>"; };
+		4CF7544B283E3ACB00020D90 /* TransferOpMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOpMetrics.swift; sourceTree = "<group>"; };
 		4CFB76562833C88100B36438 /* RemoteLifeCycleStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteLifeCycleStateMachine.swift; sourceTree = "<group>"; };
 		4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -377,6 +380,7 @@
 				4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */,
 				4C1443B627E7A2E600F87557 /* NetworkConfig.swift */,
 				4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */,
+				4CF7544B283E3ACB00020D90 /* TransferOpMetrics.swift */,
 			);
 			path = Backend;
 			sourceTree = "<group>";
@@ -682,6 +686,7 @@
 				4CDD56BD27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
 				4CDD56F627B7B85D00A9B537 /* warp.pb.swift in Sources */,
 				4CDD570027B93F2600A9B537 /* WarpClient.swift in Sources */,
+				4CF7544C283E3ACB00020D90 /* TransferOpMetrics.swift in Sources */,
 				4CA9E5BC280F11040044CE1F /* Discovery.swift in Sources */,
 				4CD3F06F283CC23200DFE396 /* ObservableValue.swift in Sources */,
 				4C418C352801C98700E01D60 /* FileProvider.swift in Sources */,
@@ -721,6 +726,7 @@
 				4CDD56F427B7B85900A9B537 /* warp.pb.swift in Sources */,
 				4CDD570127B93F2600A9B537 /* WarpClient.swift in Sources */,
 				4CDD56C527B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
+				4CF7544D283E3ACB00020D90 /* TransferOpMetrics.swift in Sources */,
 				4C418C362801C98700E01D60 /* FileProvider.swift in Sources */,
 				4CD3F070283CC23200DFE396 /* ObservableValue.swift in Sources */,
 				4C39E80927E8C89F000F0ACD /* TransferOp.swift in Sources */,

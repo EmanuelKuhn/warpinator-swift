@@ -331,6 +331,11 @@ class Remote {
         for try await chunk in response {
             print("new chunk")
             
+            // Increment the progress metric
+            Task {
+                await transferOp.progress.increment(by: chunk.chunk.count)
+            }
+            
             do {
                 
                 var newChunk = chunk

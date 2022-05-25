@@ -42,7 +42,7 @@ struct TransferOpView: View {
 
             Text(viewModel.size).frame(maxWidth: 50, alignment: .leading)
 
-            Text(String(describing: viewModel.state)).frame(maxWidth: 250, alignment: .leading)
+            StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
 
             Spacer()
 
@@ -50,7 +50,7 @@ struct TransferOpView: View {
 
         }
     }
-
+    
     var actionButtons: some View {
         switch(viewModel.availableActions) {
         case .acceptOrCancel:
@@ -88,6 +88,26 @@ struct TransferOpView: View {
     }
 }
 
+struct StatusView: View {
+    
+    let state: TransferOpState
+    
+    @ObservedObject
+    var progress: TransferOpMetrics
+    
+    var body: some View {
+        Group {
+            if state == .started {
+                AnyView(ProgressView(value: Double(progress.bytesTransmittedCount),
+                                     total: Double(progress.totalBytesCount)))
+            } else {
+                AnyView(Text(String(describing: state)))
+            }
+        }.frame(maxWidth: 250, alignment: .leading)
+    }
+
+}
+
 extension TransferOpView {
     @MainActor
     class ViewModel: Identifiable, ObservableObject {
@@ -102,8 +122,16 @@ extension TransferOpView {
             ByteCountFormatter.string(fromByteCount: Int64(transferOp.size), countStyle: .file)
         }
         
-        var state: String {
+        var state: TransferOpState {
+            transferOp.state
+        }
+        
+        var stateDescription: String {
             String(describing: transferOp.state)
+        }
+        
+        var progressMetrics: TransferOpMetrics {
+            transferOp.progress
         }
         
         var directionImageSystemName: String {
