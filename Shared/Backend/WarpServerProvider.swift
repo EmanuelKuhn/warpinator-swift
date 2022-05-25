@@ -21,6 +21,7 @@ class WarpServerProvider: WarpAsyncProvider {
         case notImplemented
         case remoteNotFound
         case transferOpToRemoteNotFound
+        case transferCanceled
     }
     
     let remoteRegistration: RemoteRegistration
@@ -82,15 +83,10 @@ class WarpServerProvider: WarpAsyncProvider {
             throw ServerError.remoteNotFound
         }
         
-        let transferOp = TransferFromRemote.createFromRemote(timestamp: request.info.timestamp)
+        let transferOp = TransferFromRemote.createFromRequest(request, remote: remote)
         
         remote.transfersFromRemote[request.info.timestamp] = transferOp
-        
-        // TODO: Currently auto accepts and starts a transfer request
-        Task {
-            try? await remote.startTransfer(timestamp: transferOp.timestamp)
-        }
-        
+                
         return VoidType()
     }
 
@@ -111,12 +107,21 @@ class WarpServerProvider: WarpAsyncProvider {
         guard var transferOp = remote.transfersToRemote[request.timestamp] else {
             throw ServerError.transferOpToRemoteNotFound
         }
+        
+        guard transferOp.state == .requested else {
+            throw ServerError.transferCanceled
+        }
                         
         transferOp.state = .started
         
         let backpressure = context.userInfo.backpressure
         
         for chunk in transferOp.getFileChunks() {
+            
+            if transferOp.state != .started {
+                throw ServerError.transferCanceled
+            }
+            
             print("Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
                         
             try! await responseStream.send(chunk)
@@ -125,22 +130,30 @@ class WarpServerProvider: WarpAsyncProvider {
             /// Wait until previous chunks have been transmitted over the network
             await backpressure.waitForCompleted()
         }
-                
+        
+        transferOp.state = .completed
+        
         print("done sending chunks!")
     }
 
     func cancelTransferOpRequest(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("cancelTransferOpRequest(\(request)")
+        print("cancelTransferOpRequest(\(request)\n")
         
         guard let remote = await remoteRegistration[id: request.ident] else {
             throw ServerError.remoteNotFound
         }
         
-        guard var transferOp = remote.transfersToRemote[request.timestamp] else {
+        print("cancelTransferOpRequest: found remote\n")
+        
+        let transferOps = remote.transferOps(forKey: request.timestamp)
+        
+        guard transferOps.count > 0 else {
             throw ServerError.transferOpToRemoteNotFound
         }
         
-        // TODO: Cancel transferop (as declined)
+        transferOps.forEach {
+            $0.state = .requestCanceled
+        }
         
         return VoidType()
 
@@ -149,9 +162,23 @@ class WarpServerProvider: WarpAsyncProvider {
     func stopTransfer(request: StopInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
         print("stopTransfer(\(request)")
         
-        // TODO: Stop transferop
+        let info = request.info
         
-        throw ServerError.notImplemented
+        guard let remote = await remoteRegistration[id: info.ident] else {
+            throw ServerError.remoteNotFound
+        }
+        
+        let transferOps = remote.transferOps(forKey: info.timestamp)
+        
+        guard transferOps.count > 0 else {
+            throw ServerError.transferOpToRemoteNotFound
+        }
+        
+        transferOps.forEach {
+            $0.state = .transferCanceled
+        }
+
+        return VoidType()
     }
 
     func ping(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> VoidType {

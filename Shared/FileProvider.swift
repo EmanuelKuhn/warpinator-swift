@@ -7,6 +7,8 @@
 
 import Foundation
 
+import UniformTypeIdentifiers
+
 class FileProvider {
     
     /// Files in depth first search order.
@@ -19,6 +21,54 @@ class FileProvider {
     
     func getFileChunks() -> FileChunkSequence {
         return FileChunkSequence(files: files)
+    }
+    
+    var nameIfSingle: String {
+        if files.count == 1 {
+            return files[0].relativePath
+        } else {
+            return "\(files.count) files"
+        }
+    }
+    
+    var mimeIfSingle: String {
+        if files.count == 1 {
+            return (files[0].url.mime() ?? UTType.data).mimeTypeString
+        } else {
+            return "application/octet-stream"
+        }
+    }
+    
+    var size: Int? {
+        return files.map {
+            $0.url.fileSize()
+        }.reduce(0) { prev, next in
+            if let prev = prev, let next = next {
+                return prev + next
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    var count: Int {
+        return files.count
+    }
+    
+    var topDirBasenames: [String] {
+        return files.map {
+            $0.relativePath
+        }
+    }
+}
+
+extension UTType {
+    var mimeTypeString: String {
+        if let mimeType = self.preferredMIMEType {
+            return mimeType
+        } else {
+            return "application/octet-stream"
+        }
     }
 }
 
