@@ -231,7 +231,7 @@ struct File {
 
                 var data = Data()
 
-                data.append(bufferPointer, count: chunkSize)
+                data.append(bufferPointer, count: read)
 
                 return data
             } else {
