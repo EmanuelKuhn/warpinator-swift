@@ -13,6 +13,8 @@ class WarpServerInterceptorFactory: WarpServerInterceptorFactoryProtocol {
     
     let startTransferBackpressure = BackPressureInterceptor<OpInfo, FileChunk>()
     
+    let transferOpMetricsInterceptor = TransferOpMetricsInterceptor<OpInfo>()
+    
     init() {
         print("WarpServerInterceptorFactory.init()")
     }
@@ -45,7 +47,7 @@ class WarpServerInterceptorFactory: WarpServerInterceptorFactoryProtocol {
         
         print("makeStartTransferInterceptors")
         
-        return [startTransferBackpressure]
+        return [startTransferBackpressure, transferOpMetricsInterceptor]
     }
     
     func makeCancelTransferOpRequestInterceptors() -> [ServerInterceptor<OpInfo, VoidType>] {

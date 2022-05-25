@@ -116,6 +116,8 @@ class WarpServerProvider: WarpAsyncProvider {
         
         let backpressure = context.userInfo.backpressure
         
+        context.userInfo.filechunkMetrics = transferOp.progress
+        
         for chunk in transferOp.getFileChunks() {
             
             if transferOp.state != .started {
