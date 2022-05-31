@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import warpinator_project
 
 class TransferDownloaderTests: XCTestCase {
 
@@ -17,19 +18,41 @@ class TransferDownloaderTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testSanitizeRelativePathCanHandleSpaces() throws {
+        let relpath = "versions/solution (copy).ipynb"
+        
+        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100))
+        
+        let result = try downloader.sanitizeRelativePath(relativePath: relpath)
+        
+        XCTAssertEqual(relpath, result.relativePath)
+        
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testTopDirBasenamesCanHaveSpaces() throws {
+        let downloader = try TransferDownloader(topDirBasenames: ["top dir name with spaces"], progress: TransferOpMetrics(totalBytesCount: 100))
+        
+        XCTAssertNotNil(downloader)
+    }
+    
+    func testTopDirBasenamesCannotHaveMultipleComponents() throws {
+        
+        XCTAssertThrowsError(
+            try TransferDownloader(topDirBasenames: ["nested/folder/"], progress: TransferOpMetrics(totalBytesCount: 100))
+        )
     }
 
+    func testTopDirBasenamesCannotHaveLinksToParentDir() throws {
+        
+        XCTAssertThrowsError(
+            try TransferDownloader(topDirBasenames: [".."], progress: TransferOpMetrics(totalBytesCount: 100))
+        )
+    }
+
+    func testTopDirBasenamesCannotBeEmpty() throws {
+        
+        XCTAssertThrowsError(
+            try TransferDownloader(topDirBasenames: ["hey", ""], progress: TransferOpMetrics(totalBytesCount: 100))
+        )
+    }
 }

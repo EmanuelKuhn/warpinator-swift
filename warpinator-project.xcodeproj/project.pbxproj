@@ -42,6 +42,8 @@
 		4C4E20A227E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
 		4C5039EB28461C6600D20F04 /* TransferDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5039EA28461C6600D20F04 /* TransferDownloader.swift */; };
 		4C5039EC28461C6600D20F04 /* TransferDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5039EA28461C6600D20F04 /* TransferDownloader.swift */; };
+		4C5C7EF22846764E0063BE6F /* TransferDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */; };
+		4C5C7EF32846764E0063BE6F /* TransferDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */; };
 		4C7E832A27EB2ED400E393B5 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
 		4CA343772802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
 		4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
@@ -163,6 +165,7 @@
 		4C4A73CE27B3FB8A004EDA61 /* warp.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = warp.proto; sourceTree = "<group>"; };
 		4C4E20A027E5FD25001695FC /* WarpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServer.swift; sourceTree = "<group>"; };
 		4C5039EA28461C6600D20F04 /* TransferDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferDownloader.swift; sourceTree = "<group>"; };
+		4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferDownloaderTests.swift; sourceTree = "<group>"; };
 		4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		4CA343762802D32F00702DD6 /* Backpressure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backpressure.swift; sourceTree = "<group>"; };
 		4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WarpIntegrationTests.swift; path = "warpinator-projectTests/WarpIntegrationTests.swift"; sourceTree = SOURCE_ROOT; };
@@ -428,6 +431,7 @@
 				4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */,
 				4CDD571227B9842600A9B537 /* AuthTests.swift */,
 				4CA9E5C8281449460044CE1F /* helpers.swift */,
+				4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */,
 			);
 			path = "warpinator-projectTests";
 			sourceTree = "<group>";
@@ -670,6 +674,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */,
+				4C5C7EF32846764E0063BE6F /* TransferDownloaderTests.swift in Sources */,
 				4CA9E5B0280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */,
 				4CA9E5CA281468C30044CE1F /* TestDiscovery.swift in Sources */,
 				4CA9E5CB281468C50044CE1F /* TestWarpInstance.swift in Sources */,
@@ -782,6 +787,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CA9E5C7281448060044CE1F /* TestWarpInstance.swift in Sources */,
+				4C5C7EF22846764E0063BE6F /* TransferDownloaderTests.swift in Sources */,
 				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
 				4CA9E5B1280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */,
 				4CA9E5C5281447A90044CE1F /* TestDiscovery.swift in Sources */,

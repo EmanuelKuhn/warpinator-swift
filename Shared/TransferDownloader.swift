@@ -26,7 +26,7 @@ class TransferDownloader {
     
     let progress: TransferOpMetrics
     
-    let topDirBasenames: [String?]
+    let topDirBasenames: [String]
     
     let fileManager: FileManager
     
@@ -40,11 +40,7 @@ class TransferDownloader {
         
         self.saveDirectory = try getDocumentsDirectory()
         
-        self.topDirBasenames = topDirBasenames.map(TransferDownloader.standardizePath)
-        
-        guard !self.topDirBasenames.contains(nil) else {
-            throw TransferDownloaderError.invalidTopDirBasenames
-        }
+        self.topDirBasenames = try topDirBasenames.map(TransferDownloader.sanitizeTopDirName)
         
     }
     
@@ -109,15 +105,22 @@ class TransferDownloader {
     ///
     /// Returns standardized path that doesn't contain "/../" etc.
     func sanitizeRelativePath(relativePath: String) throws -> URL {
+        
         guard let relPath = TransferDownloader.standardizePath(path: relativePath) else {
             throw TransferDownloaderError.invalidRelativePath
         }
         
-        guard topDirBasenames.contains(URL(string: relPath)?.firstPathComponent) else {
+        guard let escapedRelPath = relPath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
             throw TransferDownloaderError.invalidRelativePath
         }
         
-        guard let url = URL(string: relPath, relativeTo: self.saveDirectory) else {
+        let firstPathComponent = URL(string: escapedRelPath)?.firstPathComponent
+        
+        guard firstPathComponent != nil && topDirBasenames.contains(firstPathComponent!) else {
+            throw TransferDownloaderError.invalidRelativePath
+        }
+        
+        guard let url = URL(string: escapedRelPath, relativeTo: self.saveDirectory) else {
             throw TransferDownloaderError.failedCreatingPath
         }
         
@@ -125,7 +128,10 @@ class TransferDownloader {
     }
     
     static func standardizePath(path: String) -> String? {
-        guard let url = URL(string: path) else {
+        
+        let escapedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+        
+        guard let url = URL(string: escapedPath ?? "") else {
             return nil
         }
         
@@ -136,6 +142,23 @@ class TransferDownloader {
         }
         
         return path
+    }
+    
+    /// Interprets the topDirName as URL and asserts that it has exactly one path component.
+    ///
+    /// Returns the sanitized name.
+    static func sanitizeTopDirName(dirName: String) throws -> String {
+        let escapedPath = dirName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+        
+        guard let url = URL(string: escapedPath ?? "")?.standardized else {
+            throw TransferDownloaderError.invalidTopDirBasenames
+        }
+        
+        guard url.pathComponents.count == 1 else {
+            throw TransferDownloaderError.invalidTopDirBasenames
+        }
+        
+        return url.path
     }
 }
 
