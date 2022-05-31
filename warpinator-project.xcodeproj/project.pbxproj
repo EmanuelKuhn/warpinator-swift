@@ -40,6 +40,8 @@
 		4C4A73D427B3FB8A004EDA61 /* warp.proto in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73CE27B3FB8A004EDA61 /* warp.proto */; };
 		4C4E20A127E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
 		4C4E20A227E5FD25001695FC /* WarpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4E20A027E5FD25001695FC /* WarpServer.swift */; };
+		4C5039EB28461C6600D20F04 /* TransferDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5039EA28461C6600D20F04 /* TransferDownloader.swift */; };
+		4C5039EC28461C6600D20F04 /* TransferDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5039EA28461C6600D20F04 /* TransferDownloader.swift */; };
 		4C7E832A27EB2ED400E393B5 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
 		4CA343772802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
 		4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
@@ -160,6 +162,7 @@
 		4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.grpc.swift; sourceTree = "<group>"; };
 		4C4A73CE27B3FB8A004EDA61 /* warp.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = warp.proto; sourceTree = "<group>"; };
 		4C4E20A027E5FD25001695FC /* WarpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServer.swift; sourceTree = "<group>"; };
+		4C5039EA28461C6600D20F04 /* TransferDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferDownloader.swift; sourceTree = "<group>"; };
 		4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		4CA343762802D32F00702DD6 /* Backpressure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backpressure.swift; sourceTree = "<group>"; };
 		4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WarpIntegrationTests.swift; path = "warpinator-projectTests/WarpIntegrationTests.swift"; sourceTree = SOURCE_ROOT; };
@@ -293,6 +296,7 @@
 				4CDD56F227B7B85900A9B537 /* warp.pb.swift */,
 				4C4A73CE27B3FB8A004EDA61 /* warp.proto */,
 				4C4A738527B3D2D5004EDA61 /* Assets.xcassets */,
+				4C5039EA28461C6600D20F04 /* TransferDownloader.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -680,6 +684,7 @@
 				4CDD56EC27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
 				4CDD56C727B6672D00A9B537 /* BonjourDiscovery.swift in Sources */,
 				4CDD56EF27B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
+				4C5039EB28461C6600D20F04 /* TransferDownloader.swift in Sources */,
 				4CDD570327B93F9E00A9B537 /* Remote.swift in Sources */,
 				4C7E832A27EB2ED400E393B5 /* DocumentPicker.swift in Sources */,
 				4CA9E5B8280F02220044CE1F /* WarpServerInterceptors.swift in Sources */,
@@ -720,6 +725,7 @@
 				4CDD56ED27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
 				4CDD56C827B6672D00A9B537 /* BonjourDiscovery.swift in Sources */,
 				4CDD56F027B7A5B100A9B537 /* RemoteRegistration.swift in Sources */,
+				4C5039EC28461C6600D20F04 /* TransferDownloader.swift in Sources */,
 				4CDD570427B93F9E00A9B537 /* Remote.swift in Sources */,
 				4CDD56BE27B40FAC00A9B537 /* CertificateServerV2.swift in Sources */,
 				4CA9E5B9280F02220044CE1F /* WarpServerInterceptors.swift in Sources */,

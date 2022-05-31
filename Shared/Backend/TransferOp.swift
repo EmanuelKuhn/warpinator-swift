@@ -8,11 +8,11 @@
 import Foundation
 import UniformTypeIdentifiers
 
-enum TransferOpState {
+enum TransferOpState: Equatable {
     case initialized
     case requested
     case started
-    case failed
+    case failed(reason: String)
     case requestCanceled
     case transferCanceled
     case completed
@@ -128,6 +128,8 @@ class TransferFromRemote: TransferOp {
     
     let progress: TransferOpMetrics
     
+    let downloader: TransferDownloader?
+    
     /// The associated remote. Needed to remove the transferop from the list of transfers.
     private weak var remote: Remote?
     
@@ -142,6 +144,8 @@ class TransferFromRemote: TransferOp {
         self.remote = remote
         
         self.progress = .init(totalBytesCount: Int(size))
+        
+        self.downloader = try? .init(topDirBasenames: topDirBasenames, progress: progress)
     }
     
     func accept() async throws {

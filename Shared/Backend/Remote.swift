@@ -302,7 +302,7 @@ class Remote {
         if result != nil {
             transferOperation.state = .requested
         } else {
-            transferOperation.state = .failed
+            transferOperation.state = .failed(reason: "Failed to request")
         }
     }
     
@@ -328,40 +328,28 @@ class Remote {
         
         let response = client.startTransfer(opInfo)
         
+        guard let downloader = transferOp.downloader else {
+            throw TransferDownloaderError.invalidTopDirBasenames
+        }
+        
         for try await chunk in response {
-            print("new chunk")
             
             // Increment the progress metric
             Task {
                 await transferOp.progress.increment(by: chunk.chunk.count)
             }
-            
+
             do {
-                
-                var newChunk = chunk
-                
-                newChunk.chunk = Data()
-                
-                print(newChunk)
-                
-                let fileUrl = URL.init(fileURLWithPath: chunk.relativePath, relativeTo: try getDocumentsDirectory())
-                
-                if chunk.hasTime {
-                    let time = chunk.time
-                    
-                    try chunk.chunk.write(to: fileUrl, options: .atomic)
-                    
-                    // Timestamp is mtime seconds + mtimeUsec microseconds
-                    let timestamp: NSDate = NSDate(timeIntervalSince1970: .init(time.mtime))
-                        .addingTimeInterval(.init(time.mtimeUsec) * 10e-6)
-                    
-                    try! FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
-                } else {
-                    try chunk.chunk.append(fileURL: fileUrl)
-                }
+                try downloader.handleChunk(chunk: chunk)
             } catch {
                 print(error)
-                transferOp.state = .failed
+                transferOp.state = .failed(reason: "\(error)")
+                
+                Task {
+                    try? await stopTransfer(timestamp: transferOp.timestamp, error: true)
+                }
+                
+                throw error
             }
         }
         

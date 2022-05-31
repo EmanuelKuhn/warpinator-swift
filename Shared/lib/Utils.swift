@@ -13,20 +13,22 @@ extension Data {
     }
 }
 
+enum FileError: Error {
+    case failedToOpenFileHandle
+}
+
 extension Data {
-    @discardableResult
-    func append(fileURL: URL) throws -> Bool {
-        if let fileHandle = FileHandle(forWritingAtPath: fileURL.path) {
-            defer {
-                fileHandle.closeFile()
-            }
-            fileHandle.seekToEndOfFile()
-            fileHandle.write(self)
-            
-            return true
-        } else {
-            return false
+    func append(fileURL: URL) throws {
+        guard let fileHandle = FileHandle(forWritingAtPath: fileURL.path) else {
+            throw FileError.failedToOpenFileHandle
         }
+        
+        defer {
+            fileHandle.closeFile()
+        }
+        
+        fileHandle.seekToEndOfFile()
+        fileHandle.write(self)
     }
 }
 
