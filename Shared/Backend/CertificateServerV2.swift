@@ -76,6 +76,7 @@ class CertServerV2 {
         try server?.map({
             $0.channel.close()
             $0.initiateGracefulShutdown()
+            $0.close()
         }).wait()
     }
 
