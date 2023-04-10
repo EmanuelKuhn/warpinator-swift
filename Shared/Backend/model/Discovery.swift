@@ -15,5 +15,5 @@ typealias RemoteChangeListener = (RemoteChanged) -> Void
 
 enum RemoteChanged {
     case added(peer: Peer)
-    case removed(name: String)
+    case mdnsOffline(name: String)
 }

@@ -104,7 +104,9 @@ class BonjourDiscovery: PeerDiscovery {
     }
     
     private func removePeer(name: String) {
-        self.onRemotesChanged(.removed(name: name))
+        self.onRemotesChanged(.mdnsOffline(name: name))
+    }
+    
     // MARK: Setup zeroconf browser
     }
     

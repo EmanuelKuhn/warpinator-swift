@@ -97,8 +97,8 @@ actor RemoteRegistration {
             switch(change) {
             case .added(let peer):
                 await self.addOrUpdatePeer(peer: peer)
-            case .removed(let name):
-                self.remotesDict[name]?.mdnsOffline()
+            case .mdnsOffline(let name):
+                await self.remotesDict[name]?.mdnsOffline()
             }
             
             // Send update
