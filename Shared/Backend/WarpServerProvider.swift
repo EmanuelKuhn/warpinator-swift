@@ -31,30 +31,30 @@ class WarpServerProvider: WarpAsyncProvider {
     }
     
     func checkDuplexConnection(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> HaveDuplex {
-        print("checkDuplexConnection(\(request)")
+        print("\n\nWarpServerProvider: checkDuplexConnection(\(request)")
         
         throw ServerError.notImplemented
     }
 
     func waitingForDuplex(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> HaveDuplex {
-        print("waitingForDuplex(\(request)")
+        print("\n\nWarpServerProvider: waitingForDuplex(\(request)")
         
         // remoteRegistration[id, timeout: 5] waits upto 5 seconds to discover the remote.
         guard let remote = await remoteRegistration[id: request.id, timeout: 5] else {
-            print("waitingForDuplex: RemoteNotFound")
+            print("\n\nWarpServerProvider: waitingForDuplex: RemoteNotFound")
             
-            print("remotes: \(await remoteRegistration.keys)")
+            print("\n\nWarpServerProvider: remotes: \(await remoteRegistration.keys)")
             
-            print("Did not find: \(request.id)")
+            print("\n\nWarpServerProvider: Did not find: \(request.id)")
             
             throw ServerError.remoteNotFound
         }
         
-        print("waitingForDuplex (\(remote.id)): starting waitForConnected")
+        print("\n\nWarpServerProvider: waitingForDuplex (\(remote.id)): starting waitForConnected")
         
         await remote.waitForConnected()
         
-        print("waitingForDuplex (\(remote.id)): finished waitForConnected")
+        print("\n\nWarpServerProvider: waitingForDuplex (\(remote.id)): finished waitForConnected")
         
         return HaveDuplex.with({
             $0.response = true
@@ -62,8 +62,8 @@ class WarpServerProvider: WarpAsyncProvider {
     }
 
     func getRemoteMachineInfo(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> RemoteMachineInfo {
-        print("getRemoteMachineInfo(\(request)")
-                
+        print("\n\nWarpServerProvider: getRemoteMachineInfo(\(request)")
+        
         return RemoteMachineInfo.with({
             $0.displayName = "processInfo.fullUserName"
             $0.userName = "processInfo.userName"
@@ -71,13 +71,13 @@ class WarpServerProvider: WarpAsyncProvider {
     }
 
     func getRemoteMachineAvatar(request: LookupName, responseStream: GRPCAsyncResponseStreamWriter<RemoteMachineAvatar>, context: GRPCAsyncServerCallContext) async throws {
-        print("getRemoteMachineAvatar(\(request)")
+        print("\n\nWarpServerProvider: getRemoteMachineAvatar(\(request)")
         
         throw ServerError.notImplemented
     }
 
     func processTransferOpRequest(request: TransferOpRequest, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("processTransferOpRequest(\(request)")
+        print("\n\nWarpServerProvider: processTransferOpRequest(\(request)")
         
         guard let remote = await remoteRegistration[id: request.info.ident] else {
             throw ServerError.remoteNotFound
@@ -91,14 +91,14 @@ class WarpServerProvider: WarpAsyncProvider {
     }
 
     func pauseTransferOp(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("pauseTransferOp(\(request)")
+        print("\n\nWarpServerProvider: pauseTransferOp(\(request)")
         
         // Not used in linux warpinator implementation
         throw ServerError.notImplemented
     }
 
     func startTransfer(request: OpInfo, responseStream: GRPCAsyncResponseStreamWriter<FileChunk>, context: GRPCAsyncServerCallContext) async throws {
-        print("startTransfer(\(request)")
+        print("\n\nWarpServerProvider: startTransfer(\(request)")
         
         guard let remote = await remoteRegistration[id: request.ident] else {
             throw ServerError.remoteNotFound
@@ -124,7 +124,7 @@ class WarpServerProvider: WarpAsyncProvider {
                 throw ServerError.transferCanceled
             }
             
-            print("Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
+            print("\n\nWarpServerProvider: Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
                         
             try! await responseStream.send(chunk)
             
@@ -138,17 +138,17 @@ class WarpServerProvider: WarpAsyncProvider {
         
         transferOp.state = .completed
         
-        print("done sending chunks!")
+        print("\n\nWarpServerProvider: done sending chunks!")
     }
 
     func cancelTransferOpRequest(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("cancelTransferOpRequest(\(request)\n")
+        print("\n\nWarpServerProvider: cancelTransferOpRequest(\(request)\n")
         
         guard let remote = await remoteRegistration[id: request.ident] else {
             throw ServerError.remoteNotFound
         }
         
-        print("cancelTransferOpRequest: found remote\n")
+        print("\n\nWarpServerProvider: cancelTransferOpRequest: found remote\n")
         
         let transferOps = remote.transferOps(forKey: request.timestamp)
         
@@ -165,7 +165,7 @@ class WarpServerProvider: WarpAsyncProvider {
     }
 
     func stopTransfer(request: StopInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("stopTransfer(\(request)")
+        print("\n\nWarpServerProvider: stopTransfer(\(request)")
         
         let info = request.info
         
@@ -187,7 +187,7 @@ class WarpServerProvider: WarpAsyncProvider {
     }
 
     func ping(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> VoidType {
-        print("ping(\(request)")
+        print("\n\nWarpServerProvider: ping(\(request)")
         
         return VoidType()
     }

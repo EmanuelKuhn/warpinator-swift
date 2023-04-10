@@ -62,7 +62,7 @@ class CertServerV2 {
         server.map {
             $0.channel.localAddress
         }.whenFailure({ error in
-            print("server failed to start \(error)")
+            print("cert server failed to start \(error)")
         })
         
 
