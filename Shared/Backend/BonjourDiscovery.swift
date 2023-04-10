@@ -70,12 +70,20 @@ extension MDNSPeer {
     }
 }
 
+/// Class that both browses zeroconf peers, as well as advertises this warpinator instance using zeroconf
 class BonjourDiscovery: PeerDiscovery {
     
     let config: DiscoveryConfig
     
     private var listener: NWListener?
     private var browser: NWBrowser?
+    
+    init(config: DiscoveryConfig) {
+        self.config = config
+    }
+
+    
+    // MARK: Respond to browse results
     
     private var onRemoteChangedListeners: Array<RemoteChangeListener> = []
 
@@ -88,11 +96,7 @@ class BonjourDiscovery: PeerDiscovery {
             $0(change)
         })
     }
-    
-    init(config: DiscoveryConfig) {
-        self.config = config
-    }
-    
+        
     private func addOrUpdatePeer(peer: MDNSPeer) {
         if peer.txtRecord["type"] != "flush" {
             self.onRemotesChanged(.added(peer: peer))
@@ -101,6 +105,7 @@ class BonjourDiscovery: PeerDiscovery {
     
     private func removePeer(name: String) {
         self.onRemotesChanged(.removed(name: name))
+    // MARK: Setup zeroconf browser
     }
     
     
@@ -192,11 +197,22 @@ class BonjourDiscovery: PeerDiscovery {
                 
         // Start browsing and ask for updates on the main queue.
         browser.start(queue: .main)
-        
-        
     }
     
-    func setupListener() {
+    // MARK: Advertise this instance with listener
+    
+    
+    // The txtRecord to advertise with
+    private var txtRecord: NWTXTRecord {
+        return NWTXTRecord(["api-version": config.api_version, "auth-port": String(config.auth_port), "hostname": config.hostname, "type": "real"])
+    }
+        
+    func setupListener(port: UInt16 = 42000) {
+        
+        if let listener = listener {
+            listener.cancel()
+        }
+        
         print("setting up NWListener")
         
         /// Has to be udp to be able to start while the WarpServer is already running on the same port.
@@ -204,16 +220,11 @@ class BonjourDiscovery: PeerDiscovery {
         let params = NWParameters.udp
         params.includePeerToPeer = true
         
-        let listener = try! NWListener(using: params, on: 42000)
+        listener = try! NWListener(using: params, on: NWEndpoint.Port(integerLiteral: port))
         
-        self.listener = listener
+        let listener = self.listener!
         
-        let txtRecord =  NWTXTRecord(["api-version": config.api_version, "auth-port": String(config.auth_port), "hostname": config.hostname, "type": "real"])
-        
-        listener.service = NWListener.Service(name: config.identity,
-                                              type: "_warpinator._tcp",
-                                              txtRecord: txtRecord)
-        
+            
         listener.stateUpdateHandler = { newState in
             switch newState {
             case .ready:
@@ -242,6 +253,11 @@ class BonjourDiscovery: PeerDiscovery {
         
         // Start listening, and request updates on the main queue.
         listener.start(queue: .main)
+        
+        listener.service = NWListener.Service(name: config.identity,
+                                              type: "_warpinator._tcp",
+                                              txtRecord: txtRecord)
+
         
         print("started listening")
         
