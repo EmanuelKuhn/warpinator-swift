@@ -306,11 +306,6 @@ class Remote: ObservableObject {
         print("NSLOG: ended waitingForDuplex rpc call \(String(describing: response))")
     }
     
-    func retry() {
-        Task {
-            await statemachine.tryEvent(.retryTimerFired)
-        }
-    }
     
     func getRemoteMachineInfo() async throws {
         guard let client = client else {
