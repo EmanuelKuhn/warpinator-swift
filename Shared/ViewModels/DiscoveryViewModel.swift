@@ -11,20 +11,20 @@ import Foundation
 extension RemoteState {
     var systemImageName: String {
         switch self {
-        case .mdnsDiscovered:
+        case .fetchingCertificate:
             return "wave.3.right"
         case .waitingForDuplex:
             return "dot.radiowaves.right"
         case .online:
             return "wifi"
-        case .mdnsOffline:
+        case .offline:
             return "wifi.slash"
-        case .failure:
-            return "wifi.exclamationmark"
-        case .channelFailure:
+        case .channelShutdownFailure, .channelTransientFailure:
             return "fiberchannel"
-        case .retry:
+        case .retrying:
             return "arrow.counterclockwise.circle"
+        case .unExpectedTransition:
+            return "questionmark.diamond"
         }
     }
 }
@@ -36,24 +36,42 @@ class DiscoveryViewModel: ObservableObject {
         
         let id: String
         
-        let title: String
+        @Published
+        var title: String
+        
+        @Published
+        var subTitle: String
         
         private let remote: Remote
         
         @Published
-        var connectivityImageSystemName: String = RemoteState.mdnsOffline.systemImageName
+        var connectivityImageSystemName: String = RemoteState.offline.systemImageName
         
         var token: Any? = nil
         
         init(remote: Remote) {
             self.id = remote.id
-            self.title = remote.peer.hostName 
+            
+            self.title = remote.peer.hostName
+            
+            self.subTitle = ""
+            
             
             self.remote = remote
             
             Task {
-                token = await remote.statePublisher.receive(on: DispatchQueue.main).sink { newState in
+                token = await remote.$state.receive(on: DispatchQueue.main).sink { newState in
                     self.connectivityImageSystemName = newState.systemImageName
+                    
+                    self.title = remote.displayName ?? remote.peer.hostName
+                                        
+                    if let username = remote.userName {
+                        self.subTitle = "\(username)@\(remote.peer.hostName)"
+                    } else {
+                        self.subTitle = remote.peer.hostName
+                    }
+
+                    
                 }
             }
         }

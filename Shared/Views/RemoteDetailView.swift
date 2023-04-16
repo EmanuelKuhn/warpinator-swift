@@ -139,7 +139,7 @@ extension RemoteDetailView {
             }.store(in: &tokens)
             
             Task {
-                await remote.statePublisher.receive(on: DispatchQueue.main).sink { state in
+                remote.$state.receive(on: DispatchQueue.main).sink { state in
                     self.state = "\(state)"
                 }.store(in: &tokens)
             }
