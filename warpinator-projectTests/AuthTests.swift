@@ -167,4 +167,19 @@ class AuthTests: XCTestCase {
 
         XCTAssertEqual(expectedUnlockedCert, unlockedCert.utf8String)
     }
+    
+    func testRegenerateCertificate() throws {
+        
+        // Arrange
+                
+        let auth = getAuth()
+                
+        let originalCert = auth.serverIdentity.certificate
+        
+        // Act
+        auth.regenerateCertificate()
+        
+        // Assert
+        XCTAssertNotEqual(auth.serverIdentity.certificate, originalCert)
+    }
 }

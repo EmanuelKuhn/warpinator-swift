@@ -38,7 +38,11 @@ class Auth {
         
     let identity: String
     
-    var groupCode: String
+    var groupCode: String {
+        didSet {
+            print("Auth: changed group code")
+        }
+    }
     
     var serverIdentity: ServerIdentity!
     
@@ -133,5 +137,11 @@ class Auth {
         }
         
         return result
+    }
+    
+    func regenerateCertificate() {
+        self.serverIdentity = makeServerKeys()
+        
+        print("Auth: regenerateCertificate")
     }
 }
