@@ -64,10 +64,17 @@ class WarpServerProvider: WarpAsyncProvider {
     func getRemoteMachineInfo(request: LookupName, context: GRPCAsyncServerCallContext) async throws -> RemoteMachineInfo {
         print("\n\nWarpServerProvider: getRemoteMachineInfo(\(request)")
         
+        #if os(macOS)
         return RemoteMachineInfo.with({
-            $0.displayName = "processInfo.fullUserName"
-            $0.userName = "processInfo.userName"
+            $0.displayName = ProcessInfo().fullUserName
+            $0.userName = ProcessInfo().userName
         })
+        #else
+        return RemoteMachineInfo.with({
+            $0.displayName = "iOS"
+            $0.userName = "warpinator-ios"
+        })
+        #endif
     }
 
     func getRemoteMachineAvatar(request: LookupName, responseStream: GRPCAsyncResponseStreamWriter<RemoteMachineAvatar>, context: GRPCAsyncServerCallContext) async throws {
@@ -104,7 +111,7 @@ class WarpServerProvider: WarpAsyncProvider {
             throw ServerError.remoteNotFound
         }
         
-        guard var transferOp = remote.transfersToRemote[request.timestamp] else {
+        guard let transferOp = remote.transfersToRemote[request.timestamp] else {
             throw ServerError.transferOpToRemoteNotFound
         }
         
