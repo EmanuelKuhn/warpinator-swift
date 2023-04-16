@@ -10,6 +10,8 @@ import Network
 
 class NetworkConfig {
     
+    static var shared = NetworkConfig()
+    
     var hostname: String {
         return ProcessInfo().hostName
     }

@@ -10,6 +10,9 @@ import NIOCore
 import GRPC
 
 class WarpBackend {
+    static let shared = WarpBackend()
+    
+    private let settings: WarpSettings
     
     private let eventLoopGroup: EventLoopGroup
     
@@ -18,29 +21,63 @@ class WarpBackend {
     
     let remoteRegistration: RemoteRegistration
     
-    init(discovery: BonjourDiscovery, auth: Auth) {
-        self.eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 2)
+    var isStarted = false
+    
+    var isFirstStart = true
+    
+    private var certServer: CertServerV2? = nil
+    private var warpServer: WarpServer? = nil
+    
+    private init() {
         
-        self.discovery = discovery
-        self.auth = auth
+        self.settings = WarpSetingsUserDefaults.shared
+        self.eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 2)
+
+        let networkConfig = NetworkConfig.shared
+        
+        self.auth = Auth(networkConfig: networkConfig, identity: settings.identity, groupCode: settings.groupCode)
+        
+        let discoveryConfig = DiscoveryConfig(identity: auth.identity, api_version: "2", auth_port: settings.authPort, hostname: networkConfig.hostname)
+
+        self.discovery = BonjourDiscovery(config: discoveryConfig)
         
         self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth, clientEventLoopGroup: eventLoopGroup)
-    }
 
-    static func from(discoveryConfig: DiscoveryConfig, auth: Auth) -> WarpBackend {
-        return .init(discovery: .init(config: discoveryConfig), auth: auth)
+//         Add callback for when connection settings change
+        settings.addOnConnectionSettingsChangedCallback(onConnectionSettingsChanged)
+        
+        auth.groupCode
+    }
+        
+    func onConnectionSettingsChanged() {
+        
+        // Set groupcode to potentially new value
+        auth.groupCode = settings.groupCode
+        
+        // Generate new server certificate when changing connection settings
+        auth.regenerateCertificate()
+        
+        restart()
     }
     
     func start() {
         
+        if isStarted {
+            return
+        }
+        
+        isStarted = true
+        
         // Start servers
         let certServer = CertServerV2(auth: auth)
+        self.certServer = certServer
         
         DispatchQueue.global(qos: .userInitiated).async {
             try? certServer.run(eventLoopGroup: self.eventLoopGroup)
         }
-        
-        let warpServer = WarpServer(auth: auth, remoteRegistration: self.remoteRegistration)
+                
+        let warpServer = WarpServer(auth: auth, remoteRegistration: self.remoteRegistration, port: settings.port)
+        self.warpServer = warpServer
         
         DispatchQueue.global(qos: .userInitiated).async {
             try? warpServer.run(eventLoopGroup: self.eventLoopGroup)
@@ -53,10 +90,13 @@ class WarpBackend {
             print("setup browser")
 
             
-            self.discovery.setupListener()
+            self.discovery.setupListener(port: UInt16(self.settings.port))
             
             print("setup listener done")
-            }
+            
+            self.isFirstStart = false
+        }
+    }
     }
     
     func resetupListener() {

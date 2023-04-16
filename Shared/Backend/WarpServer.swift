@@ -27,7 +27,7 @@ class WarpServer {
     
     private var server: EventLoopFuture<Server>! = nil
     
-    init(auth: Auth, remoteRegistration: RemoteRegistration, port: Int = 42000) {
+    init(auth: Auth, remoteRegistration: RemoteRegistration, port: Int) {
         self.auth = auth
         self.provider = WarpServerProvider(remoteRegistration: remoteRegistration)
         

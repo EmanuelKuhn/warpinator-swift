@@ -220,7 +220,7 @@ class BonjourDiscovery: PeerDiscovery {
         return NWTXTRecord(["api-version": config.api_version, "auth-port": String(config.auth_port), "hostname": config.hostname, "type": "real"])
     }
         
-    func setupListener(port: UInt16 = 42000) {
+    func setupListener(port: UInt16) {
         
         if let listener = listener {
             listener.cancel()
