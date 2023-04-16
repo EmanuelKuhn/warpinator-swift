@@ -97,6 +97,10 @@ actor RemoteRegistration {
                 await self.addOrUpdatePeer(peer: peer)
             case .mdnsOffline(let name):
                 await self.remotesDict[name]?.mdnsOffline()
+            case .mdnsOfflineAll:
+                for remote in self.remotesDict.values {
+                    await remote.mdnsOffline()
+                }
             }
             
             // Send update

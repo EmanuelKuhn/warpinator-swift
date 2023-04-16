@@ -108,8 +108,19 @@ class BonjourDiscovery: PeerDiscovery {
     }
     
     // MARK: Setup zeroconf browser
+    
+    func pauseBonjour() {
+        listener?.service = nil
+        
+        browser?.cancel()
+
+        onRemotesChanged(.mdnsOfflineAll)
     }
     
+    func restartBonjour() {
+        setupBrowser()
+        refreshService()
+    }
     
     func setupBrowser() {
         
@@ -262,6 +273,18 @@ class BonjourDiscovery: PeerDiscovery {
 
         
         print("started listening")
+    }
+    
+    // Function that sets the service to nil for a short period of time
+    // This is needed for linux warpinator to reconnect after channel connection changes
+    func refreshService() {
+        listener?.service = nil
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
+            
+            listener?.service = NWListener.Service(name: config.identity,
+                                                  type: "_warpinator._tcp",
+                                                  txtRecord: txtRecord)
+        }
     }
 }
