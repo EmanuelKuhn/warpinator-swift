@@ -56,18 +56,18 @@ struct TransferOpView: View {
         case .acceptOrCancel:
             return AnyView(HStack {
                 Button {
-                    viewModel.cancel()
-                } label: {
-                    Image(systemName: "xmark")
-                }.buttonStyle(.borderless)
-
-                Button {
                     viewModel.accept()
                 } label: {
                     Image(systemName: "checkmark")
                 }.buttonStyle(.borderless)
-
+                
+                Button {
+                    viewModel.cancel()
+                } label: {
+                    Image(systemName: "xmark")
+                }.buttonStyle(.borderless)
             })
+
         case .cancel:
             return AnyView(
                 Button {
@@ -84,6 +84,21 @@ struct TransferOpView: View {
                     Image(systemName: "minus")
                 }.buttonStyle(.borderless)
             )
+        case .removeOrShow:
+            return AnyView(HStack {
+                Button {
+                    viewModel.locate()
+                } label: {
+                    Image(systemName: "folder")
+                }.buttonStyle(.borderless)
+
+                Button {
+                    viewModel.remove()
+                } label: {
+                    Image(systemName: "minus")
+                }.buttonStyle(.borderless)
+
+            })
         }
     }
 }
@@ -161,6 +176,23 @@ extension TransferOpView {
         
         func remove() {
             transferOp.remove()
+        }
+        
+        func locate() {
+            
+            guard let transferOp = transferOp as? TransferFromRemote else {
+                return
+            }
+            
+            print("localurls:")
+            print(transferOp.localSaveUrls)
+            
+            #if os(macOS)
+            NSWorkspace.shared.activateFileViewerSelecting(transferOp.localSaveUrls)
+            #endif
+            
+            //TODO: Show file location on iOS
+            
         }
 
         var bag: Set<AnyCancellable> = .init()

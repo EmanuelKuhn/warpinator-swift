@@ -31,6 +31,7 @@ class TransferDownloader {
     let fileManager: FileManager
     
     let saveDirectory: URL
+    
         
     init(topDirBasenames: [String], progress: TransferOpMetrics) throws {
         
@@ -41,7 +42,19 @@ class TransferDownloader {
         self.saveDirectory = try getDocumentsDirectory()
         
         self.topDirBasenames = try topDirBasenames.map(TransferDownloader.sanitizeTopDirName)
+    }
+    
+    /// The local paths the topDirBasenames will be downloaded to. This is computed by computing the local save path for each sanitized topDirBaseName given the self.saveDirectory
+    var savePaths: [URL] {
+        let savePaths = try? topDirBasenames.map { baseName in
+            try sanitizeRelativePath(relativePath: baseName).absoluteURL
+        }
         
+        guard let savePaths = savePaths else {
+            return []
+        }
+        
+        return savePaths
     }
     
     func handleChunk(chunk: FileChunk) throws {

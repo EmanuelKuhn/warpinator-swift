@@ -90,6 +90,7 @@ enum TransferOpAvailableActions {
     case acceptOrCancel
     case cancel
     case remove
+    case removeOrShow
 }
 
 extension TransferOp {
@@ -104,8 +105,14 @@ extension TransferOp {
             }
         case .initialized, .started:
             return .cancel
-        case .requestCanceled, .transferCanceled, .failed, .completed:
+        case .requestCanceled, .transferCanceled, .failed:
             return .remove
+        case .completed:
+            if self.direction == .download {
+                return .removeOrShow
+            } else {
+                return .remove
+            }
         }
     }
 }
@@ -128,7 +135,9 @@ class TransferFromRemote: TransferOp {
     
     let progress: TransferOpMetrics
     
-    let downloader: TransferDownloader?
+    var localSaveUrls: [URL] = []
+    
+//    let downloader: TransferDownloader?
     
     /// The associated remote. Needed to remove the transferop from the list of transfers.
     private weak var remote: Remote?
@@ -145,9 +154,9 @@ class TransferFromRemote: TransferOp {
         
         self.progress = .init(totalBytesCount: Int(size))
         
-        self.downloader = try? .init(topDirBasenames: topDirBasenames, progress: progress)
+//        self.downloader = try? .init(topDirBasenames: topDirBasenames, progress: progress)
     }
-    
+        
     func accept() async throws {
         if state == .requested {
             try await remote?.startTransfer(transferOp: self)
