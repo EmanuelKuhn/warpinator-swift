@@ -78,9 +78,7 @@ actor RemoteRegistration {
     
     func addOrUpdatePeer(peer: Peer) async {
         if let oldRemote = self.remotesDict[peer.name] {
-            if await oldRemote.state == .mdnsOffline {
-                oldRemote.mdnsDiscovered(peer: peer)
-            }
+            await oldRemote.mdnsDiscovered(peer: peer)
         } else {
             let newRemote = await Remote.from(peer: peer, auth: auth, eventLoopGroup: self.eventLoopGroup)
             
