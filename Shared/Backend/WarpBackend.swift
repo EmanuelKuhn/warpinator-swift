@@ -97,14 +97,66 @@ class WarpBackend {
             self.isFirstStart = false
         }
     }
+    
+    func pause() {
+        self.discovery.pauseBonjour()
+    }
+    
+    func resume() {
+        self.discovery.refreshService()
+        
+        self.discovery.setupBrowser()
     }
     
     func resetupListener() {
+        
         // Start bonjour discovery
         DispatchQueue.global(qos: .userInitiated).async {
-            self.discovery.setupListener()
             
-            print("setup listener done")
+            self.pause()
+            
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                self.resume()
+            }
+        }
+    }
+    
+    func restart() {
+        
+        if isFirstStart {
+            return
+        }
+        
+        if !isStarted {
+            return
+        }
+        
+        isStarted = false
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            try! self.warpServer?.close()
+            self.warpServer = nil
+            
+            self.discovery.pauseBonjour()
+
+            self.auth.regenerateCertificate()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                print("Starting servers again...")
+                                        
+                let warpServer = WarpServer(auth: self.auth, remoteRegistration: self.remoteRegistration, port: self.settings.port)
+                self.warpServer = warpServer
+                
+                DispatchQueue.global(qos: .userInitiated).async {
+                    try? warpServer.run(eventLoopGroup: self.eventLoopGroup)
+                }
+
+                DispatchQueue.global(qos: .userInitiated).async {
+                    self.discovery.restartBonjour()
+                }
+                
+                self.isStarted = true
+            }
         }
     }
     

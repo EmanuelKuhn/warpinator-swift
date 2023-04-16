@@ -25,11 +25,14 @@ struct warpinator_projectApp: App {
         .onChange(of: scenePhase, perform: { phase in
             switch(phase) {
             case .background:
+                warp.pause()
                 return
             case .inactive:
+                warp.pause()
                 return
             case .active:
-                warp.resetupListener()
+                warp.resume()
+                return
             @unknown default:
                 return
             }
