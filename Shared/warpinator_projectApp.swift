@@ -37,5 +37,11 @@ struct warpinator_projectApp: App {
                 return
             }
         })
+        
+        #if os(macOS)
+        Settings {
+            SettingsView()
+        }
+        #endif
     }
 }
