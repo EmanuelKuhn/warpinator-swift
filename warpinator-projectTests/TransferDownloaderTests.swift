@@ -55,4 +55,58 @@ class TransferDownloaderTests: XCTestCase {
             try TransferDownloader(topDirBasenames: ["hey", ""], progress: TransferOpMetrics(totalBytesCount: 100))
         )
     }
+    
+    func testTopDirBasenamesCannotPointToRandomPath() throws {
+        
+        XCTAssertThrowsError(
+            try TransferDownloader(topDirBasenames: ["/Users/throwaway/Downloads"], progress: TransferOpMetrics(totalBytesCount: 100))
+        )
+    }
+    
+    
+    func testRelativeNameHasToStartWithTopDirName() throws {
+        
+        let relpath = "solution (copy).ipynb"
+        
+        let downloader = try TransferDownloader(topDirBasenames: ["versions", "hello"], progress: TransferOpMetrics(totalBytesCount: 100))
+
+        XCTAssertThrowsError(
+            try downloader.sanitizeRelativePath(relativePath: relpath)
+        )
+    }
+    
+    func testRelativeNameCanNotEscape() throws {
+        
+        let relpath = "versions/../solution (copy).ipynb"
+        
+        let downloader = try TransferDownloader(topDirBasenames: ["versions", "hello"], progress: TransferOpMetrics(totalBytesCount: 100))
+
+        XCTAssertThrowsError(
+            try downloader.sanitizeRelativePath(relativePath: relpath)
+        )
+    }
+    
+    func testSanitizeRelativePathCanHandleParentUrls() throws {
+        let relpathStandardized = "versions/solution (copy).ipynb"
+        
+        let relpath = "versions/../versions/solution (copy).ipynb"
+        
+        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100))
+        
+        let result = try downloader.sanitizeRelativePath(relativePath: relpath)
+        
+        XCTAssertEqual(relpathStandardized, result.relativePath)
+        
+    }
+
+    func testSanitizeRelativePathCanNotEscape2() throws {
+        let relpath = "versions/../versions/../solution (copy).ipynb"
+        
+        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100))
+        
+        XCTAssertThrowsError(
+            try downloader.sanitizeRelativePath(relativePath: relpath)
+        )
+    }
+    
 }
