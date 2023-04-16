@@ -119,7 +119,7 @@ struct RemoteListViewItem: View {
                         Text(remote.title)
                             .fontWeight(.bold)
                             .padding(5)
-                        Text(remote.title)
+                        Text(remote.subTitle)
                             .padding(5)
                     }
                 }.padding()
