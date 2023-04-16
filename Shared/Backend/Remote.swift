@@ -13,7 +13,7 @@ import NIO
 
 import Combine
 
-enum RemoteError: Error {
+enum RemoteError: String, Error {
     case peerNotInitialised
     
     case clientNotInitialized
@@ -22,30 +22,34 @@ enum RemoteError: Error {
     case failedToMakeWarpClient
 }
 
-class Remote {
+class Remote: ObservableObject {
     
-    private var connectionLifeCycle: RemoteConnectionLifeCycle!
+    private let statemachine: StateMachine
+    private var stateCancellable: AnyCancellable?
+
+    @Published var state: RemoteState {
+        willSet { /* Leave state */ }
+        didSet {
+            DispatchQueue.global().async {
+                Task {
+                    await self.enterState(self.state)
+                }
+            }
+        }
+      }  
     
     var peer: Peer
-    
-    var statePublisher: AnyPublisher<RemoteState, Never> {
-        get async {
-            return await connectionLifeCycle.statePublisher
-        }
-    }
-    
-    var state: RemoteState {
-        get async {
-            return await connectionLifeCycle.state
-        }
-    }
-    
+
     let id: String
     
     private let auth: Auth
     
     private var certificate: Bytes? = nil
     private var connection: RemoteConnection?
+    
+    
+    var displayName: String? = nil
+    var userName: String? = nil
     
     private var client: WarpAsyncClient? {
         get {
@@ -98,8 +102,45 @@ class Remote {
     }
     
     let eventLoopGroup: EventLoopGroup
+        
+    func enterState(_ state: RemoteState) async {
+        switch state {
+        case .fetchingCertificate, .retrying:
+            do {
+                try await createConnection()
+
+                let pingResult = await ping()
+                
+                print("\n\nPing result: \(pingResult)")
+                
+                // GRPC channel only tries to connect when the first call happens
+                try await waitingForDuplex()
+                
+                await statemachine.tryEvent(.gotDuplex)
+            } catch {
+
+                print("\n\nError while in .mdnsDiscovered case; error (\(error.self)): \(error)\n\n")
+            }
+
+        case .offline:
+            return
+//            deinitClient()
+        case .waitingForDuplex:
+            return
+        case .online:
+            try? await getRemoteMachineInfo()
+        case .channelTransientFailure:
+            return
+        case .channelShutdownFailure:
+            return
+        case .unExpectedTransition:
+            return
+        case .failure(_):
+            return
+        }
+    }
     
-    init(id: String, peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) async {
+    init(id: String, peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) {
         self.id = id
         self.auth = auth
         
@@ -107,9 +148,17 @@ class Remote {
         
         self.peer = peer
         
-        self.connectionLifeCycle = .init(remote: self)
+        self.statemachine = StateMachine()
         
-        self.mdnsDiscovered(peer: peer)
+        self.state = statemachine.state
+        
+        self.stateCancellable = statemachine.statePublisher.sink { [weak self] state in
+            self?.state = state
+        }
+        
+        Task {
+            await self.mdnsDiscovered(peer: peer)
+        }
     }
     
     deinit {
@@ -119,30 +168,39 @@ class Remote {
     }
     
     static func from(peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) async -> Remote {
-        return await .init(id: peer.name, peer: peer, auth: auth, eventLoopGroup: eventLoopGroup)
+        return .init(id: peer.name, peer: peer, auth: auth, eventLoopGroup: eventLoopGroup)
     }
-    
+
+    @MainActor
     func mdnsDiscovered(peer: Peer) {
-        Task {
-            await connectionLifeCycle.mdnsDiscovered(peer: peer)
-        }
+        statemachine.tryEvent(.peerCameOnline)
     }
     
+    @MainActor
     func mdnsOffline() {
-        Task {
-            await connectionLifeCycle.mdnsOffline()
-        }
+        statemachine.tryEvent(.peerWentOffline)
     }
     
     func createConnection() async throws {
         
         guard let certificate = await requestCertificate(peer: peer) else {
+            
+            print("Statemachine transition: \(self.state) -> failedToFetchCertificate for event: ")
+            
             throw RemoteError.failedToFetchCertificate
         }
         
+        print("Statemachine transition: \(self.state) -> fetchedCertificate for event: ")
+        
         guard let client = await initClient(peer: peer, certificate: certificate) else {
+            
+            print("Statemachine transition: \(self.state) -> failedToMakeWarpClient for event: ")
+            
             throw RemoteError.failedToMakeWarpClient
         }
+        
+        print("Statemachine transition: \(self.state) -> madeWarpClient for event: ")
+
         
         self.connection = RemoteConnection(client: client)
     }
@@ -152,7 +210,7 @@ class Remote {
         guard let (host, _) = try? await peer.resolve() else {
             print("failed to resolve")
             
-            await connectionLifeCycle.mdnsOffline()
+            await mdnsOffline()
             
             return nil
         }
@@ -172,6 +230,8 @@ class Remote {
         guard let certBytes = try? auth.processRemoteCertificate(lockedCertificate: response.lockedCert) else {
             print("failed processing remote certificate")
             
+//            await statemachine.failedToProcessCertificate()
+            
             return nil
         }
         
@@ -185,17 +245,19 @@ class Remote {
         guard let (host, port) = try? await peer.resolve() else {
             print("failed to resolvednsname")
             
-            await connectionLifeCycle.mdnsOffline()
+            await mdnsOffline()
             
             return nil
         }
+        
+        print("\n\n resolved client: \(host):\(port)")
         
         let client = try? makeWarpClient(host: host,
                                          port: port,
                                          pinnedCertificate: certificate,
                                          hostnameOverride: peer.hostName,
                                          group: eventLoopGroup,
-                                         connectivityStateDelegate: connectionLifeCycle)
+                                         connectivityStateDelegate: statemachine)
         
         print("initClient: \(String(describing: client))")
         
@@ -209,7 +271,10 @@ class Remote {
     
     func waitForConnected() async {
         
-        let statePublisher = await statePublisher
+        print("waitForConnected called on remote: \(String(describing: self.displayName))")
+        
+        // The @Published state publisher will also send an initial value update to a new sink
+        let statePublisher = $state
         
         return await withCheckedContinuation { continuation in
             
@@ -220,6 +285,9 @@ class Remote {
             statePublisher.filter({$0 == .waitingForDuplex || $0 == .online})
                 .first()
                 .subscribe(Subscribers.Sink {receiveCompletion in
+                    
+                    print("waitForConnected resumed continuation for remote: \(String(describing: self.displayName))")
+                    
                     continuation.resume()
                 } receiveValue: { _ in
                     // pass
@@ -233,11 +301,30 @@ class Remote {
             throw RemoteError.clientNotInitialized
         }
         
-        NSLog("starting waitingForDuplex rpccall")
+        print("NSLOG: starting waitingForDuplex rpccall")
         
         let response = try await client.waitingForDuplex(auth.lookupName)
         
-        NSLog("ended waitingForDuplex rpc call \(String(describing: response))")
+        print("NSLOG: ended waitingForDuplex rpc call \(String(describing: response))")
+    }
+    
+    func retry() {
+        Task {
+            await statemachine.tryEvent(.retryTimerFired)
+        }
+    }
+    
+    func getRemoteMachineInfo() async throws {
+        guard let client = client else {
+            throw RemoteError.clientNotInitialized
+        }
+        
+        let response = try? await client.getRemoteMachineInfo(auth.lookupName)
+        
+        DispatchQueue.main.async {
+            self.displayName = response?.displayName
+            self.userName = response?.userName
+        }
     }
     
     func ping() async -> Bool {
@@ -246,11 +333,11 @@ class Remote {
             return false
         }
         
-        NSLog("starting ping rpccall")
+        print("NSLOG: starting ping rpccall")
         
         let response = try? await client.ping(auth.lookupName)
         
-        NSLog("ended ping rpc call \(String(describing: response))")
+        print("NSLOG: ended ping rpc call \(String(describing: response))")
         
         if response != nil {
             print("succeed ping to \(self.id)")
@@ -306,6 +393,14 @@ class Remote {
         }
     }
     
+    var lastConnErrMsg: String? {
+//        get async {
+//            return await statemachine.lastErrorMsg
+//        }
+        
+        return nil
+    }
+    
     func startTransfer(transferOp: TransferFromRemote) async throws {
         
         guard transferOp.state == .requested else {
@@ -325,12 +420,12 @@ class Remote {
             $0.ident = auth.identity
             $0.readableName = auth.networkConfig.hostname
         })
+                
+        let downloader = try TransferDownloader(topDirBasenames: transferOp.topDirBasenames, progress: transferOp.progress)
+        
+        transferOp.localSaveUrls = downloader.savePaths
         
         let response = client.startTransfer(opInfo)
-        
-        guard let downloader = transferOp.downloader else {
-            throw TransferDownloaderError.invalidTopDirBasenames
-        }
         
         for try await chunk in response {
             
@@ -342,12 +437,11 @@ class Remote {
             do {
                 try downloader.handleChunk(chunk: chunk)
             } catch {
+                
+                try? await stopTransfer(timestamp: transferOp.timestamp, error: true)
+                
                 print(error)
                 transferOp.state = .failed(reason: "\(error)")
-                
-                Task {
-                    try? await stopTransfer(timestamp: transferOp.timestamp, error: true)
-                }
                 
                 throw error
             }
