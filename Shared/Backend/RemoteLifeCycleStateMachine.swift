@@ -14,10 +14,6 @@ import NIO
 import Combine
 
 
-//enum ChannelFailure {
-//    case shutdown, transient
-//}
-
 enum RemoteState: Equatable {
     case fetchingCertificate
     case offline
@@ -26,8 +22,8 @@ enum RemoteState: Equatable {
     case channelTransientFailure, channelShutdownFailure
     case retrying
     case unExpectedTransition
-    indirect case failure(_: String)
-    //    case failedToProcessRemoteCertificate
+//    indirect case failure(_: String)
+//    case failedToProcessRemoteCertificate
 }
 
 enum RemoteEvent {
@@ -36,7 +32,6 @@ enum RemoteEvent {
 
 class StateMachine {
     
-    
     private(set) var state: RemoteState {
         didSet { stateSubject.send(self.state) }
     }
@@ -44,7 +39,7 @@ class StateMachine {
     private let stateSubject: PassthroughSubject<RemoteState, Never>
     
     let statePublisher: AnyPublisher<RemoteState, Never>
-    
+        
     init() {
         self.state = .offline
         self.stateSubject = PassthroughSubject<RemoteState, Never>()
@@ -64,11 +59,11 @@ extension StateMachine {
         }
         
         print("Statemachine ignored transition: \(self.state) -> \(state) for event: \(event)")
-
     }
 }
 
 extension StateMachine {
+    
     private func nextState(for event: RemoteEvent) -> RemoteState? {
         
         switch state {
@@ -160,24 +155,24 @@ extension StateMachine {
                 return .retrying
 
         }
-        case .failure(_):
-            switch event {
-            case .peerWentOffline:
-                return .offline
-            case .peerCameOnline:
-                return .fetchingCertificate
-            case .channelReady:
-                return .unExpectedTransition
-            case .channelShutdown:
-                return .channelShutdownFailure
-            case .channelTransientFailure:
-                return .channelTransientFailure
-            case .gotDuplex:
-                return .unExpectedTransition
-            case .retryTimerFired:
-                return .retrying
+//        case .failure(errorMsg):
+//            switch event {
+//            case .peerWentOffline:
+//                return .offline
+//            case .peerCameOnline:
+//                return .fetchingCertificate
+//            case .channelReady:
+//                return .unExpectedTransition
+//            case .channelShutdown:
+//                return .channelShutdownFailure
+//            case .channelTransientFailure:
+//                return .channelTransientFailure
+//            case .gotDuplex:
+//                return .unExpectedTransition
+//            case .retryTimerFired:
+//                return .retrying
+//        }
 
-        }
         // Should be functionally the same as discovered
         case .retrying:
             switch event {

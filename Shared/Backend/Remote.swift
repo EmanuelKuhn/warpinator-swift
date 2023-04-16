@@ -135,8 +135,6 @@ class Remote: ObservableObject {
             return
         case .unExpectedTransition:
             return
-        case .failure(_):
-            return
         }
     }
     
@@ -392,15 +390,7 @@ class Remote: ObservableObject {
             transferOperation.state = .failed(reason: "Failed to request")
         }
     }
-    
-    var lastConnErrMsg: String? {
-//        get async {
-//            return await statemachine.lastErrorMsg
-//        }
         
-        return nil
-    }
-    
     func startTransfer(transferOp: TransferFromRemote) async throws {
         
         guard transferOp.state == .requested else {
