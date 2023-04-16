@@ -34,6 +34,26 @@ struct ContentView: View {
             VStack {
                 RemoteListView(discoveryViewModel: .init(warp: warp))
             }
+            
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        warp.resetupListener()
+                    } label: {
+                        Text("restart listener")
+                    }
+                }
+                
+                ToolbarItem {
+                    Button {
+                        warp.restart()
+                    } label: {
+                        Text("restart servers and bonjour")
+                    }
+                }
+
+            }
+
             VStack {
                 Text(":)")
             }
