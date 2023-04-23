@@ -24,8 +24,7 @@ enum RemoteState: Equatable {
     case waitingForDuplex
     case online
     case retrying
-//    indirect case failure(_: String)
-//    case failedToProcessRemoteCertificate
+
     case failure(_: Failure)
 }
 

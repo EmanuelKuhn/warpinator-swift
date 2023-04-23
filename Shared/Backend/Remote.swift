@@ -128,12 +128,11 @@ class Remote: ObservableObject {
             } catch {
                 await statemachine.tryEvent(.peerFailure(.failedToMakeWarpClient))
             }
-
         case .offline:
-            return
+            break
 //            deinitClient()
         case .waitingForDuplex:
-            return
+            break
         case .online:
             try? await getRemoteMachineInfo()
         case .failure(_):
