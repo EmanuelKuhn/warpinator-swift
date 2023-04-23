@@ -22,8 +22,6 @@ extension RemoteState {
             return failure.systemImageName
         case .retrying:
             return "arrow.counterclockwise.circle" // 􀚃
-        case .unExpectedTransition:
-            return "questionmark.diamond.fill" // 􀄣
         }
     }
 }

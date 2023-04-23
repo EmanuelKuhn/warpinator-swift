@@ -24,7 +24,6 @@ enum RemoteState: Equatable {
     case waitingForDuplex
     case online
     case retrying
-    case unExpectedTransition
 //    indirect case failure(_: String)
 //    case failedToProcessRemoteCertificate
     case failure(_: Failure)
@@ -85,7 +84,7 @@ extension StateMachine {
             case .channelTransientFailure:
                 return .failure(.channelFailure)
             case .gotDuplex:
-                return .unExpectedTransition
+                return .online
             case .retryTimerFired:
                 return nil
             case .peerFailure(let error):
@@ -98,13 +97,13 @@ extension StateMachine {
             case .peerCameOnline:
                 return .fetchingCertificate
             case .channelReady:
-                return .unExpectedTransition
+                return nil
             case .channelShutdown:
                 return nil
             case .channelTransientFailure:
                 return nil
             case .gotDuplex:
-                return .unExpectedTransition
+                return .online
             case .retryTimerFired:
                 return nil
             case .peerFailure(let error):
@@ -162,7 +161,7 @@ extension StateMachine {
             case .channelTransientFailure:
                 return .failure(.channelFailure)
             case .gotDuplex:
-                return .unExpectedTransition
+                return .online
             case .retryTimerFired:
                 return .retrying
             case .peerFailure(let error):
@@ -184,15 +183,13 @@ extension StateMachine {
             case .channelTransientFailure:
                 return .failure(.channelFailure)
             case .gotDuplex:
-                return .unExpectedTransition
+                return .online
             case .retryTimerFired:
                 return nil
             case .peerFailure(let error):
                 return .failure(.remoteError(error))
         }
 
-        case .unExpectedTransition:
-            return .unExpectedTransition
         }
     }
 }

@@ -136,8 +136,6 @@ class Remote: ObservableObject {
             return
         case .online:
             try? await getRemoteMachineInfo()
-        case .unExpectedTransition:
-            return
         case .failure(_):
             break
         }
