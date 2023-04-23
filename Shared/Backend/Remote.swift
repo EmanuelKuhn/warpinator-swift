@@ -24,6 +24,8 @@ enum RemoteError: String, Error {
     case failedToUnlockCertificate
     
     case failedToMakeWarpClient
+    
+    case failedToGetDuplex
 }
 
 class Remote: ObservableObject {
@@ -106,28 +108,12 @@ class Remote: ObservableObject {
     }
     
     let eventLoopGroup: EventLoopGroup
-        
+    
+    // Handle statemachine state changes
     func enterState(_ state: RemoteState) async {
         switch state {
         case .fetchingCertificate, .retrying:
-            do {
-                try await createConnection()
-
-                let pingResult = await ping()
-
-                // GRPC channel only tries to connect when the first call happens
-                print("\n\nPing result: \(pingResult)")
-                
-                try await waitingForDuplex()
-                
-                await statemachine.tryEvent(.gotDuplex)
-            } catch RemoteError.failedToResolvePeer {
-                await statemachine.tryEvent(.peerWentOffline)
-            } catch let error as RemoteError {
-                await statemachine.tryEvent(.peerFailure(error))
-            } catch {
-                await statemachine.tryEvent(.peerFailure(.failedToMakeWarpClient))
-            }
+            await statemachine.tryEvent(await establishDuplexConnection())
         case .offline:
             break
 //            deinitClient()
@@ -180,7 +166,7 @@ class Remote: ObservableObject {
     func mdnsOffline() {
         statemachine.tryEvent(.peerWentOffline)
     }
-    
+        
     func createConnection() async throws {
         
         let certificate = try await requestCertificate(peer: peer)
@@ -276,17 +262,38 @@ class Remote: ObservableObject {
         }
     }
     
-    func waitingForDuplex() async throws {
+    func establishDuplexConnection() async -> RemoteEvent {
+        do {
+            try await createConnection()
+
+            await ping()
+            
+            // After succesfull ping wait for duplex connection
+            return await waitForDuplex()
+            
+        } catch RemoteError.failedToResolvePeer {
+            return .peerWentOffline
+        } catch let error as RemoteError {
+            return .peerFailure(error)
+        } catch {
+            return .peerFailure(.failedToMakeWarpClient)
+        }
+    }
+    
+    func waitForDuplex() async -> RemoteEvent {
         
         guard let client = client else {
-            throw RemoteError.clientNotInitialized
+            return .peerFailure(.clientNotInitialized)
         }
         
-        print("NSLOG: starting waitingForDuplex rpccall")
-        
-        let response = try await client.waitingForDuplex(auth.lookupName)
-        
-        print("NSLOG: ended waitingForDuplex rpc call \(String(describing: response))")
+        do {
+            // Don't care about response value
+            let _ = try await client.waitingForDuplex(auth.lookupName)
+            
+            return .gotDuplex
+        } catch {
+            return .peerFailure(.failedToGetDuplex)
+        }
     }
     
     

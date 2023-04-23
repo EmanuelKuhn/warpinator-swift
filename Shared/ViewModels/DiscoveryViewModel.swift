@@ -44,7 +44,7 @@ extension RemoteError {
             return "wifi.exclamationmark" // 􀙥
         case .failedToUnlockCertificate:
             return "lock.slash" // 􀎢
-        case .peerMissingFetchCertInfo, .failedToFetchLockedCertificate:
+        case .peerMissingFetchCertInfo, .failedToFetchLockedCertificate, .failedToGetDuplex:
             return "display.trianglebadge.exclamationmark" // 􀨦
         case .failedToMakeWarpClient, .clientNotInitialized:
             return "questionmark.diamond" // 􀄢
