@@ -94,6 +94,59 @@ struct RemoteDetailView: View {
 }
 
 
+extension RemoteState {
+    var description: String {
+        switch self {
+        case .fetchingCertificate:
+            return "connecting"
+        case .offline:
+            return "offline"
+        case .waitingForDuplex:
+            return "waiting for duplex"
+        case .online:
+            return "online"
+        case .retrying:
+            return "retrying"
+        case .failure(let failure):
+            return failure.description
+        }
+    }
+}
+
+extension Failure {
+    var description: String {
+        switch self {
+        case .remoteError(let remoteError):
+            return remoteError.localizedDescription
+        case .channelFailure:
+            return "channel failure"
+        }
+    }
+}
+
+extension RemoteError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .failedToResolvePeer:
+            return "Failed to resolve"
+        case .failedToFetchLockedCertificate:
+            return "Failed to fetch certificate"
+        case .failedToMakeWarpClient:
+            return "Failed to connect"
+        case .failedToPing:
+            return "Ping request failed"
+        case .failedToUnlockCertificate:
+            return "Incorrect groupcode"
+        case .failedToGetDuplex:
+            return "Failed to get duplex"
+        case .clientNotInitialized:
+            return "Client not initialized"
+        case .peerMissingFetchCertInfo:
+            return "peerMissingFetchCertInfo"
+        }
+    }
+}
+
 
 extension RemoteDetailView {
     @MainActor
@@ -140,7 +193,7 @@ extension RemoteDetailView {
             
             Task {
                 remote.$state.receive(on: DispatchQueue.main).sink { state in
-                    self.state = "\(state)"
+                    self.state = "\(state.description)"
                 }.store(in: &tokens)
             }
             
