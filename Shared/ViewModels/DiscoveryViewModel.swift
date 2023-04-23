@@ -19,12 +19,35 @@ extension RemoteState {
             return "wifi"
         case .offline:
             return "wifi.slash"
-        case .channelShutdownFailure, .channelTransientFailure:
-            return "fiberchannel"
+        case .failure(let failure):
+            return failure.systemImageName
         case .retrying:
             return "arrow.counterclockwise.circle"
         case .unExpectedTransition:
             return "questionmark.diamond"
+
+extension Failure {
+    var systemImageName: String {
+        switch self {
+        case .channelFailure:
+            return "fiberchannel"
+        case .remoteError(let remoteError):
+            return remoteError.systemImageName
+        }
+    }
+}
+
+extension RemoteError {
+    var systemImageName: String {
+        switch self {
+        case .failedToResolvePeer:
+            return "wifi.exclamationmark" // 􀙥
+        case .failedToUnlockCertificate:
+            return "lock.slash" // 􀎢
+        case .peerMissingFetchCertInfo, .failedToFetchLockedCertificate:
+            return "display.trianglebadge.exclamationmark" // 􀨦
+        case .failedToMakeWarpClient, .clientNotInitialized:
+            return "questionmark.diamond" // 􀄢
         }
     }
 }

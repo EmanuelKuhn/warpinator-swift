@@ -133,12 +133,10 @@ class Remote: ObservableObject {
             return
         case .online:
             try? await getRemoteMachineInfo()
-        case .channelTransientFailure:
-            return
-        case .channelShutdownFailure:
-            return
         case .unExpectedTransition:
             return
+        case .failure(_):
+            break
         }
     }
     

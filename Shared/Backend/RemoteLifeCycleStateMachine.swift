@@ -13,21 +13,26 @@ import NIO
 
 import Combine
 
+enum Failure: Equatable {
+    case remoteError(RemoteError)
+    case channelFailure
+}
 
-enum RemoteState: Equatable {
+enum RemoteState: Equatable {    
     case fetchingCertificate
     case offline
     case waitingForDuplex
     case online
-    case channelTransientFailure, channelShutdownFailure
     case retrying
     case unExpectedTransition
 //    indirect case failure(_: String)
 //    case failedToProcessRemoteCertificate
+    case failure(_: Failure)
 }
 
 enum RemoteEvent {
     case peerWentOffline, peerCameOnline, channelReady, channelShutdown, channelTransientFailure, gotDuplex, retryTimerFired
+    case peerFailure(_: RemoteError)
 }
 
 class StateMachine {
@@ -76,13 +81,15 @@ extension StateMachine {
             case .channelReady:
                 return .waitingForDuplex
             case .channelShutdown:
-                return .channelShutdownFailure
+                return .failure(.channelFailure)
             case .channelTransientFailure:
-                return .channelTransientFailure
+                return .failure(.channelFailure)
             case .gotDuplex:
                 return .unExpectedTransition
             case .retryTimerFired:
                 return nil
+            case .peerFailure(let error):
+                return .failure(.remoteError(error))
             }
         case .offline:
             switch event {
@@ -100,6 +107,8 @@ extension StateMachine {
                 return .unExpectedTransition
             case .retryTimerFired:
                 return nil
+            case .peerFailure(let error):
+                return .failure(.remoteError(error))
             }
         case .waitingForDuplex:
             switch event {
@@ -110,14 +119,15 @@ extension StateMachine {
             case .channelReady:
                 return nil
             case .channelShutdown:
-                return .channelShutdownFailure
+                return .failure(.channelFailure)
             case .channelTransientFailure:
-                return .channelTransientFailure
+                return .failure(.channelFailure)
             case .gotDuplex:
                 return .online
             case .retryTimerFired:
                 return nil
-
+            case .peerFailure(let error):
+                return .failure(.remoteError(error))
             }
         case .online:
             switch event {
@@ -128,16 +138,18 @@ extension StateMachine {
             case .channelReady:
                 return nil
             case .channelShutdown:
-                return .channelShutdownFailure
+                return .failure(.channelFailure)
             case .channelTransientFailure:
-                return .channelTransientFailure
+                return .failure(.channelFailure)
             case .gotDuplex:
                 return nil
             case .retryTimerFired:
                 return nil
+            case .peerFailure(let error):
+                return .failure(.remoteError(error))
 
             }
-        case .channelTransientFailure, .channelShutdownFailure:
+        case .failure(_):
             switch event {
             case .peerWentOffline:
                 return .offline
@@ -146,32 +158,17 @@ extension StateMachine {
             case .channelReady:
                 return .online
             case .channelShutdown:
-                return .channelShutdownFailure
+                return .failure(.channelFailure)
             case .channelTransientFailure:
-                return .channelTransientFailure
+                return .failure(.channelFailure)
             case .gotDuplex:
                 return .unExpectedTransition
             case .retryTimerFired:
                 return .retrying
+            case .peerFailure(let error):
+                return .failure(.remoteError(error))
 
         }
-//        case .failure(errorMsg):
-//            switch event {
-//            case .peerWentOffline:
-//                return .offline
-//            case .peerCameOnline:
-//                return .fetchingCertificate
-//            case .channelReady:
-//                return .unExpectedTransition
-//            case .channelShutdown:
-//                return .channelShutdownFailure
-//            case .channelTransientFailure:
-//                return .channelTransientFailure
-//            case .gotDuplex:
-//                return .unExpectedTransition
-//            case .retryTimerFired:
-//                return .retrying
-//        }
 
         // Should be functionally the same as discovered
         case .retrying:
@@ -183,14 +180,16 @@ extension StateMachine {
             case .channelReady:
                 return .waitingForDuplex
             case .channelShutdown:
-                return .channelShutdownFailure
+                return .failure(.channelFailure)
             case .channelTransientFailure:
-                return .channelTransientFailure
+                return .failure(.channelFailure)
             case .gotDuplex:
                 return .unExpectedTransition
             case .retryTimerFired:
                 return nil
-            }
+            case .peerFailure(let error):
+                return .failure(.remoteError(error))
+        }
 
         case .unExpectedTransition:
             return .unExpectedTransition
