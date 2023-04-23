@@ -30,7 +30,7 @@ enum RemoteError: String, Error {
     case failedToPing
 }
 
-class Remote: ObservableObject {
+class Remote {
     
     private let statemachine: StateMachine
     private var stateCancellable: AnyCancellable?
