@@ -14,11 +14,15 @@ import NIO
 import Combine
 
 enum RemoteError: String, Error {
-    case peerNotInitialised
-    
     case clientNotInitialized
     
-    case failedToFetchCertificate
+    case peerMissingFetchCertInfo
+    
+    case failedToResolvePeer
+    
+    case failedToFetchLockedCertificate
+    case failedToUnlockCertificate
+    
     case failedToMakeWarpClient
 }
 
@@ -181,58 +185,36 @@ class Remote: ObservableObject {
     
     func createConnection() async throws {
         
-        guard let certificate = await requestCertificate(peer: peer) else {
-            
-            print("Statemachine transition: \(self.state) -> failedToFetchCertificate for event: ")
-            
-            throw RemoteError.failedToFetchCertificate
-        }
-        
-        print("Statemachine transition: \(self.state) -> fetchedCertificate for event: ")
-        
+        let certificate = try await requestCertificate(peer: peer)
+                
         guard let client = await initClient(peer: peer, certificate: certificate) else {
-            
-            print("Statemachine transition: \(self.state) -> failedToMakeWarpClient for event: ")
-            
             throw RemoteError.failedToMakeWarpClient
         }
-        
-        print("Statemachine transition: \(self.state) -> madeWarpClient for event: ")
-
         
         self.connection = RemoteConnection(client: client)
     }
     
-    private func requestCertificate(peer: Peer) async -> Bytes? {
+    private func requestCertificate(peer: Peer) async throws -> Bytes {
         
         guard let (host, _) = try? await peer.resolve() else {
-            print("failed to resolve")
-            
-            await mdnsOffline()
-            
-            return nil
+            throw RemoteError.failedToResolvePeer
         }
         
         let regRequest = RegRequest.with {$0.hostname = ProcessInfo().hostName}
         
         guard case let .authPort(authPort) = peer.fetchCertInfo else {
-            return nil
+            throw RemoteError.peerMissingFetchCertInfo
         }
         
         guard let response = try? await fetchCertV2(host: host, auth_port: authPort, regRequest: regRequest, eventLoopGroup: eventLoopGroup) else {
-            print("requestCertificate: failed fetchCertV2")
-            
-            return nil
+            throw RemoteError.failedToFetchLockedCertificate
         }
+        
         
         guard let certBytes = try? auth.processRemoteCertificate(lockedCertificate: response.lockedCert) else {
-            print("failed processing remote certificate")
-            
-//            await statemachine.failedToProcessCertificate()
-            
-            return nil
+            throw RemoteError.failedToUnlockCertificate
         }
-        
+
         return certBytes
     }
     
