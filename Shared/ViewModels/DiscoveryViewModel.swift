@@ -7,24 +7,26 @@
 
 import Foundation
 
-
 extension RemoteState {
     var systemImageName: String {
         switch self {
         case .fetchingCertificate:
-            return "wave.3.right"
+            return "wave.3.right" // 􀙲
         case .waitingForDuplex:
-            return "dot.radiowaves.right"
+            return "dot.radiowaves.right" // 􀖒
         case .online:
-            return "wifi"
+            return "wifi" // 􀙇
         case .offline:
-            return "wifi.slash"
+            return "wifi.slash" // 􀙈
         case .failure(let failure):
             return failure.systemImageName
         case .retrying:
-            return "arrow.counterclockwise.circle"
+            return "arrow.counterclockwise.circle" // 􀚃
         case .unExpectedTransition:
-            return "questionmark.diamond"
+            return "questionmark.diamond.fill" // 􀄣
+        }
+    }
+}
 
 extension Failure {
     var systemImageName: String {
