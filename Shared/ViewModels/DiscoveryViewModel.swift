@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Combine
+
 extension RemoteState {
     var systemImageName: String {
         switch self {
@@ -70,7 +72,7 @@ class DiscoveryViewModel: ObservableObject {
         @Published
         var connectivityImageSystemName: String = RemoteState.offline.systemImageName
         
-        var token: Any? = nil
+        var tokens: Set<AnyCancellable> = .init()
         
         init(remote: Remote) {
             self.id = remote.id
@@ -83,19 +85,19 @@ class DiscoveryViewModel: ObservableObject {
             self.remote = remote
             
             Task {
-                token = await remote.$state.receive(on: DispatchQueue.main).sink { newState in
+                tokens.update(with: remote.$state.receive(on: DispatchQueue.main).sink { newState in
                     self.connectivityImageSystemName = newState.systemImageName
-                    
-                    self.title = remote.displayName ?? remote.peer.hostName
+                })
+                
+                tokens.update(with: remote.$remoteMachineInfo.receive(on: DispatchQueue.main).sink { newInfo in
+                    self.title = newInfo?.displayName ?? remote.peer.hostName
                                         
-                    if let username = remote.userName {
+                    if let username = newInfo?.userName {
                         self.subTitle = "\(username)@\(remote.peer.hostName)"
                     } else {
                         self.subTitle = remote.peer.hostName
                     }
-
-                    
-                }
+                })
             }
         }
 

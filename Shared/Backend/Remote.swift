@@ -55,9 +55,8 @@ class Remote {
     private var certificate: Bytes? = nil
     private var connection: RemoteConnection?
     
-    
-    var displayName: String? = nil
-    var userName: String? = nil
+    @Published
+    var remoteMachineInfo: RemoteMachineInfo? = nil
     
     private var client: WarpAsyncClient? {
         get {
@@ -237,7 +236,7 @@ class Remote {
     
     func waitForConnected() async {
         
-        print("waitForConnected called on remote: \(String(describing: self.displayName))")
+        print("waitForConnected called on remote: \(String(describing: self.peer.hostName))")
                 
         // Hint to retry if failed
         await self.statemachine.tryEvent(.retryTimerFired)
@@ -255,7 +254,7 @@ class Remote {
                 .first()
                 .subscribe(Subscribers.Sink {receiveCompletion in
                     
-                    print("waitForConnected resumed continuation for remote: \(String(describing: self.displayName))")
+                    print("waitForConnected resumed continuation for remote: \(String(describing: self.peer.hostName))")
                     
                     continuation.resume()
                 } receiveValue: { _ in
@@ -306,10 +305,7 @@ class Remote {
         
         let response = try? await client.getRemoteMachineInfo(auth.lookupName)
         
-        DispatchQueue.main.async {
-            self.displayName = response?.displayName
-            self.userName = response?.userName
-        }
+        self.remoteMachineInfo = response
     }
     
     func ping() async throws {
