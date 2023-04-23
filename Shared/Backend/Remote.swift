@@ -26,6 +26,8 @@ enum RemoteError: String, Error {
     case failedToMakeWarpClient
     
     case failedToGetDuplex
+    
+    case failedToPing
 }
 
 class Remote: ObservableObject {
@@ -266,7 +268,7 @@ class Remote: ObservableObject {
         do {
             try await createConnection()
 
-            await ping()
+            try await ping()
             
             // After succesfull ping wait for duplex connection
             return await waitForDuplex()
@@ -310,26 +312,18 @@ class Remote: ObservableObject {
         }
     }
     
-    func ping() async -> Bool {
+    func ping() async throws {
         
         guard let client = client else {
-            return false
+            throw RemoteError.clientNotInitialized
         }
-        
-        print("NSLOG: starting ping rpccall")
-        
+                
         let response = try? await client.ping(auth.lookupName)
         
         print("NSLOG: ended ping rpc call \(String(describing: response))")
         
-        if response != nil {
-            print("succeed ping to \(self.id)")
-        }
-        
         if response == nil {
-            return false
-        } else {
-            return true
+            throw RemoteError.failedToPing
         }
     }
     

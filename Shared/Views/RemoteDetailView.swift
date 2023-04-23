@@ -119,7 +119,7 @@ extension RemoteDetailView {
         
         func ping() {
             Task {
-                await remote.ping()
+                try? await remote.ping()
             }
         }
         
