@@ -250,6 +250,9 @@ class Remote: ObservableObject {
     func waitForConnected() async {
         
         print("waitForConnected called on remote: \(String(describing: self.displayName))")
+                
+        // Hint to retry if failed
+        await self.statemachine.tryEvent(.retryTimerFired)
         
         // The @Published state publisher will also send an initial value update to a new sink
         let statePublisher = $state
