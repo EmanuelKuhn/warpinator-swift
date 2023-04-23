@@ -114,16 +114,19 @@ class Remote: ObservableObject {
                 try await createConnection()
 
                 let pingResult = await ping()
-                
+
+                // GRPC channel only tries to connect when the first call happens
                 print("\n\nPing result: \(pingResult)")
                 
-                // GRPC channel only tries to connect when the first call happens
                 try await waitingForDuplex()
                 
                 await statemachine.tryEvent(.gotDuplex)
+            } catch RemoteError.failedToResolvePeer {
+                await statemachine.tryEvent(.peerWentOffline)
+            } catch let error as RemoteError {
+                await statemachine.tryEvent(.peerFailure(error))
             } catch {
-
-                print("\n\nError while in .mdnsDiscovered case; error (\(error.self)): \(error)\n\n")
+                await statemachine.tryEvent(.peerFailure(.failedToMakeWarpClient))
             }
 
         case .offline:
