@@ -13,7 +13,6 @@
   },
   "testTargets" : [
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:warpinator-project.xcodeproj",
         "identifier" : "4CDD570827B982CA00A9B537",
