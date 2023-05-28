@@ -54,12 +54,6 @@ struct RemoteDetailView: View {
                         #endif
                     }
                 }
-                
-                ToolbarItem(placement: .automatic) {
-                    Button("Ping") {
-                        viewModel.ping()
-                    }
-                }
             }
             #if canImport(UIKIT)
             .sheet(isPresented: $showingSheet, content: {
