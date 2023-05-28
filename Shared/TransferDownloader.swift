@@ -32,6 +32,8 @@ class TransferDownloader {
     
     let saveDirectory: URL
     
+    var seenRelativePaths: Set<String>
+    
         
     init(topDirBasenames: [String], progress: TransferOpMetrics) throws {
         
@@ -42,6 +44,8 @@ class TransferDownloader {
         self.saveDirectory = try getDocumentsDirectory()
         
         self.topDirBasenames = try topDirBasenames.map(TransferDownloader.sanitizeTopDirName)
+        
+        self.seenRelativePaths = Set()
     }
     
     /// The local paths the topDirBasenames will be downloaded to. This is computed by computing the local save path for each sanitized topDirBaseName given the self.saveDirectory
@@ -80,23 +84,27 @@ class TransferDownloader {
         
         let fileUrl = try sanitizeRelativePath(relativePath: chunk.relativePath)
         
-        if chunk.hasTime {
-            let timestamp = NSDate.from(time: chunk.time)
+        // If this is the first chunk of fileUrl
+        if !self.seenRelativePaths.contains(chunk.relativePath) {
+            self.seenRelativePaths.update(with: chunk.relativePath)
 
             try chunk.chunk.write(to: fileUrl, options: .atomic)
 
-            try FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
+            // The first chunk should have timestamp
+            if chunk.hasTime {
+                let timestamp = NSDate.from(time: chunk.time)
+                try FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
+            }
         } else {
-            
+            // Read the current modification date
             let attributes = try fileManager.attributesOfItem(atPath: fileUrl.path)
-            
             let timestamp = attributes[.modificationDate]
             
             try chunk.chunk.append(fileURL: fileUrl)
-            
-            try FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
-        }
 
+            // Keep the modification date
+            try FileManager.default.setAttributes([.modificationDate: timestamp as Any], ofItemAtPath: fileUrl.path)
+        }
     }
 
     func handleDirectory(chunk: FileChunk) throws {
