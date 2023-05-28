@@ -121,6 +121,8 @@ struct RemoteListViewItem: View {
                             .padding(5)
                         Text(remote.subTitle)
                             .padding(5)
+                        Text(remote.resolvedHost)
+                            .padding(5)
                     }
                 }.padding()
             }

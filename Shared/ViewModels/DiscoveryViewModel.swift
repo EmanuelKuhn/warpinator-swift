@@ -72,6 +72,9 @@ class DiscoveryViewModel: ObservableObject {
         @Published
         var connectivityImageSystemName: String = RemoteState.offline.systemImageName
         
+        @Published
+        var resolvedHost: String
+        
         var tokens: Set<AnyCancellable> = .init()
         
         init(remote: Remote) {
@@ -80,6 +83,8 @@ class DiscoveryViewModel: ObservableObject {
             self.title = remote.peer.hostName
             
             self.subTitle = ""
+            
+            self.resolvedHost = ""
             
             
             self.remote = remote
@@ -98,6 +103,11 @@ class DiscoveryViewModel: ObservableObject {
                         self.subTitle = remote.peer.hostName
                     }
                 })
+                
+                tokens.update(with: remote.$resolved.receive(on: DispatchQueue.main).sink { newResolved in
+                    self.resolvedHost = newResolved?.host ?? ""
+                })
+
             }
         }
 

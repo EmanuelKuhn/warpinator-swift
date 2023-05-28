@@ -30,6 +30,11 @@ enum RemoteError: String, Error {
     case failedToPing
 }
 
+struct ResolvedHost {
+    let host: String
+    let port: Int
+}
+
 class Remote {
     
     private let statemachine: StateMachine
@@ -47,6 +52,9 @@ class Remote {
       }  
     
     var peer: Peer
+    
+    @Published
+    var resolved: ResolvedHost? = nil
 
     let id: String
     
@@ -225,6 +233,8 @@ class Remote {
                                          connectivityStateDelegate: statemachine)
         
         print("initClient: \(String(describing: client))")
+        
+        self.resolved = .init(host: host, port: port)
         
         guard let client = client else {
             print("failed to make warpclient")
