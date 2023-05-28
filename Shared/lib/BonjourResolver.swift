@@ -75,11 +75,50 @@ final class BonjourResolver: NSObject, NetServiceDelegate {
         selfRetain = nil
     }
     
+    // Adapted from: https://stackoverflow.com/questions/38197198/swift-3-how-to-resolve-netservice-ip
+    private static func getNameFromAddresses(addresses: [Data]?) -> String? {
+        guard let data = addresses?.first else { return nil }
+        
+        var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+        
+        var success = false
+        
+        data.withUnsafeBytes { ptr in
+            guard let sockaddr_ptr = ptr.baseAddress?.assumingMemoryBound(to: sockaddr.self) else {
+                // handle error
+                return
+            }
+            let sockaddr = sockaddr_ptr.pointee
+            guard getnameinfo(sockaddr_ptr, socklen_t(sockaddr.sa_len), &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST) == 0 else {
+                return
+            }
+            
+            success = true
+        }
+        
+        guard success else {
+            return nil
+        }
+        
+        let ipAddress = String(cString:hostname)
+        return ipAddress
+    }
+    
     func netServiceDidResolveAddress(_ sender: NetService) {
         let hostName = sender.hostName!
         let port = sender.port
-        self.stop(with: .success((hostName, port)))
+        
+        if let ipAddress = BonjourResolver.getNameFromAddresses(addresses: sender.addresses) {
+            print("\nBonjourResolver::netServiceDidResolveAddress: resolved ip address: \(ipAddress):\(port)")
+            
+            self.stop(with: .success((ipAddress, port)))
+        } else {
+            print("\nBonjourResolver::netServiceDidResolveAddress: resolved hostname: \(hostName):\(port)")
+            
+            self.stop(with: .success((hostName, port)))
+        }
     }
+    
     func netService(_ sender: NetService, didNotResolve errorDict: [String: NSNumber]) {
         let code = (errorDict[NetService.errorCode]?.intValue)
             .flatMap { NetService.ErrorCode.init(rawValue: $0) }
