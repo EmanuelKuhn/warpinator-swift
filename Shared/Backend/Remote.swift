@@ -220,7 +220,7 @@ class Remote {
         let client = try? makeWarpClient(host: host,
                                          port: port,
                                          pinnedCertificate: certificate,
-                                         hostnameOverride: peer.hostName,
+                                         hostnameOverride: host,
                                          group: eventLoopGroup,
                                          connectivityStateDelegate: statemachine)
         
