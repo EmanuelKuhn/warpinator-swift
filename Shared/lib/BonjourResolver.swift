@@ -6,10 +6,14 @@
 
 import Foundation
 
+enum ResolvedName {
+    case hostName(name: String), ipAddress(address: String)
+}
+
 final class BonjourResolver: NSObject, NetServiceDelegate {
-    typealias CompletionHandler = (Result<(String, Int), Error>) -> Void
+    typealias CompletionHandler = (Result<(ResolvedName, Int), Error>) -> Void
     
-    static func resolve(service: NetService) async throws -> (String, Int) {
+    static func resolve(service: NetService) async throws -> (ResolvedName, Int) {
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 resolve(service: service, completionHandler: { result in
@@ -63,7 +67,7 @@ final class BonjourResolver: NSObject, NetServiceDelegate {
         self.stop(with: .failure(CocoaError(.userCancelled)))
     }
     
-    private func stop(with result: Result<(String, Int), Error>) {
+    private func stop(with result: Result<(ResolvedName, Int), Error>) {
         precondition(Thread.isMainThread)
         self.service?.delegate = nil
         self.service?.stop()
@@ -111,11 +115,11 @@ final class BonjourResolver: NSObject, NetServiceDelegate {
         if let ipAddress = BonjourResolver.getNameFromAddresses(addresses: sender.addresses) {
             print("\nBonjourResolver::netServiceDidResolveAddress: resolved ip address: \(ipAddress):\(port)")
             
-            self.stop(with: .success((ipAddress, port)))
+            self.stop(with: .success((.ipAddress(address: ipAddress), port)))
         } else {
             print("\nBonjourResolver::netServiceDidResolveAddress: resolved hostname: \(hostName):\(port)")
             
-            self.stop(with: .success((hostName, port)))
+            self.stop(with: .success((.hostName(name: hostName), port)))
         }
     }
     

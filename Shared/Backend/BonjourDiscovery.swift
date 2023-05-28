@@ -19,6 +19,10 @@ struct DiscoveryConfig {
     let hostname: String
 }
 
+enum BonjourDiscoveryError: Error {
+    case didNotResolveToIpAddress
+}
+
 struct MDNSPeer: Peer {
     
     let domain: String
@@ -34,7 +38,13 @@ struct MDNSPeer: Peer {
     /// `dns-sd -L` type lookup query is send. Thus it is easier to always resolve the domain, type, name combination to a
     /// dns name host and immediately use the result to start a network connection.
     func resolve() async throws -> (String, Int) {
-        return try await BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name))
+        let (host, port) = try await BonjourResolver.resolve(service: .init(domain: domain, type: type, name: name))
+        
+        guard case let .ipAddress(address) = host else {
+            throw BonjourDiscoveryError.didNotResolveToIpAddress
+        }
+        
+        return (address, port)
     }
     
     let txtRecord: NWTXTRecord
