@@ -125,19 +125,25 @@ class WarpServerProvider: WarpAsyncProvider {
         
         context.userInfo.filechunkMetrics = transferOp.progress
         
-        for chunk in transferOp.getFileChunks() {
-            
+        for chunk: Result<FileChunk, Error> in transferOp.getFileChunks() {
+
             if transferOp.state != .started {
                 throw ServerError.transferCanceled
             }
             
-            print("\n\nWarpServerProvider: Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
-                        
-            try! await responseStream.send(chunk)
-            
-            
-            // Suspend until enough previous chunks have been transmitted over the network.
-            await backpressure.waitForCompleted(waitForAll: false)
+            switch chunk {
+            case let .failure(error):
+                transferOp.state = .failed(reason: error.localizedDescription)
+                
+                throw error
+            case let .success(chunk):
+                print("\n\nWarpServerProvider: Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
+                            
+                try! await responseStream.send(chunk)
+                
+                // Suspend until enough previous chunks have been transmitted over the network.
+                await backpressure.waitForCompleted(waitForAll: false)
+            }
         }
         
         // Suspend until all chunks have been transmitted.

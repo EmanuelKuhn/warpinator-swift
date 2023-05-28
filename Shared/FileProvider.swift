@@ -72,8 +72,12 @@ extension UTType {
     }
 }
 
+enum FileProviderError: Error {
+    case failedToReadFileChunk
+}
+
 struct FileChunkSequence : Sequence {
-    typealias Element = FileChunk
+    typealias Element = Result<FileChunk, Error>
     
     /// The files in to read and generate FileChunks from.
     /// The files are iterated over in  the order
@@ -91,7 +95,7 @@ struct FileChunkSequence : Sequence {
             self.fileIterator = files.makeIterator()
         }
         
-        func next() -> FileChunk? {
+        func next() -> Result<FileChunk, Error>? {
             
             // Check if async iterator was canceled
             if Task.isCancelled {
@@ -102,7 +106,11 @@ struct FileChunkSequence : Sequence {
             if currentFileChunkIterator == nil {
                 let nextFile = fileIterator.next()
                 
-                currentFileChunkIterator = nextFile?.getDataChunkIterator()
+                do {
+                    currentFileChunkIterator = try nextFile?.getDataChunkIterator()
+                } catch {
+                    return .failure(FileProviderError.failedToReadFileChunk)
+                }
             }
             
             guard let currentFileChunkIterator = currentFileChunkIterator else {
@@ -110,7 +118,9 @@ struct FileChunkSequence : Sequence {
             }
 
             // The current filechunk iterator should have a chunk available
-            let chunk: FileChunk = currentFileChunkIterator.next()!
+            guard let chunk: FileChunk = try? currentFileChunkIterator.next() else {
+                return .failure(FileProviderError.failedToReadFileChunk)
+            }
             
             
             // If the current filechunk iterator is exhausted, set reference to nil
@@ -119,7 +129,7 @@ struct FileChunkSequence : Sequence {
                 self.currentFileChunkIterator = nil
             }
             
-            return chunk
+            return .success(chunk)
         }
         
         deinit {
@@ -168,11 +178,11 @@ struct File {
         self.relativePath = relativePath
     }
     
-    internal func getDataChunkIterator() -> ChunkIterator {
-        return .init(parent: self)
+    internal func getDataChunkIterator() throws -> ChunkIterator {
+        return try .init(parent: self)
     }
     
-    internal class ChunkIterator: IteratorProtocol {
+    internal class ChunkIterator {
         
         typealias Element = FileChunk
         
@@ -200,7 +210,7 @@ struct File {
         /// The first FileChunk will have its time field set.
         private var isFirstChunk: Bool = true
                 
-        init(parent file: File) {
+        init(parent file: File) throws {
             // Creating the SecurityScopedURL enables accessing a security scoped url until
             // the reference to SecurityScopedURL goes out of scope.
             self.securityScopedURL = SecurityScopedURL(file.url)
@@ -212,12 +222,12 @@ struct File {
             
             self.inputStream.open()
             
-            self.nextData = readData()
+            self.nextData = try readData()
         }
         
         /// Read the next chunk of Data from the inputstream.
         /// Calling this modifies the state of the inputstream.
-        private func readData() -> Data? {
+        private func readData() throws -> Data? {
             let bufferPointer: UnsafeMutablePointer<UInt8> = .allocate(capacity: chunkSize)
 
             defer {
@@ -238,8 +248,12 @@ struct File {
                 
                 print("inside File.ChunkIterator readData(): read=\(read); return nil")
                 
-                print(inputStream.streamError)
-                
+                if let error = inputStream.streamError {
+                    print(inputStream.streamError)
+
+                    throw error
+                }
+
                 print(inputStream.streamStatus)
                 
                 return nil
@@ -252,7 +266,7 @@ struct File {
         }
         
         /// Get the next FileChunk. Returns nil if there is no next Chunk.
-        func next() -> FileChunk? {
+        func next() throws -> FileChunk? {
             print("inside File.ChunkIterator next()")
             print(inputStream.streamStatus)
             
@@ -262,7 +276,7 @@ struct File {
             
             let currentChunk = makeFileChunk(data: currentData)
             
-            nextData = readData()
+            nextData = try readData()
             isFirstChunk = false
             
             return currentChunk
