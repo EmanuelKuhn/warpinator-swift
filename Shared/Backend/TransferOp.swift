@@ -159,7 +159,11 @@ class TransferFromRemote: TransferOp {
         
     func accept() async throws {
         if state == .requested {
-            try await remote?.startTransfer(transferOp: self)
+            do {
+                try await remote?.startTransfer(transferOp: self)
+            } catch {
+                self.state = .failed(reason: error.localizedDescription)
+            }
         }
     }
     
