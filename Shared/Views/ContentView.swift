@@ -43,15 +43,6 @@ struct ContentView: View {
                         Text("restart listener")
                     }
                 }
-                
-                ToolbarItem {
-                    Button {
-                        warp.restart()
-                    } label: {
-                        Text("restart servers and bonjour")
-                    }
-                }
-
             }
 
             VStack {
