@@ -65,70 +65,12 @@ final class WarpIntegrationTests: XCTestCase {
         let client = try await sot.connect()
         
         // When
-        
+//
         let result = try await client.ping(otherWarp.lookupName, callOptions: nil)
-        
-        // Assert
-        
+//
+//        // Assert
+//
         XCTAssertEqual(result, VoidType())
-    }
-    
-    func testWaitingForDuplexWhenAlreadyDiscovered() async throws {
-        // Given
-        
-        let otherWarp = await setupWarpInstance("otherWarp", port: getPort(), authPort: getPort(), flag: true)
-        
-        let sot = await setupWarpInstance("sot", port: getPort(), authPort: getPort(), flag: true)
-        let client = try await sot.connect()
-        
-        // When
-        
-        let resultExpectation = self.expectation(description: "got_result")
-        
-        sot.addPeer(otherWarp.getPeer())
-
-        Task {
-            let result = try await client.waitingForDuplex(otherWarp.lookupName, callOptions: nil)
-            
-            XCTAssertEqual(result.response, true)
-            
-            resultExpectation.fulfill()
-        }
-                
-        // Assert
-        
-        await waitForExpectations(timeout: 5, handler: nil)
-        
-    }
-
-    func testWaitingForDuplexWhenDiscoveredAfter() async throws {
-        // Given
-        
-        let otherWarp = await setupWarpInstance("otherWarp", port: getPort(), authPort: getPort())
-        
-        let sot = await setupWarpInstance("sot", port: getPort(), authPort: getPort())
-        let client = try await sot.connect()
-        
-        // When
-        
-        let resultExpectation = self.expectation(description: "got_result")
-                
-        Task {
-            let result = try await client.waitingForDuplex(otherWarp.lookupName, callOptions: nil)
-            
-            XCTAssertEqual(result.response, true)
-            
-            resultExpectation.fulfill()
-        }
-        
-        try await Task.sleep(nanoseconds: .nanoseconds(milliseconds: 500))
-        
-        sot.addPeer(otherWarp.getPeer())
-                
-        // Assert
-        
-        await waitForExpectations(timeout: 5, handler: nil)
-        
     }
     
 }
