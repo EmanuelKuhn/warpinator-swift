@@ -69,6 +69,9 @@ class Auth {
         var altSubjectNames: [GeneralName] = networkConfig.ipAddresses
             .map({GeneralName.ipAddress($0.rawValue)})
         
+        // Allow loopback for testing
+        altSubjectNames.append(GeneralName.ipAddress(IPv4Address.loopback.rawValue))
+        
         altSubjectNames.append(.dnsName(networkConfig.hostname))
         
         let certificate = try! ShieldX509.Certificate.Builder()
