@@ -4,6 +4,9 @@
 # https://circleci.com/docs/testing-ios/
 version: 2.1
 
+orbs:
+  ruby: circleci/ruby@1.2.0
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -13,15 +16,25 @@ jobs:
     macos:
       xcode: 13.4.1 # Specify the Xcode version to use
 
+    environment:
+      FL_OUTPUT_DIR: output
+
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
+      
+      - ruby/install-deps
+
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
           
       # - run: pod install # Install CocoaPods dependencies
-      - run: fastlane scan # Run tests using Fastlane
+      - run:
+          name: fastlane
+          command: bundle exec fastlane ios tests
+      
+      - run: ls -a
 
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
