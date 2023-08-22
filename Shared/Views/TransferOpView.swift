@@ -189,10 +189,28 @@ extension TransferOpView {
             
             #if os(macOS)
             NSWorkspace.shared.activateFileViewerSelecting(transferOp.localSaveUrls)
+            
+            #else
+            
+            var url: URL = transferOp.localSaveUrls[0]
+            
+            if !url.isDirectory {
+                url = url.deletingLastPathComponent()
+            }
+                        
+            guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true) else {
+                return
+            }
+            
+            components.scheme = "shareddocuments"
+            
+            if let sharedDocument = components.url {
+                
+                print("sharedDocument: \(sharedDocument)")
+                
+                UIApplication.shared.open(sharedDocument)
+            }
             #endif
-            
-            //TODO: Show file location on iOS
-            
         }
 
         var bag: Set<AnyCancellable> = .init()
@@ -204,5 +222,12 @@ extension TransferOpView {
                 self.objectWillChange.send()
             }).store(in: &bag)
         }
+    }
+}
+
+
+extension URL {
+    var isDirectory: Bool {
+       (try? resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
     }
 }

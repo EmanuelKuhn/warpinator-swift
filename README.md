@@ -17,6 +17,6 @@ Currently the only way to try the app is to build it using Xcode.
     - [ ] Multiple files/folders
 - [ ] Show received file location
     - [X] on macOS
-    - [ ] on iOS (they can be found in the files app)
+    - [X] on iOS (they can be found in the files app)
 - [ ] Settings view (currently macOS only)
     - [X] Set groupcode
