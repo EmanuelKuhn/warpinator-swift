@@ -25,7 +25,8 @@ platform :ios do
     run_tests(
       scheme: "Tests Shared (iOS)",
       device: "iPhone 13 mini",
-      cloned_source_packages_path: "SourcePackages"
+      cloned_source_packages_path: "SourcePackages",
+      include_simulator_logs: false
     )
   end
   
