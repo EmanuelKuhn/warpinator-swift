@@ -10,10 +10,6 @@ import SwiftUI
 
 import Combine
 
-#if canImport(AppKit)
-import AppKit
-#endif
-
 import UniformTypeIdentifiers
 
 extension String: Identifiable {
@@ -369,12 +365,7 @@ extension TransferOpView {
             print("localurls:")
             print(transferOp.localSaveUrls)
             
-            #if os(macOS)
-            NSWorkspace.shared.activateFileViewerSelecting(transferOp.localSaveUrls)
-            #endif
-            
-            //TODO: Show file location on iOS
-            
+            openFilesApp(urls: transferOp.localSaveUrls)
         }
 
         var bag: Set<AnyCancellable> = .init()
@@ -388,6 +379,7 @@ extension TransferOpView {
         }
     }
 }
+
 
 #if DEBUG
 
