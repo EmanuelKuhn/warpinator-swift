@@ -24,5 +24,24 @@ platform :ios do
       cloned_source_packages_path: "SourcePackages"
     )
   end
+  
+end
+
+platform :mac do
+  
+    lane :tests do
+      run_tests(
+        scheme: "warpinator-project (macOS)",
+        cloned_source_packages_path: "SourcePackages"
+      )
+    end
+
+    lane :build do
+      build_app(  
+        scheme: "warpinator-project (macOS)",
+        cloned_source_packages_path: "SourcePackages",
+        export_method: "mac-application"
+      )
+    end
 end
 
