@@ -1,6 +1,6 @@
-# Warpinator swift
+# Warpinator for macOS and iOS
 
-An unoffical implementation of [Warpinator](https://github.com/linuxmint/warpinator) for macOS and iOS devices. The UI is implemented in swiftUI so that almost all code can be shared between the macOS and iOS versions.
+Warpinator-swift is an unoffical implementation of [Warpinator](https://github.com/linuxmint/warpinator) for macOS and iOS devices. The UI is implemented in swiftUI so that almost all code can be shared between the macOS and iOS versions.
 
 ## Download
 
