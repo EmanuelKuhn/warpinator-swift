@@ -46,10 +46,12 @@ platform :mac do
     end
 
     lane :build do
-      build_app(  
+      build_app(
         scheme: "warpinator-project (macOS)",
         cloned_source_packages_path: "SourcePackages",
-        export_method: "mac-application"
+        export_method: "mac-application",
+        configuration: "Release",
+        output_directory: "release"
       )
     end
 end
