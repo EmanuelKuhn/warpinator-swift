@@ -86,7 +86,11 @@ jobs:
       - store_artifacts:
           path: output
           destination: scan-output
-      
+          
+      - store_artifacts:
+          path: warpinator-project.app
+          destination: warpinator-project.app
+          
       - save_cache:
           paths:
             - SourcePackages/
