@@ -97,6 +97,18 @@ jobs:
           paths:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+          
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./release
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=0.0.1
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./release/
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
@@ -110,3 +122,11 @@ workflows:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - mac_build_only
+      - publish-github-release:
+        requires:
+            - mac_build_only
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
