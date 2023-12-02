@@ -123,10 +123,10 @@ workflows:
     jobs:
       - mac_build_only
       - publish-github-release:
-        requires:
-          - mac_build_only
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^\d+\.\d+\.\d+$/
+          requires:
+            - mac_build_only
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
