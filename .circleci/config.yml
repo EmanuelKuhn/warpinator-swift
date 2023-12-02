@@ -77,12 +77,6 @@ jobs:
           name: fastlane build mac application
           command: bundle exec fastlane mac build
 
-      - run: ls -a output
-      
-      - run: ls -a
-      
-      - run: pwd
-
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
       - store_test_results:
@@ -90,16 +84,19 @@ jobs:
       - store_artifacts:
           path: output
           destination: scan-output
+    
+      - run:
+          name: zip warpinator-project.app
+          command: zip -r release/warpinator-project.app.zip release/warpinator-project.app
           
       - store_artifacts:
-          path: warpinator-project.app
-          destination: warpinator-project.app
+          path: release/warpinator-project.app.zip
+          destination: warpinator-project.app.zip
           
       - save_cache:
           paths:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
