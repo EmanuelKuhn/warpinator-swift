@@ -4,104 +4,34 @@
 # https://circleci.com/docs/testing-ios/
 version: 2.1
 
-orbs:
-  ruby: circleci/ruby@1.2.0
-
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  build_ios:
+  build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
     macos:
-      xcode: 13.4.1 # Specify the Xcode version to use
-
-    environment:
-      FL_OUTPUT_DIR: output
+      xcode: 12.5.1 # Specify the Xcode version to use
 
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
-      
-      - ruby/install-deps
-
-      - restore_cache:
-          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-          
-      # - run: pod install # Install CocoaPods dependencies
-      - run:
-          name: fastlane ios test
-          command: bundle exec fastlane ios tests
-      
-      - run: ls -a output
+      - run: pod install # Install CocoaPods dependencies
+      - run: fastlane scan # Run tests using Fastlane
 
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
       - store_test_results:
-          path: output/scan
+          path: test_output
       - store_artifacts:
-          path: output
+          path: test_output
           destination: scan-output
-      
-      - save_cache:
-          paths:
-            - SourcePackages/
-          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-
-  mac_build_only:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
-    macos:
-      xcode: 13.4.1 # Specify the Xcode version to use
-
-    environment:
-      FL_OUTPUT_DIR: output
-
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
-    steps:
-      - checkout
-      
-      - ruby/install-deps
-
-      - restore_cache:
-          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-          
-      # - run: pod install # Install CocoaPods dependencies
-      # - run:
-      #     name: fastlane mac test
-      #     command: bundle exec fastlane mac tests
-      
-      - run:
-          name: fastlane build mac application
-          command: bundle exec fastlane mac build
-
-      - run: ls -a output
-
-      # Collect XML test results data to show in the UI, and save the same XML
-      # files under test-results folder in the Artifacts tab
-      - store_test_results:
-          path: output/scan
-      - store_artifacts:
-          path: output
-          destination: scan-output
-      
-      - save_cache:
-          paths:
-            - SourcePackages/
-          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  ios: # This is the name of the workflow, feel free to change it to better match your workflow.
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build_ios
-  
-  mac: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
-    jobs:
-      - mac_build_only
+      - build
