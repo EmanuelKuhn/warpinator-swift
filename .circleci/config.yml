@@ -23,17 +23,17 @@ jobs:
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
-      
+
       - ruby/install-deps
 
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-          
+
       # - run: pod install # Install CocoaPods dependencies
       - run:
           name: fastlane ios test
           command: bundle exec fastlane ios tests
-      
+
       - run: ls -a output
 
       # Collect XML test results data to show in the UI, and save the same XML
@@ -43,7 +43,7 @@ jobs:
       - store_artifacts:
           path: output
           destination: scan-output
-      
+
       - save_cache:
           paths:
             - SourcePackages/
@@ -62,17 +62,17 @@ jobs:
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
-      
+
       - ruby/install-deps
 
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-          
+
       # - run: pod install # Install CocoaPods dependencies
       # - run:
       #     name: fastlane mac test
       #     command: bundle exec fastlane mac tests
-      
+
       - run:
           name: fastlane build mac application
           command: bundle exec fastlane mac build
@@ -84,20 +84,20 @@ jobs:
       - store_artifacts:
           path: output
           destination: scan-output
-    
+
       - run:
           name: zip warpinator-project.app
           command: zip -r release/warpinator-project.app.zip release/warpinator-project.app
-          
+
       - store_artifacts:
           path: release/warpinator-project.app.zip
           destination: warpinator-project.app.zip
-          
+
       - save_cache:
           paths:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-          
+
   publish-github-release:
     docker:
       - image: cibuilds/github:0.10
@@ -113,11 +113,11 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-#  ios: # This is the name of the workflow, feel free to change it to better match your workflow.
-#    # Inside the workflow, you define the jobs you want to run.
-#    jobs:
-#      - build_ios
-  
+  #  ios: # This is the name of the workflow, feel free to change it to better match your workflow.
+  #    # Inside the workflow, you define the jobs you want to run.
+  #    jobs:
+  #      - build_ios
+
   mac: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
