@@ -117,7 +117,7 @@ jobs:
           name: "Publish Release on GitHub"
           command: |
             VERSION=0.0.1
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./release/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -b "Release uploaded from circleci job: ${CIRCLE_BUILD_URL}" -delete -soft -prerelease "v${VERSION}" ./release/
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
