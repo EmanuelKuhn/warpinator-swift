@@ -130,7 +130,7 @@ workflows:
           requires:
             - mac_build_only
           filters:
-            branches:
-              ignore: /.*/
+            # branches:
+            #   ignore: /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
