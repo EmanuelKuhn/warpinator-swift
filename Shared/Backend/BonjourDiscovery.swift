@@ -109,8 +109,8 @@ class BonjourDiscovery: PeerDiscovery {
         
     private func addOrUpdatePeer(peer: MDNSPeer) {
         if peer.txtRecord["type"] != "flush" {
-            // Ignore own name
-            if peer.name != config.identity {
+            // Ignore own name (|| true is added for debugging to check if sending to self even works)
+            if peer.name != config.identity || true {
                 self.onRemotesChanged(.added(peer: peer))
             }
         }

@@ -21,9 +21,7 @@
 		4C3F86BB27E7B93200555A83 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F86B927E7B93200555A83 /* Utils.swift */; };
 		4C418C352801C98700E01D60 /* FileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C418C342801C98700E01D60 /* FileProvider.swift */; };
 		4C418C362801C98700E01D60 /* FileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C418C342801C98700E01D60 /* FileProvider.swift */; };
-		4C4A739C27B3D2D6004EDA61 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739B27B3D2D6004EDA61 /* Tests_iOS.swift */; };
 		4C4A739E27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A739D27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift */; };
-		4C4A73A827B3D2D6004EDA61 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */; };
 		4C4A73AA27B3D2D6004EDA61 /* Tests_macOSLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A73A927B3D2D6004EDA61 /* Tests_macOSLaunchTests.swift */; };
 		4C4A73AB27B3D2D6004EDA61 /* warpinator_projectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A738327B3D2D4004EDA61 /* warpinator_projectApp.swift */; };
 		4C4A73AC27B3D2D6004EDA61 /* warpinator_projectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4A738327B3D2D4004EDA61 /* warpinator_projectApp.swift */; };
@@ -162,10 +160,8 @@
 		4C4A739027B3D2D5004EDA61 /* warpinator-project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "warpinator-project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C4A739227B3D2D5004EDA61 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		4C4A739727B3D2D6004EDA61 /* Tests iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C4A739B27B3D2D6004EDA61 /* Tests_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOS.swift; sourceTree = "<group>"; };
 		4C4A739D27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOSLaunchTests.swift; sourceTree = "<group>"; };
 		4C4A73A327B3D2D6004EDA61 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		4C4A73A927B3D2D6004EDA61 /* Tests_macOSLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOSLaunchTests.swift; sourceTree = "<group>"; };
 		4C4A73CC27B3FB89004EDA61 /* warp.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = warp.grpc.swift; sourceTree = "<group>"; };
 		4C4A73CE27B3FB8A004EDA61 /* warp.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = warp.proto; sourceTree = "<group>"; };
@@ -341,7 +337,6 @@
 		4C4A739A27B3D2D6004EDA61 /* Tests iOS */ = {
 			isa = PBXGroup;
 			children = (
-				4C4A739B27B3D2D6004EDA61 /* Tests_iOS.swift */,
 				4C4A739D27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift */,
 			);
 			path = "Tests iOS";
@@ -350,7 +345,6 @@
 		4C4A73A627B3D2D6004EDA61 /* Tests macOS */ = {
 			isa = PBXGroup;
 			children = (
-				4C4A73A727B3D2D6004EDA61 /* Tests_macOS.swift */,
 				4C4A73A927B3D2D6004EDA61 /* Tests_macOSLaunchTests.swift */,
 			);
 			path = "Tests macOS";
@@ -789,7 +783,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C4A739E27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift in Sources */,
-				4C4A739C27B3D2D6004EDA61 /* Tests_iOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -798,7 +791,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C4A73AA27B3D2D6004EDA61 /* Tests_macOSLaunchTests.swift in Sources */,
-				4C4A73A827B3D2D6004EDA61 /* Tests_macOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1071,10 +1063,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6THNG9YB47;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1087,6 +1082,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-project";
 				PRODUCT_NAME = "warpinator-project";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1099,10 +1096,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6THNG9YB47;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1115,6 +1115,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-project";
 				PRODUCT_NAME = "warpinator-project";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
