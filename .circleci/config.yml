@@ -101,6 +101,11 @@ jobs:
           paths:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+      
+      - persist_to_workspace:
+          root: ./release
+          paths:
+            - warpinator-project.app.zip
 
   publish-github-release:
     docker:
