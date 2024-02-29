@@ -92,3 +92,11 @@ iOSInjectionProject/
 
 
 Shared\ (original)
+
+
+
+SourcePackages
+build
+
+
+*.app
