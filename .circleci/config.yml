@@ -149,6 +149,7 @@ jobs:
   publish-github-release:
     docker:
       - image: emanuelk/github-ghr:0.16.2
+    resource_class: medium
     steps:
       - attach_workspace:
           at: ./release
