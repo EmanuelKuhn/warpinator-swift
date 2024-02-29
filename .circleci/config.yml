@@ -173,10 +173,10 @@ workflows:
           requires:
             - mac_release_build
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
 
   ios: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
