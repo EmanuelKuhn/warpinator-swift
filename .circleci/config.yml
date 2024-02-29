@@ -109,7 +109,7 @@ jobs:
 
   publish-github-release:
     docker:
-      - image: cibuilds/github:0.10
+      - image: emanuelk/github-ghr:0.16.2
     steps:
       - attach_workspace:
           at: ./release
