@@ -159,8 +159,10 @@ jobs:
             # Check that CIRCLE_TAG is set (i.e. this build is run because of a tag)
             [ -z "$CIRCLE_TAG" ] && echo "CIRCLE_TAG is not set or is empty" && exit 1
 
-            VERSION=$CIRCLE_TAG
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -b "Release uploaded from circleci job: ${CIRCLE_BUILD_URL}" -delete -soft -prerelease "v${VERSION}" ./release/
+            # Version string as used for github release / tag
+            VERSION="v${CIRCLE_TAG}-alpha"
+
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -b "Release uploaded from circleci job: ${CIRCLE_BUILD_URL}." -delete -soft -prerelease "${VERSION}" ./release/
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
