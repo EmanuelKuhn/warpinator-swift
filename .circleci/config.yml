@@ -165,11 +165,17 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  mac: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+
+  mac:
     jobs:
-      # - test_mac
-      - mac_release_build
+
+      # Should run for all branches, and tags for which a release should be published
+      - mac_release_build:
+          filters:  # required since `publish-github-release` has tag filters AND requires `build`
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+
+      # Should only run for tags in the form of x.y.z
       - publish-github-release:
           requires:
             - mac_release_build
