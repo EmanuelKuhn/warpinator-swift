@@ -50,7 +50,7 @@ platform :mac do
 
       # Ensure that a Git tag is present for a release build
       unless ENV["CIRCLE_TAG"]
-        UI.important!("Should be run on a tag to set version number")
+        UI.important("Should be run on a tag to set version number")
       else
         increment_version_number(version_number: ENV["CIRCLE_TAG"])
       end
