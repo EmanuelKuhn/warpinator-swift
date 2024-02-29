@@ -10,7 +10,7 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  build_ios:
+  test_ios:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
     macos:
@@ -49,7 +49,7 @@ jobs:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
-  mac_build_only:
+  mac_release_build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
     macos:
@@ -67,11 +67,6 @@ jobs:
 
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
-
-      # - run: pod install # Install CocoaPods dependencies
-      # - run:
-      #     name: fastlane mac test
-      #     command: bundle exec fastlane mac tests
 
       - run:
           name: fastlane build mac application
@@ -92,6 +87,10 @@ jobs:
       - run:
           name: zip warpinator-project.app
           command: zip -r release/warpinator-project.app.zip release/warpinator-project.app
+      
+      - run:
+          name: compute sha256sum checksum of warpinator-project.app.zip
+          command: shasum -a 256 release/warpinator-project.app.zip
 
       - store_artifacts:
           path: release/warpinator-project.app.zip
@@ -107,6 +106,42 @@ jobs:
           paths:
             - warpinator-project.app.zip
 
+  test_mac:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
+    macos:
+      xcode: 13.4.1 # Specify the Xcode version to use
+
+    environment:
+      FL_OUTPUT_DIR: output
+
+    # Add steps to the job
+    # See: https://circleci.com/docs/configuration-reference/#steps
+    steps:
+      - checkout
+
+      - ruby/install-deps
+
+      - restore_cache:
+          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+
+      - run:
+          name: fastlane test mac application
+          command: bundle exec fastlane mac tests
+      
+      # Collect XML test results data to show in the UI, and save the same XML
+      # files under test-results folder in the Artifacts tab
+      - store_test_results:
+          path: output/scan
+      - store_artifacts:
+          path: output
+          destination: scan-output
+
+      - save_cache:
+          paths:
+            - SourcePackages/
+          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+
   publish-github-release:
     docker:
       - image: emanuelk/github-ghr:0.16.2
@@ -116,7 +151,10 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=0.0.1
+            # Check that CIRCLE_TAG is set (i.e. this build is run because of a tag)
+            [ -z "$CIRCLE_TAG" ] && echo "CIRCLE_TAG is not set or is empty" && exit 1
+
+            VERSION=CIRCLE_TAG
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -b "Release uploaded from circleci job: ${CIRCLE_BUILD_URL}" -delete -soft -prerelease "v${VERSION}" ./release/
 
 # Invoke jobs via workflows
@@ -125,18 +163,19 @@ workflows:
   mac: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - mac_build_only
+      - test_mac
       - publish-github-release:
           requires:
-            - mac_build_only
+            - test_mac
+            - mac_release_build
           filters:
-            # branches:
-            #   ignore: /.*/
+            branches:
+              ignore: /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
-  
+
   ios: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build_ios
+      - test_ios
 
