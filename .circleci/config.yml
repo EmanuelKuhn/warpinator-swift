@@ -165,8 +165,7 @@ jobs:
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -b "Release uploaded from circleci job: ${CIRCLE_BUILD_URL}." -delete -soft -prerelease "${VERSION}" ./release/
 
             # Delete the initial tag:
-            git tag -d ${CIRCLE_TAG}            # Delete local tag
-            git push origin :${CIRCLE_TAG}      # Delete remote tag
+            curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/git/refs/tags/${CIRCLE_TAG}"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
