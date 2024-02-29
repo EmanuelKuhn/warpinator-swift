@@ -168,9 +168,11 @@ workflows:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - test_mac
-      - publish-github-release:
+      - mac_release_build:
           requires:
             - test_mac
+      - publish-github-release:
+          requires:
             - mac_release_build
           filters:
             branches:
