@@ -110,6 +110,9 @@ platform :mac do
         configuration: "Release",
         output_directory: "release"
       )
+
+      notarize
+
     end
 end
 

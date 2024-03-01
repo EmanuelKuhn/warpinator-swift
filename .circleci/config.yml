@@ -78,6 +78,7 @@ jobs:
 
     environment:
       FL_OUTPUT_DIR: output
+      FL_NOTARIZE_PACKAGE: output/warpinator-project.app
 
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
