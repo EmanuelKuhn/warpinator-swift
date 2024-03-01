@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
+### ios adhoc
+
+```sh
+[bundle exec] fastlane ios adhoc
+```
+
+Ad-hoc build
+
 ----
 
 
@@ -32,6 +40,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ```sh
 [bundle exec] fastlane mac tests
+```
+
+
+
+### mac increment_version_and_build_number
+
+```sh
+[bundle exec] fastlane mac increment_version_and_build_number
 ```
 
 
