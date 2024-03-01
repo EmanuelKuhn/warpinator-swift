@@ -50,6 +50,25 @@ platform :mac do
 
     before_all do
       setup_circle_ci
+
+      cert_url = "https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer"
+
+      filename = "DeveloperIDG2CA.cer"
+  
+      # build command
+      import_command = "curl -f -o #{filename} #{cert_url} && security import #{filename} && rm #{filename}"
+      # Executes command
+      stdout, stderr, status = Open3.capture3(import_command)
+      unless status.success?
+        unless stderr.include?("The specified item already exists in the keychain.")
+          UI.command_output(stdout)
+          UI.command_output(stderr)
+
+          UI.user_error!("Could not install certificate")
+        end
+        UI.verbose("The Certificate was already installed")
+      end
+  
     end
   
     lane :tests do
