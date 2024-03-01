@@ -93,8 +93,8 @@ platform :mac do
   
     lane :tests do
       
-      match(type: "development", 
-            app_identifier: "io.github.emanuelkuhn.*")
+      # match(type: "development", 
+            # app_identifier: "io.github.emanuelkuhn.*")
 
       run_tests(
         scheme: "warpinator-project (macOS)",
