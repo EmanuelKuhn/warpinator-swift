@@ -63,6 +63,32 @@ platform :ios do
       output_name: "warpinator-swift.ipa"
     )
   end
+
+
+  desc "Upload to Testflight"
+  lane :upload_testflight do
+    increment_version_and_build_number
+
+    match(type: "appstore")
+
+    gym(
+      scheme: "warpinator-project (iOS)",
+      export_method: "app-store",
+      output_name: "warpinator-swift.ipa"
+    )
+
+    app_store_connect_api_key
+
+    pilot(
+      ipa: "warpinator-swift.ipa",
+      distribute_external: false,
+      skip_submission: true,
+      # notify_external_testers: false,
+      groups: ["warpinator internal test group automatic"],
+      changelog: "This is another new build from CircleCI!"
+    )
+
+  end
   
 end
 
