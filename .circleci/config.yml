@@ -91,10 +91,6 @@ jobs:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
       - run:
-          name: fastlane set version and build number
-          command: bundle exec fastlane mac increment_version_and_build_number
-
-      - run:
           name: fastlane build mac application
           command: bundle exec fastlane mac build
       
