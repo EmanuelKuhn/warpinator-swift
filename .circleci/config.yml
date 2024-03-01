@@ -49,6 +49,27 @@ jobs:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
+  adhoc:
+    macos:
+      xcode: 13.4.1
+    environment:
+      FL_OUTPUT_DIR: output
+      FASTLANE_LANE: adhoc
+    steps:
+      - checkout
+      - ruby/install-deps
+
+      - restore_cache:
+          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+
+      - run:
+          name: Fastlane
+          command: bundle exec fastlane $FASTLANE_LANE
+
+      - store_artifacts:
+          path: output/gym/warpinator-swift.ipa
+
+
   mac_release_build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor

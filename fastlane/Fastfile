@@ -29,6 +29,15 @@ platform :ios do
       include_simulator_logs: false
     )
   end
+
+  desc "Ad-hoc build"
+  lane :adhoc do
+    match(type: "adhoc")
+    gym(
+      export_method: "ad-hoc",
+      output_name: "warpinator-swift.ipa"
+    )
+  end
   
 end
 
