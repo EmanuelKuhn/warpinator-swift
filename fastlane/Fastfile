@@ -110,6 +110,11 @@ platform :mac do
         configuration: "Release",
         output_directory: "release"
       )
+
+      app_store_connect_api_key
+
+      notarize(package: "release/warpinator-project.app")
+
     end
 end
 
