@@ -101,10 +101,6 @@ jobs:
       - store_artifacts:
           path: output
           destination: scan-output
-
-      - run:
-          name: zip warpinator-project.app
-          command: zip -r release/warpinator-project.app.zip release/warpinator-project.app
       
       - run:
           name: compute sha256sum checksum of warpinator-project.app.zip
