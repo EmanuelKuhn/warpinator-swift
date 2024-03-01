@@ -49,11 +49,14 @@ platform :ios do
 
   desc "Ad-hoc build"
   lane :adhoc do
+    increment_version_and_build_number
+
     match(
       type: "adhoc",
       # skip_set_partition_list: true,
       profile_name: "ad-hoc profile"
     )
+
     gym(
       scheme: "warpinator-project (iOS)",
       export_method: "ad-hoc",
