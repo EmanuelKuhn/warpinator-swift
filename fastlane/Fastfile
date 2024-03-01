@@ -32,8 +32,13 @@ platform :ios do
 
   desc "Ad-hoc build"
   lane :adhoc do
-    match(type: "adhoc")
+    match(
+      type: "adhoc",
+      # skip_set_partition_list: true,
+      profile_name: "ad-hoc profile"
+    )
     gym(
+      scheme: "warpinator-project (iOS)",
       export_method: "ad-hoc",
       output_name: "warpinator-swift.ipa"
     )
@@ -48,10 +53,13 @@ platform :mac do
     end
   
     lane :tests do
+      
+      match(type: "development", 
+            app_identifier: "io.github.emanuelkuhn.*")
+
       run_tests(
         scheme: "warpinator-project (macOS)",
-        cloned_source_packages_path: "SourcePackages",
-        xcargs: "-allowProvisioningUpdates"
+        cloned_source_packages_path: "SourcePackages"
       )
     end
 
@@ -74,7 +82,7 @@ platform :mac do
 
     lane :build do
 
-      match(type: "developer_id")
+      match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
 
       build_app(
         scheme: "warpinator-project (macOS)",
