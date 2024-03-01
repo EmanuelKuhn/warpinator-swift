@@ -74,6 +74,7 @@ platform :ios do
     gym(
       scheme: "warpinator-project (iOS)",
       export_method: "app-store",
+      skip_profile_detection: true,
       output_name: "warpinator-swift.ipa"
     )
 
