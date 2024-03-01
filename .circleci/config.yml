@@ -213,6 +213,9 @@ workflows:
           filters:  # required since `publish-github-release` has tag filters AND requires `build`
             tags:
               only: /^\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+
 
       # Should only run for tags in the form of x.y.z
       - publish-github-release:
