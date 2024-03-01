@@ -116,6 +116,8 @@ platform :mac do
         output_directory: "release"
       )
 
+      app_store_connect_api_key
+
       notarize
 
     end
