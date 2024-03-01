@@ -15,6 +15,23 @@
 
 default_platform(:ios)
 
+lane :increment_version_and_build_number do
+
+  # Ensure that a Git tag is present for a release build
+  unless ENV["CIRCLE_TAG"]
+    UI.important("Should be run on a tag to set version number")
+  else
+    increment_version_number(version_number: ENV["CIRCLE_TAG"])
+  end
+
+  unless ENV["CIRCLE_BUILD_NUM"]
+    UI.user_error!("Expected CIRCLE_BUILD_NUM to be set")
+    return
+  end
+
+  increment_build_number(build_number: ENV["CIRCLE_BUILD_NUM"])
+end
+
 platform :ios do
 
   before_all do
@@ -82,24 +99,9 @@ platform :mac do
       )
     end
 
-    lane :increment_version_and_build_number do
-
-      # Ensure that a Git tag is present for a release build
-      unless ENV["CIRCLE_TAG"]
-        UI.important("Should be run on a tag to set version number")
-      else
-        increment_version_number(version_number: ENV["CIRCLE_TAG"])
-      end
-    
-      unless ENV["CIRCLE_BUILD_NUM"]
-        UI.user_error!("Expected CIRCLE_BUILD_NUM to be set")
-        return
-      end
-    
-      increment_build_number(build_number: ENV["CIRCLE_BUILD_NUM"])
-    end
-
     lane :build do
+
+      increment_version_and_build_number
 
       match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
 
