@@ -1017,9 +1017,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-project";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-swift";
 				PRODUCT_NAME = "warpinator-project";
-				PROVISIONING_PROFILE_SPECIFIER = "development profile *";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.github.emanuelkuhn.*";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1032,7 +1032,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4378CNN9DG;
@@ -1050,9 +1050,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-project";
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.emanuelkuhn.warpinator;
 				PRODUCT_NAME = "warpinator-project";
-				PROVISIONING_PROFILE_SPECIFIER = "development profile *";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc io.github.emanuelkuhn.warpinator";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1082,7 +1082,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-project";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-swift";
 				PRODUCT_NAME = "warpinator-project";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -1097,7 +1097,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1112,7 +1112,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-project";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-swift";
 				PRODUCT_NAME = "warpinator-project";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -1134,7 +1134,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.Tests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "development profile *";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.github.emanuelkuhn.*";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -1157,7 +1157,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.Tests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "development profile *";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.github.emanuelkuhn.*";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
