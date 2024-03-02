@@ -120,6 +120,8 @@ platform :mac do
   
     lane :tests do
       
+      match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
+
       # match(type: "development", 
             # app_identifier: "io.github.emanuelkuhn.*")
 
