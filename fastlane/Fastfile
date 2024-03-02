@@ -130,7 +130,9 @@ platform :mac do
 
       run_tests(
         scheme: "warpinator-project (macOS)",
-        cloned_source_packages_path: "SourcePackages"
+        cloned_source_packages_path: "SourcePackages",
+        skip_detect_devices: true,
+        include_simulator_logs: false
       )
     end
 
