@@ -81,7 +81,7 @@ platform :ios do
     app_store_connect_api_key
 
     pilot(
-      ipa: "warpinator-swift.ipa",
+      ipa: "output/gym/warpinator-swift.ipa",
       distribute_external: false,
       skip_submission: true,
       # notify_external_testers: false,
