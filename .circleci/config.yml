@@ -54,7 +54,7 @@ jobs:
       xcode: 13.4.1
     environment:
       FL_OUTPUT_DIR: output
-      FASTLANE_LANE: adhoc
+      FASTLANE_LANE: ios adhoc
     steps:
       - checkout
       - ruby/install-deps
@@ -74,7 +74,7 @@ jobs:
       xcode: 13.4.1
     environment:
       FL_OUTPUT_DIR: output
-      FASTLANE_LANE: upload_testflight
+      FASTLANE_LANE: ios upload_testflight
     steps:
       - checkout
       - ruby/install-deps
