@@ -24,8 +24,9 @@ jobs:
     steps:
       - checkout
 
-      - ruby/install-deps
-
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
@@ -61,8 +62,9 @@ jobs:
       FASTLANE_LANE: ios adhoc
     steps:
       - checkout
-      - ruby/install-deps
-
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
@@ -81,8 +83,9 @@ jobs:
       FASTLANE_LANE: ios upload_testflight
     steps:
       - checkout
-      - ruby/install-deps
-
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
@@ -109,8 +112,9 @@ jobs:
     steps:
       - checkout
 
-      - ruby/install-deps
-
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
@@ -158,7 +162,9 @@ jobs:
     steps:
       - checkout
 
-      - ruby/install-deps
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
 
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
