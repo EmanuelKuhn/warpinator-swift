@@ -30,6 +30,10 @@ jobs:
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
+      - run:
+          name: Log available sdk versions
+          command: xcrun simctl list runtimes
+
       # - run: pod install # Install CocoaPods dependencies
       - run:
           name: fastlane ios test
