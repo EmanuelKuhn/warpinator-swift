@@ -13,7 +13,7 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:ios)
+# default_platform(:ios)
 
 lane :increment_version_and_build_number do
 
