@@ -13,7 +13,7 @@ import NIOCore
 import NIOPosix
 import GRPC
 
-#if !canImport(UIKit)
+#if os(macOS)
 import AppKit
 #endif
 
