@@ -211,7 +211,10 @@ workflows:
   mac:
     jobs:
 
-      - test_mac
+      - test_mac:
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
 
       # Should run for all branches, and tags for which a release should be published
       - mac_release_build:
