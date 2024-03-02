@@ -112,9 +112,8 @@ jobs:
     steps:
       - checkout
 
-      - ruby/install-deps:
-          key: "gems-xcode15"
-          
+      - ruby/install-deps
+
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
@@ -162,9 +161,7 @@ jobs:
     steps:
       - checkout
 
-      - ruby/install-deps:
-          key: "gems-xcode15"
-          
+      - ruby/install-deps
 
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
