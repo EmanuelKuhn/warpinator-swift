@@ -42,6 +42,7 @@ platform :ios do
     run_tests(
       scheme: "Tests Shared (iOS)",
       device: "iPhone 13 mini",
+      sdk: "iOS 17.0",
       cloned_source_packages_path: "SourcePackages",
       include_simulator_logs: false
     )
@@ -59,6 +60,7 @@ platform :ios do
 
     gym(
       scheme: "warpinator-project (iOS)",
+      sdk: "iOS 17.0",
       export_method: "ad-hoc",
       output_name: "warpinator-swift.ipa"
     )
@@ -73,6 +75,7 @@ platform :ios do
 
     gym(
       scheme: "warpinator-project (iOS)",
+      sdk: "iOS 17.0",
       export_method: "app-store",
       skip_profile_detection: true,
       output_name: "warpinator-swift.ipa"
