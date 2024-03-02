@@ -11,6 +11,12 @@
 		4C1443B527E7290000F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B427E7290000F87557 /* Shield */; };
 		4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
 		4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
+		4C195A8D2B931A4800E18958 /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
+		4C195A8E2B931A4800E18958 /* TransferDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */; };
+		4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
+		4C195A902B931A4800E18958 /* WarpIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */; };
+		4C195A912B931A4800E18958 /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
+		4C195A922B931A4800E18958 /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
 		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
 		4C39E80927E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
@@ -116,6 +122,13 @@
 			remoteGlobalIDString = 4C4A738927B3D2D5004EDA61;
 			remoteInfo = "warpinator-project (iOS)";
 		};
+		4C195A892B931A4800E18958 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C4A738F27B3D2D5004EDA61;
+			remoteInfo = "warpinator-project (macOS)";
+		};
 		4C3F86AD27E7AFE000555A83 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C4A737E27B3D2D4004EDA61 /* Project object */;
@@ -148,6 +161,7 @@
 
 /* Begin PBXFileReference section */
 		4C1443B627E7A2E600F87557 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
+		4C195A982B931A4800E18958 /* Tests Shared (macOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (macOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C39E80727E8C89F000F0ACD /* TransferOp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOp.swift; sourceTree = "<group>"; };
 		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3F86B627E7B87700555A83 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
@@ -207,6 +221,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4C195A932B931A4800E18958 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C3F86A627E7AFE000555A83 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -322,6 +343,7 @@
 				4C4A73A327B3D2D6004EDA61 /* Tests macOS.xctest */,
 				4CDD570927B982CA00A9B537 /* warpinator-projectTests.xctest */,
 				4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */,
+				4C195A982B931A4800E18958 /* Tests Shared (macOS).xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -447,6 +469,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4C195A872B931A4800E18958 /* Tests Shared (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C195A952B931A4800E18958 /* Build configuration list for PBXNativeTarget "Tests Shared (macOS)" */;
+			buildPhases = (
+				4C195A8C2B931A4800E18958 /* Sources */,
+				4C195A932B931A4800E18958 /* Frameworks */,
+				4C195A942B931A4800E18958 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C195A882B931A4800E18958 /* PBXTargetDependency */,
+			);
+			name = "Tests Shared (macOS)";
+			productName = "warpinator-projectTests";
+			productReference = 4C195A982B931A4800E18958 /* Tests Shared (macOS).xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4C3F86A827E7AFE000555A83 /* Tests Shared (iOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4C3F86AF27E7AFE000555A83 /* Build configuration list for PBXNativeTarget "Tests Shared (iOS)" */;
@@ -624,12 +664,20 @@
 				4C4A739627B3D2D6004EDA61 /* Tests iOS */,
 				4C4A73A227B3D2D6004EDA61 /* Tests macOS */,
 				4CDD570827B982CA00A9B537 /* warpinator-projectTests */,
+				4C195A872B931A4800E18958 /* Tests Shared (macOS) */,
 				4C3F86A827E7AFE000555A83 /* Tests Shared (iOS) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4C195A942B931A4800E18958 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C3F86A727E7AFE000555A83 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -677,6 +725,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4C195A8C2B931A4800E18958 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C195A8D2B931A4800E18958 /* TestWarpInstance.swift in Sources */,
+				4C195A8E2B931A4800E18958 /* TransferDownloaderTests.swift in Sources */,
+				4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */,
+				4C195A902B931A4800E18958 /* WarpIntegrationTests.swift in Sources */,
+				4C195A912B931A4800E18958 /* TestDiscovery.swift in Sources */,
+				4C195A922B931A4800E18958 /* helpers.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C3F86A527E7AFE000555A83 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -815,6 +876,11 @@
 			target = 4C4A738927B3D2D5004EDA61 /* warpinator-project (iOS) */;
 			targetProxy = 4C1443BD27E7A7CE00F87557 /* PBXContainerItemProxy */;
 		};
+		4C195A882B931A4800E18958 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C4A738F27B3D2D5004EDA61 /* warpinator-project (macOS) */;
+			targetProxy = 4C195A892B931A4800E18958 /* PBXContainerItemProxy */;
+		};
 		4C3F86AE27E7AFE000555A83 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4C4A738927B3D2D5004EDA61 /* warpinator-project (iOS) */;
@@ -838,6 +904,48 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4C195A962B931A4800E18958 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4378CNN9DG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-projectTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/warpinator-project.app/Contents/MacOS/warpinator-project";
+			};
+			name = Debug;
+		};
+		4C195A972B931A4800E18958 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4378CNN9DG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.emanuelkuhn.warpinator-projectTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/warpinator-project.app/Contents/MacOS/warpinator-project";
+			};
+			name = Release;
+		};
 		4C3F86B027E7AFE000555A83 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1068,7 +1176,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4378CNN9DG;
@@ -1214,8 +1322,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4378CNN9DG;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1235,8 +1343,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4378CNN9DG;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1255,6 +1363,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C195A952B931A4800E18958 /* Build configuration list for PBXNativeTarget "Tests Shared (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C195A962B931A4800E18958 /* Debug */,
+				4C195A972B931A4800E18958 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4C3F86AF27E7AFE000555A83 /* Build configuration list for PBXNativeTarget "Tests Shared (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
