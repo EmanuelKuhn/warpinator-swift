@@ -119,7 +119,7 @@ jobs:
 
       - run:
           name: fastlane build mac application
-          command: bundle exec fastlane mac build
+          command: bundle exec fastlane mac build --verbose
       
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
@@ -168,7 +168,7 @@ jobs:
 
       - run:
           name: fastlane test mac application
-          command: bundle exec fastlane mac tests
+          command: bundle exec fastlane mac tests --verbose
       
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
