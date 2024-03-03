@@ -214,6 +214,8 @@ workflows:
           filters:
             tags:
               only: /^\d+\.\d+\.\d+$/
+            branches:
+              only: main
 
       # Should run for all branches, and tags for which a release should be published
       - mac_release_build:
