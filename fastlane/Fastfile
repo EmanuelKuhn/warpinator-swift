@@ -89,7 +89,8 @@ platform :ios do
       skip_submission: true,
       # notify_external_testers: false,
       groups: ["warpinator internal test group automatic"],
-      changelog: "This is another new build from CircleCI!"
+      skip_waiting_for_build_processing: true,
+      # changelog: "This is another new build from CircleCI!"
     )
 
   end
