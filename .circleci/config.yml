@@ -82,6 +82,19 @@ jobs:
       FL_OUTPUT_DIR: output
       FASTLANE_LANE: ios upload_testflight
     steps:
+
+      - run:
+          name: Set version tag
+          command: |
+            if [[ ! $CIRCLE_TAG =~ ^ios-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$ ]]; then
+              echo "Error: Tag format is incorrect. Expected format 'ios-x.y.z' or 'ios-x.y.z-suffix'"
+              exit 1
+            fi
+
+            VERSION=$(echo $CIRCLE_TAG | sed -E 's/^ios-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$/\1/')
+            echo "Version extracted: $VERSION"
+            echo "export VERSION=$VERSION" >> $BASH_ENV
+
       - checkout
       - ruby/install-deps:
           key: "gems-xcode15"
@@ -110,6 +123,18 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
+      - run:
+          name: Set version tag
+          command: |
+            if [[ ! $CIRCLE_TAG =~ ^mac-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$ ]]; then
+              echo "Error: Tag format is incorrect. Expected format 'mac-x.y.z' or 'mac-x.y.z-suffix'"
+              exit 1
+            fi
+
+            VERSION=$(echo $CIRCLE_TAG | sed -E 's/^mac-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$/\1/')
+            echo "Version extracted: $VERSION"
+            echo "export VERSION=$VERSION" >> $BASH_ENV
+
       - checkout
 
       - ruby/install-deps
@@ -213,7 +238,7 @@ workflows:
       - test_mac:
           filters:
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^mac-\d+\.\d+\.\d+(-.+)?$/
             branches:
               only: main
 
@@ -223,7 +248,7 @@ workflows:
             - test_mac
           filters:  # required since `publish-github-release` has tag filters AND requires `build`
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^mac-\d+\.\d+\.\d+(-.+)?$/
             branches:
               ignore: /.*/
 
@@ -234,7 +259,7 @@ workflows:
             - mac_release_build
           filters:
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^mac-\d+\.\d+\.\d+(-.+)?$/
             branches:
               ignore: /.*/
 
@@ -246,6 +271,6 @@ workflows:
       - testflight:
           filters:
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^ios-\d+\.\d+\.\d+(-.+)?$/
             branches:
               ignore: /.*/

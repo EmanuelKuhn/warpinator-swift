@@ -18,10 +18,10 @@
 lane :increment_version_and_build_number do
 
   # Ensure that a Git tag is present for a release build
-  unless ENV["CIRCLE_TAG"]
+  unless ENV["VERSION"]
     UI.important("Should be run on a tag to set version number")
   else
-    increment_version_number(version_number: ENV["CIRCLE_TAG"])
+    increment_version_number(version_number: ENV["VERSION"])
   end
 
   unless ENV["CIRCLE_BUILD_NUM"]
