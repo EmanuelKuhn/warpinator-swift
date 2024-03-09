@@ -238,7 +238,10 @@ workflows:
       - test_mac:
           filters:
             tags:
-              only: /^mac-\d+\.\d+\.\d+(-.+)?$/
+              only: 
+                - /^mac-\d+\.\d+\.\d+(-.+)?$/
+                - /^mac-test/
+                - /^test/
             branches:
               only: main
 
@@ -266,7 +269,15 @@ workflows:
   ios: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      # - test_ios
+      - test_ios:
+          filters:
+            tags:
+              only: 
+                - /^ios-test/
+                - /^test/
+            branches:
+              ignore: /.*/
+
 
       - testflight:
           filters:
