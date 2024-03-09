@@ -54,26 +54,26 @@ jobs:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
-  adhoc:
-    macos:
-      xcode: 15.0.0
-    environment:
-      FL_OUTPUT_DIR: output
-      FASTLANE_LANE: ios adhoc
-    steps:
-      - checkout
-      - ruby/install-deps:
-          key: "gems-xcode15"
+  # adhoc:
+  #   macos:
+  #     xcode: 15.0.0
+  #   environment:
+  #     FL_OUTPUT_DIR: output
+  #     FASTLANE_LANE: ios adhoc
+  #   steps:
+  #     - checkout
+  #     - ruby/install-deps:
+  #         key: "gems-xcode15"
           
-      - restore_cache:
-          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+  #     - restore_cache:
+  #         key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
-      - run:
-          name: Fastlane
-          command: bundle exec fastlane $FASTLANE_LANE
+  #     - run:
+  #         name: Fastlane
+  #         command: bundle exec fastlane $FASTLANE_LANE
 
-      - store_artifacts:
-          path: output/gym/warpinator-swift.ipa
+  #     - store_artifacts:
+  #         path: output/gym/warpinator-swift.ipa
 
   testflight:
     macos:
