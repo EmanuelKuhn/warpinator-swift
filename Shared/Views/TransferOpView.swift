@@ -18,9 +18,9 @@ extension Direction {
     var imageSystemName: String {
         switch self {
         case .upload:
-            return "chevron.up"
+            return "arrow.up.to.line.alt"
         case .download:
-            return "chevron.down"
+            return "arrow.down.to.line.alt"
         }
     }
 }
