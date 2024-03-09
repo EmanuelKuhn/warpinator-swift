@@ -13,7 +13,24 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:ios)
+# default_platform(:ios)
+
+lane :increment_version_and_build_number do
+
+  # Ensure that a Git tag is present for a release build
+  unless ENV["VERSION"]
+    UI.important("Should be run on a tag to set version number")
+  else
+    increment_version_number(version_number: ENV["VERSION"])
+  end
+
+  unless ENV["CIRCLE_BUILD_NUM"]
+    UI.user_error!("Expected CIRCLE_BUILD_NUM to be set")
+    return
+  end
+
+  increment_build_number(build_number: ENV["CIRCLE_BUILD_NUM"])
+end
 
 platform :ios do
 
@@ -25,9 +42,57 @@ platform :ios do
     run_tests(
       scheme: "Tests Shared (iOS)",
       device: "iPhone 13 mini",
+      sdk: "iOS 17.0",
       cloned_source_packages_path: "SourcePackages",
       include_simulator_logs: false
     )
+  end
+
+  desc "Ad-hoc build"
+  lane :adhoc do
+    increment_version_and_build_number
+
+    match(
+      type: "adhoc",
+      # skip_set_partition_list: true,
+      profile_name: "ad-hoc profile"
+    )
+
+    gym(
+      scheme: "warpinator-project (iOS)",
+      sdk: "iOS 17.0",
+      export_method: "ad-hoc",
+      output_name: "warpinator-swift.ipa"
+    )
+  end
+
+
+  desc "Upload to Testflight"
+  lane :upload_testflight do
+    increment_version_and_build_number
+
+    match(type: "appstore")
+
+    gym(
+      scheme: "warpinator-project (iOS)",
+      sdk: "iOS 17.0",
+      export_method: "app-store",
+      skip_profile_detection: true,
+      output_name: "warpinator-swift.ipa"
+    )
+
+    app_store_connect_api_key
+
+    pilot(
+      ipa: "output/gym/warpinator-swift.ipa",
+      distribute_external: false,
+      skip_submission: true,
+      # notify_external_testers: false,
+      groups: ["warpinator internal test group automatic"],
+      skip_waiting_for_build_processing: true,
+      # changelog: "This is another new build from CircleCI!"
+    )
+
   end
   
 end
@@ -36,34 +101,48 @@ platform :mac do
 
     before_all do
       setup_circle_ci
+
+      cert_url = "https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer"
+
+      filename = "DeveloperIDG2CA.cer"
+  
+      # build command
+      import_command = "curl -f -o #{filename} #{cert_url} && security import #{filename} && rm #{filename}"
+      # Executes command
+      stdout, stderr, status = Open3.capture3(import_command)
+      unless status.success?
+        unless stderr.include?("The specified item already exists in the keychain.")
+          UI.command_output(stdout)
+          UI.command_output(stderr)
+
+          UI.user_error!("Could not install certificate")
+        end
+        UI.verbose("The Certificate was already installed")
+      end
+  
     end
   
     lane :tests do
+      
+      match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
+
+      # match(type: "development", 
+            # app_identifier: "io.github.emanuelkuhn.*")
+
       run_tests(
         scheme: "warpinator-project (macOS)",
         cloned_source_packages_path: "SourcePackages",
-        xcargs: "-allowProvisioningUpdates"
+        skip_detect_devices: true,
+        include_simulator_logs: false
       )
     end
 
-    lane :increment_version_and_build_number do
-
-      # Ensure that a Git tag is present for a release build
-      unless ENV["CIRCLE_TAG"]
-        UI.important("Should be run on a tag to set version number")
-      else
-        increment_version_number(version_number: ENV["CIRCLE_TAG"])
-      end
-    
-      unless ENV["CIRCLE_BUILD_NUM"]
-        UI.user_error!("Expected CIRCLE_BUILD_NUM to be set")
-        return
-      end
-    
-      increment_build_number(build_number: ENV["CIRCLE_BUILD_NUM"])
-    end
-
     lane :build do
+
+      increment_version_and_build_number
+
+      match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
+
       build_app(
         scheme: "warpinator-project (macOS)",
         cloned_source_packages_path: "SourcePackages",
@@ -71,6 +150,11 @@ platform :mac do
         configuration: "Release",
         output_directory: "release"
       )
+
+      app_store_connect_api_key
+
+      notarize(package: "release/warpinator-project.app")
+
     end
 end
 

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-#if canImport(UIKit)
+#if !os(macOS)
 
 import UIKit
 

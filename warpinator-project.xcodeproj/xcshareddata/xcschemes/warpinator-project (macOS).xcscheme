@@ -28,23 +28,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4C4A73A227B3D2D6004EDA61"
-               BuildableName = "Tests macOS.xctest"
-               BlueprintName = "Tests macOS"
-               ReferencedContainer = "container:warpinator-project.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4CDD570827B982CA00A9B537"
-               BuildableName = "warpinator-projectTests.xctest"
-               BlueprintName = "warpinator-projectTests"
+               BlueprintIdentifier = "4C195A872B931A4800E18958"
+               BuildableName = "Tests Shared (macOS).xctest"
+               BlueprintName = "Tests Shared (macOS)"
                ReferencedContainer = "container:warpinator-project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -70,21 +56,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4C4A73A227B3D2D6004EDA61"
-               BuildableName = "Tests macOS.xctest"
-               BlueprintName = "Tests macOS"
+               BlueprintIdentifier = "4C195A872B931A4800E18958"
+               BuildableName = "Tests Shared (macOS).xctest"
+               BlueprintName = "Tests Shared (macOS)"
                ReferencedContainer = "container:warpinator-project.xcodeproj">
             </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4CDD570827B982CA00A9B537"
-               BuildableName = "warpinator-projectTests.xctest"
-               BlueprintName = "warpinator-projectTests"
-               ReferencedContainer = "container:warpinator-project.xcodeproj">
-            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "WarpIntegrationTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

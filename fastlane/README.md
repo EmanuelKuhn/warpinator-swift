@@ -13,6 +13,17 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### increment_version_and_build_number
+
+```sh
+[bundle exec] fastlane increment_version_and_build_number
+```
+
+
+
+----
+
+
 ## iOS
 
 ### ios tests
@@ -22,6 +33,22 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 ```
 
 
+
+### ios adhoc
+
+```sh
+[bundle exec] fastlane ios adhoc
+```
+
+Ad-hoc build
+
+### ios upload_testflight
+
+```sh
+[bundle exec] fastlane ios upload_testflight
+```
+
+Upload to Testflight
 
 ----
 

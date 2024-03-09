@@ -5,7 +5,7 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@1.2.0
+  ruby: circleci/ruby@1.8.0
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
@@ -14,7 +14,7 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
     macos:
-      xcode: 13.4.1 # Specify the Xcode version to use
+      xcode: 15.0.0 # Specify the Xcode version to use
 
     environment:
       FL_OUTPUT_DIR: output
@@ -24,10 +24,15 @@ jobs:
     steps:
       - checkout
 
-      - ruby/install-deps
-
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
       - restore_cache:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+
+      - run:
+          name: Log available sdk versions
+          command: xcrun simctl list runtimes
 
       # - run: pod install # Install CocoaPods dependencies
       - run:
@@ -49,6 +54,62 @@ jobs:
             - SourcePackages/
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
+  # adhoc:
+  #   macos:
+  #     xcode: 15.0.0
+  #   environment:
+  #     FL_OUTPUT_DIR: output
+  #     FASTLANE_LANE: ios adhoc
+  #   steps:
+  #     - checkout
+  #     - ruby/install-deps:
+  #         key: "gems-xcode15"
+          
+  #     - restore_cache:
+  #         key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+
+  #     - run:
+  #         name: Fastlane
+  #         command: bundle exec fastlane $FASTLANE_LANE
+
+  #     - store_artifacts:
+  #         path: output/gym/warpinator-swift.ipa
+
+  testflight:
+    macos:
+      xcode: 15.0.0
+    environment:
+      FL_OUTPUT_DIR: output
+      FASTLANE_LANE: ios upload_testflight
+    steps:
+
+      - run:
+          name: Set version tag
+          command: |
+            if [[ ! $CIRCLE_TAG =~ ^ios-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$ ]]; then
+              echo "Error: Tag format is incorrect. Expected format 'ios-x.y.z' or 'ios-x.y.z-suffix'"
+              exit 1
+            fi
+
+            VERSION=$(echo $CIRCLE_TAG | sed -E 's/^ios-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$/\1/')
+            echo "Version extracted: $VERSION"
+            echo "export VERSION=$VERSION" >> $BASH_ENV
+
+      - checkout
+      - ruby/install-deps:
+          key: "gems-xcode15"
+          
+      - restore_cache:
+          key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
+
+      - run:
+          name: Fastlane
+          command: bundle exec fastlane $FASTLANE_LANE
+
+      - store_artifacts:
+          path: output/gym/warpinator-swift.ipa
+
+
   mac_release_build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#docker-machine-macos-windows-executor
@@ -57,10 +118,23 @@ jobs:
 
     environment:
       FL_OUTPUT_DIR: output
+      FL_NOTARIZE_PACKAGE: release/warpinator-project.app
 
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
+      - run:
+          name: Set version tag
+          command: |
+            if [[ ! $CIRCLE_TAG =~ ^mac-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$ ]]; then
+              echo "Error: Tag format is incorrect. Expected format 'mac-x.y.z' or 'mac-x.y.z-suffix'"
+              exit 1
+            fi
+
+            VERSION=$(echo $CIRCLE_TAG | sed -E 's/^mac-([0-9]+\.[0-9]+\.[0-9]+)(-.+)?$/\1/')
+            echo "Version extracted: $VERSION"
+            echo "export VERSION=$VERSION" >> $BASH_ENV
+
       - checkout
 
       - ruby/install-deps
@@ -69,17 +143,9 @@ jobs:
           key: spm-cache-{{ checksum "warpinator-project.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved" }}
 
       - run:
-          name: fastlane set version and build number
-          command: bundle exec fastlane mac increment_version_and_build_number
-
-      - run:
           name: fastlane build mac application
-          command: bundle exec fastlane mac build
+          command: bundle exec fastlane mac build --verbose
       
-      - run:
-          name: remove codesigning
-          command: codesign --remove-signature release/warpinator-project.app
-
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
       - store_test_results:
@@ -87,10 +153,6 @@ jobs:
       - store_artifacts:
           path: output
           destination: scan-output
-
-      - run:
-          name: zip warpinator-project.app
-          command: zip -r release/warpinator-project.app.zip release/warpinator-project.app
       
       - run:
           name: compute sha256sum checksum of warpinator-project.app.zip
@@ -131,7 +193,7 @@ jobs:
 
       - run:
           name: fastlane test mac application
-          command: bundle exec fastlane mac tests
+          command: bundle exec fastlane mac tests --verbose
       
       # Collect XML test results data to show in the UI, and save the same XML
       # files under test-results folder in the Artifacts tab
@@ -165,7 +227,7 @@ jobs:
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -b "Release uploaded from circleci job: ${CIRCLE_BUILD_URL}." -delete -soft -prerelease "${VERSION}" ./release/
 
             # Delete the initial tag:
-            curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/git/refs/tags/${CIRCLE_TAG}"
+            # curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/git/refs/tags/${CIRCLE_TAG}"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
@@ -173,12 +235,26 @@ workflows:
 
   mac:
     jobs:
+      - test_mac:
+          filters:
+            tags:
+              only: 
+                - /^mac-\d+\.\d+\.\d+(-.+)?$/
+                - /^mac-test/
+                - /^test/
+            branches:
+              only: main
 
       # Should run for all branches, and tags for which a release should be published
       - mac_release_build:
+          requires:
+            - test_mac
           filters:  # required since `publish-github-release` has tag filters AND requires `build`
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^mac-\d+\.\d+\.\d+(-.+)?$/
+            branches:
+              ignore: /.*/
+
 
       # Should only run for tags in the form of x.y.z
       - publish-github-release:
@@ -186,12 +262,26 @@ workflows:
             - mac_release_build
           filters:
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^mac-\d+\.\d+\.\d+(-.+)?$/
             branches:
               ignore: /.*/
 
   ios: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - test_ios
+      - test_ios:
+          filters:
+            tags:
+              only: 
+                - /^ios-test/
+                - /^test/
+            branches:
+              ignore: /.*/
 
+
+      - testflight:
+          filters:
+            tags:
+              only: /^ios-\d+\.\d+\.\d+(-.+)?$/
+            branches:
+              ignore: /.*/

@@ -47,15 +47,15 @@ struct RemoteDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Send files") {
-                        #if canImport(UIKIT)
-                        showingSheet.toggle()
-                        #else
+                        #if os(macOS)
                         openFilesMac(onPick: sendFiles)
+                        #else
+                        showingSheet.toggle()
                         #endif
                     }
                 }
             }
-            #if canImport(UIKIT)
+            #if !os(macOS)
             .sheet(isPresented: $showingSheet, content: {
                 DocumentPicker(onPick: sendFiles)
             })
