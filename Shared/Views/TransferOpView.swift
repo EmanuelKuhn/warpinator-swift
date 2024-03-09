@@ -14,6 +14,8 @@ import Combine
 import AppKit
 #endif
 
+import UniformTypeIdentifiers
+
 extension Direction {
     var imageSystemName: String {
         switch self {
@@ -34,7 +36,7 @@ struct TransferOpView: View {
         HStack {
             Image(systemName: viewModel.directionImageSystemName)
             #if canImport(AppKit)
-            Image(nsImage: NSWorkspace.shared.icon(for: (.init(filenameExtension: "pdf") ?? .data)))
+            Image(nsImage: NSWorkspace.shared.icon(for: viewModel.uttype))
             #endif
 
             Text(viewModel.title)
@@ -155,6 +157,12 @@ extension TransferOpView {
         
         var availableActions: TransferOpAvailableActions {
             transferOp.availableActions
+        }
+        
+        var uttype: UTType {
+            let defaultType: UTType = transferOp.count == 1 ? .data : .folder
+            
+            return UTType.init(mimeType: transferOp.mimeType) ?? defaultType
         }
         
         func accept() {
