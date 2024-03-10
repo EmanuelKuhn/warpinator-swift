@@ -124,12 +124,7 @@ class WarpBackend {
         }
     }
     
-    func restart() {
-        
-        if isFirstStart {
-            return
-        }
-        
+    func stop() {
         if !isStarted {
             return
         }
@@ -152,18 +147,27 @@ class WarpBackend {
                 // Handle the error or retry as necessary
                 return
             }
-            
-            print("Restarting: Stopped server; waiting 5 seconds")
-            
-            // Optionally, pause for necessary cleanup - adjust as needed
-            Thread.sleep(forTimeInterval: 5.0)
-
-            print("Restarting: Finished waiting")
-            
-            self.isStarted = false
-            
-            self.start()
         }
+    }
+
+    
+    func restart() {
+        
+        if isFirstStart {
+            return
+        }
+        
+        self.stop()
+            
+        print("Restarting: Stopped server; waiting 5 seconds")
+        
+        // Need to wait some time for network port to be released
+        // 1 second was too little, 5 works most of the time
+        Thread.sleep(forTimeInterval: 5.0)
+
+        print("Restarting: Finished waiting")
+                
+        self.start()
     }
     
 }
