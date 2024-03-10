@@ -18,17 +18,12 @@ import AppKit
 #endif
 
 struct ContentView: View {
-    let warp: WarpBackend
-    
-    var discoveryViewModel: DiscoveryViewModel
-    
+    @EnvironmentObject var warp: AppState
+
     @State private var showingSettings = false
     
-    @MainActor
-    init(warp: WarpBackend) {
-        self.warp = warp
-        
-        self.discoveryViewModel = .init(remoteRegistration: warp.remoteRegistration)
+    var discoveryViewModel: DiscoveryViewModel {
+        .init(remoteRegistration: warp.remoteRegistration)
     }
     
     var body: some View {
@@ -50,7 +45,18 @@ struct ContentView: View {
     var navigationView: some View {
         NavigationView {
             VStack {
-                RemoteListView(discoveryViewModel: discoveryViewModel)
+                switch warp.state {
+                case .starting:
+                    ProgressView("Starting...")
+                case .stopped:
+                    ProgressView("Stopped...")
+                case .restarting:
+                    ProgressView("Restarting...")
+                case .failure(let warpError):
+                    Text("Failure...")
+                case .running:
+                    RemoteListView(discoveryViewModel: discoveryViewModel)
+                }
             }
             .toolbar {
 #if !os(macOS)
