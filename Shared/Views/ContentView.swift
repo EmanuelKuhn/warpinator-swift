@@ -55,6 +55,9 @@ struct ContentView: View {
                 case .failure(let warpError):
                     VStack {
                         Text(warpError.localizedDescription)
+                        Button("Try again") {
+                            warp.restart()
+                        }
                     }.padding()
                 case .running:
                     RemoteListView(discoveryViewModel: discoveryViewModel)

@@ -59,6 +59,18 @@ class AppState: ObservableObject, WarpObserverDelegate {
         }
     }
     
+    func stop() {
+        DispatchQueue.global().async {
+            self.warp.stop()
+        }
+    }
+
+    func restart() {
+        DispatchQueue.global().async {
+            self.warp.restart()
+        }
+    }
+    
     func resetupListener() {
         warp.resetupListener()
     }
