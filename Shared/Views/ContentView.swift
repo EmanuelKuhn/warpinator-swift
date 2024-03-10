@@ -20,17 +20,49 @@ import AppKit
 struct ContentView: View {
     let warp: WarpBackend
     
+    var discoveryViewModel: DiscoveryViewModel
+    
+    @State private var showingSettings = false
+    
+    @MainActor
     init(warp: WarpBackend) {
         self.warp = warp
-    }
         
+        self.discoveryViewModel = .init(remoteRegistration: warp.remoteRegistration)
+    }
+    
     var body: some View {
+        navigationView
+            .onAppear {
+                warp.start()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigation){
+                    Button {
+                        toggleSidebar()
+                    } label: {
+                        Image(systemName: "sidebar.leading")
+                    }
+                }
+            }
+    }
+    
+    var navigationView: some View {
         NavigationView {
             VStack {
-                RemoteListView(discoveryViewModel: .init(remoteRegistration: warp.remoteRegistration))
+                RemoteListView(discoveryViewModel: discoveryViewModel)
             }
-            
             .toolbar {
+#if !os(macOS)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                    }
+                }
+#endif
+                
                 ToolbarItem {
                     Button {
                         warp.resetupListener()
@@ -39,28 +71,22 @@ struct ContentView: View {
                     }
                 }
             }
-
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
+            }
+            
             VStack {
                 Text(":)")
-            }
-        }.onAppear {
-            warp.start()
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigation){
-                Button {
-                    toggleSidebar()
-                } label: {
-                    Image(systemName: "sidebar.leading")
-                }
             }
         }
     }
     
+    
+    
     private func toggleSidebar() {
-        #if os(macOS)
+#if os(macOS)
         NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
-        #endif
+#endif
     }
 }
 
@@ -98,8 +124,8 @@ struct RemoteListViewItem: View {
                     }
                 }.padding()
             }
-             Spacer()
-         }
-
+            Spacer()
+        }
+        
     }
 }
