@@ -7,41 +7,56 @@
 
 import SwiftUI
 
+class WarpState: ObservableObject {
+    
+    var warp: WarpBackend
+    
+    init() {
+        warp = WarpBackend()
+    }
+    
+    func onScenePhaseChange(phase: ScenePhase) {
+        switch(phase) {
+        case .background:
+            warp.pause()
+            return
+        case .inactive:
+            warp.pause()
+            return
+        case .active:
+            warp.resume()
+            return
+        @unknown default:
+            return
+        }
+    }
+}
+
 @main
 struct warpinator_projectApp: App {
     @Environment(\.scenePhase) var scenePhase
     
-    let warp: WarpBackend = .shared
+    let appState = WarpState()
     
     var body: some Scene {
         WindowGroup {
-            ContentView(warp: warp)
-        }.commands {
+            ContentView(warp: appState.warp)
+        }
+        .onChange(of: scenePhase, perform: appState.onScenePhaseChange)
+
+
+
+        .commands {
             SidebarCommands() // 1
         }
-        #if os(macOS)
+#if os(macOS)
         .windowToolbarStyle(.unifiedCompact)
-        #endif
-        .onChange(of: scenePhase, perform: { phase in
-            switch(phase) {
-            case .background:
-                warp.pause()
-                return
-            case .inactive:
-                warp.pause()
-                return
-            case .active:
-                warp.resume()
-                return
-            @unknown default:
-                return
-            }
-        })
+#endif
         
-        #if os(macOS)
+#if os(macOS)
         Settings {
             SettingsView()
         }
-        #endif
+#endif
     }
 }
