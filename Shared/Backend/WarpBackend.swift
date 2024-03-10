@@ -129,30 +129,33 @@ class WarpBackend {
         
         isStarted = false
         
+        // Perform all operations on a background queue
         DispatchQueue.global(qos: .userInitiated).async {
-            try! self.warpServer?.close()
-            self.warpServer = nil
-            
             self.discovery.pauseBonjour()
 
-            self.auth.regenerateCertificate()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                print("Starting servers again...")
-                                        
-                let warpServer = WarpServer(auth: self.auth, remoteRegistration: self.remoteRegistration, port: self.settings.port)
-                self.warpServer = warpServer
+            // Close the current server
+            do {
+                try self.warpServer?.close()
+                self.warpServer = nil
                 
-                DispatchQueue.global(qos: .userInitiated).async {
-                    try? warpServer.run(eventLoopGroup: self.eventLoopGroup)
-                }
-
-                DispatchQueue.global(qos: .userInitiated).async {
-                    self.discovery.restartBonjour()
-                }
-                
-                self.isStarted = true
+                try self.certServer?.close()
+                self.certServer = nil
+            } catch {
+                print("Restarting: Error closing warpServer: \(error)")
+                // Handle the error or retry as necessary
+                return
             }
+            
+            print("Restarting: Stopped server; waiting 5 seconds")
+            
+            // Optionally, pause for necessary cleanup - adjust as needed
+            Thread.sleep(forTimeInterval: 5.0)
+
+            print("Restarting: Finished waiting")
+            
+            self.isStarted = false
+            
+            self.start()
         }
     }
     
