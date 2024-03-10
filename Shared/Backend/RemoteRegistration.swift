@@ -10,7 +10,11 @@ import Sodium
 import NIOCore
 
 
-actor RemoteRegistration {
+protocol RemoteRegistrationObserver {
+    func addOnRemoteChangedListener(_ listener: @escaping ([Remote]) -> Void) async
+}
+
+actor RemoteRegistration: RemoteRegistrationObserver {
     
     let discovery: PeerDiscovery
     
@@ -110,7 +114,7 @@ actor RemoteRegistration {
     
     private var onRemotesChangedListeners: Array<(Array<Remote>) -> Void> = []
     
-    func addOnRemoteChangedListener(_ listener: @escaping (Array<Remote>) -> Void) {
+    func addOnRemoteChangedListener(_ listener: @escaping (Array<Remote>) -> Void) async {
         self.onRemotesChangedListeners.append(listener)
         
         // Call listener with current values

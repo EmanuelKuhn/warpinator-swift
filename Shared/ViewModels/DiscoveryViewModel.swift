@@ -119,9 +119,9 @@ class DiscoveryViewModel: ObservableObject {
     
     @Published var remotes: Array<RemoteItem> = []
     
-    init(warp: WarpBackend) {
+    init(remoteRegistration: RemoteRegistrationObserver) {
         Task {
-            await warp.remoteRegistration.addOnRemoteChangedListener { remotes in
+            await remoteRegistration.addOnRemoteChangedListener { remotes in
                 print("DiscoveryViewModel: onRemotesChangedListener")
                 
                 self.setRemotes(remotes: remotes)
