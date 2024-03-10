@@ -395,7 +395,7 @@ class Remote: RemoteProtocol, ObservableObject {
         }
     }
         
-    func startTransfer(transferOp: TransferFromRemote) async throws {
+    func startTransfer(transferOp: TransferFromRemote, downloader: TransferDownloader) async throws {
         
         guard transferOp.state == .requested else {
             throw TransferOpError.invalidStateToStartTransfer
@@ -414,8 +414,6 @@ class Remote: RemoteProtocol, ObservableObject {
             $0.ident = auth.identity
             $0.readableName = auth.networkConfig.hostname
         })
-                
-        let downloader = try TransferDownloader(topDirBasenames: transferOp.topDirBasenames, progress: transferOp.progress)
         
         transferOp.localSaveUrls = downloader.savePaths
         

@@ -136,11 +136,17 @@ class TransferFromRemote: TransferOp {
     let progress: TransferOpMetrics
     
     var localSaveUrls: [URL] = []
-    
-//    let downloader: TransferDownloader?
-    
+        
     /// The associated remote. Needed to remove the transferop from the list of transfers.
     private weak var remote: Remote?
+    
+    lazy var transferDownloader: Result<TransferDownloader, Error> = {
+        do {
+            return .success(try TransferDownloader(topDirBasenames: self.topDirBasenames, progress: self.progress))
+        } catch {
+            return .failure(error)
+        }
+    }()
     
     init(timestamp: UInt64, title: String, mimeType: String, size: UInt64, count: UInt64, topDirBasenames: [String], _state: MutableObservableValue<TransferOpState>, remote: Remote) {
         self.timestamp = timestamp
@@ -154,13 +160,14 @@ class TransferFromRemote: TransferOp {
         
         self.progress = .init(totalBytesCount: Int(size))
         
-//        self.downloader = try? .init(topDirBasenames: topDirBasenames, progress: progress)
     }
         
     func accept() async throws {
         if state == .requested {
             do {
-                try await remote?.startTransfer(transferOp: self)
+                let downloader = try transferDownloader.get()
+                
+                try await remote?.startTransfer(transferOp: self, downloader: downloader)
             } catch {
                 self.state = .failed(reason: error.localizedDescription)
             }
