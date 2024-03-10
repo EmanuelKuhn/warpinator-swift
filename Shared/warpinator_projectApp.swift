@@ -7,12 +7,25 @@
 
 import SwiftUI
 
-class WarpState: ObservableObject {
+
+
+class AppState: ObservableObject, WarpObserverDelegate {
     
-    var warp: WarpBackend
+    @Published
+    var state: WarpState = .stopped
+    
+    private var warp: WarpBackend
+    
+    var remoteRegistration: RemoteRegistrationObserver {
+        warp.remoteRegistration
+    }
     
     init() {
         warp = WarpBackend()
+        
+        warp.delegate = self
+        
+        self.state = warp.state
     }
     
     func onScenePhaseChange(phase: ScenePhase) {
@@ -30,17 +43,38 @@ class WarpState: ObservableObject {
             return
         }
     }
+    
+    func stateDidUpdate(newState: WarpState) {
+        precondition(Thread.isMainThread)
+        
+        state = newState
+        
+        print("AppState: state = \(newState)")
+
+    }
+    
+    func start() {
+        DispatchQueue.global().async {
+            self.warp.start()
+        }
+    }
+    
+    func resetupListener() {
+        warp.resetupListener()
+    }
+
 }
 
 @main
 struct warpinator_projectApp: App {
     @Environment(\.scenePhase) var scenePhase
     
-    let appState = WarpState()
-    
+    @StateObject private var appState = AppState()
+
     var body: some Scene {
         WindowGroup {
-            ContentView(warp: appState.warp)
+            ContentView()
+                .environmentObject(appState)
         }
         .onChange(of: scenePhase, perform: appState.onScenePhaseChange)
 
