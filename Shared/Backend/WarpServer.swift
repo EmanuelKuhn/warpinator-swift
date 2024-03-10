@@ -37,7 +37,7 @@ class WarpServer {
     
     var stateCallbacks: [(SocketAddress?) -> Void] = []
     
-    func run(eventLoopGroup: EventLoopGroup, callback: (()->Void)?=nil) throws {
+    func run(eventLoopGroup: EventLoopGroup, completion: @escaping (Result<Void, Error>) -> Void) throws {
         
         assert(server == nil)
         
@@ -67,9 +67,7 @@ class WarpServer {
         }.whenSuccess { address in
             print("server started on port \(address!.port!)")
 
-            if let callback = callback {
-                callback()
-            }
+            completion(.success(()))
 
             print("server started called callbacks")
         }
@@ -78,7 +76,8 @@ class WarpServer {
             $0.channel.localAddress
         }.whenFailure({ error in
             print("server failed to start \(error)")
-            fatalError("warpserver failed to start")
+            
+            completion(.failure(error))
         })
         
         
