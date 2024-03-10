@@ -61,7 +61,10 @@ class WarpSetingsUserDefaults: WarpSettings {
         get { return WarpSettingsKey.groupcode.get(defaultValue: DEFAULT_GROUP_CODE) }
         set {
             WarpSettingsKey.groupcode.set(newValue: newValue)
-            connectionSettingsChangedCallbacks.forEach { $0() }
+            
+            DispatchQueue.global().async {
+                self.connectionSettingsChangedCallbacks.forEach { $0() }
+            }
         }
     }
 
