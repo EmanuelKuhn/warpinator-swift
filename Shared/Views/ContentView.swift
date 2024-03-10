@@ -53,7 +53,9 @@ struct ContentView: View {
                 case .restarting:
                     ProgressView("Restarting...")
                 case .failure(let warpError):
-                    Text("Failure...")
+                    VStack {
+                        Text(warpError.localizedDescription)
+                    }.padding()
                 case .running:
                     RemoteListView(discoveryViewModel: discoveryViewModel)
                 }

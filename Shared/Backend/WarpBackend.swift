@@ -17,6 +17,17 @@ enum WarpError: Error {
     case failedToStart(Error), failedToStop(Error)
 }
 
+extension WarpError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .failedToStart(let error):
+            return NSLocalizedString("Failed to start server: \(error)", comment: "Failed to start")
+        case .failedToStop(let error):
+            return NSLocalizedString("Failed to stop server: \(error)", comment: "Failed to stop server")
+        }
+    }
+}
+
 protocol WarpObserverDelegate: AnyObject {
     func stateDidUpdate(newState: WarpState)
 }
