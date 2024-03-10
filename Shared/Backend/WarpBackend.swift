@@ -67,7 +67,7 @@ class WarpBackend {
         isStarted = true
         
         // Start servers
-        let certServer = CertServerV2(auth: auth)
+        let certServer = CertServerV2(auth: auth, auth_port: settings.authPort)
         self.certServer = certServer
         
         DispatchQueue.global(qos: .userInitiated).async {
