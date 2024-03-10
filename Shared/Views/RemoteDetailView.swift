@@ -14,6 +14,10 @@ import Combine
 import AppKit
 #endif
 
+class LayoutInfo: ObservableObject {
+    @Published var width: CGFloat = 0
+}
+
 struct RemoteDetailView: View {
     
     @ObservedObject
@@ -22,44 +26,53 @@ struct RemoteDetailView: View {
     @State
     var showingSheet = false
     
+    @StateObject
+    var layoutInfo = LayoutInfo()
+    
     var body: some View {
-        VStack {
+        GeometryReader {geom in
             VStack {
-                
-                List {
-                    Section(content: {
-                        ForEach(viewModel.transfers) { transfer in
-                            TransferOpView(viewModel: transfer)
-                            #if os(macOS)
-                            Divider()
-                            #endif
+                VStack {
+                    
+                    List {
+                        Section(content: {
+                            ForEach(viewModel.transfers) { transfer in
+                                TransferOpView(viewModel: transfer)
+#if os(macOS)
+                                Divider()
+#endif
                             }
-                    }, header: {
-                        Text("Transfers")
+                        }, header: {
+                            Text("Transfers")
+                        })
+                    }.overlay(Group {
+                        if viewModel.transfers.isEmpty {
+                            Text("No transfers yet...")
+                        }
                     })
-                }.overlay(Group {
-                    if viewModel.transfers.isEmpty {
-                        Text("No transfers yet...")
-                    }
-                })
-            }
-        }.navigationTitle("\(viewModel.title) (\(viewModel.state))")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Send files") {
-                        #if os(macOS)
-                        openFilesMac(onPick: sendFiles)
-                        #else
-                        showingSheet.toggle()
-                        #endif
+                }
+            }.onAppear() {
+                layoutInfo.width = geom.size.width
+            }.onChange(of: geom.size) { newSize in
+                layoutInfo.width = newSize.width
+            }.navigationTitle("\(viewModel.title) (\(viewModel.state))")
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Send files") {
+#if os(macOS)
+                            openFilesMac(onPick: sendFiles)
+#else
+                            showingSheet.toggle()
+#endif
+                        }
                     }
                 }
-            }
-            #if !os(macOS)
-            .sheet(isPresented: $showingSheet, content: {
-                DocumentPicker(onPick: sendFiles)
-            })
-            #endif
+#if !os(macOS)
+                .sheet(isPresented: $showingSheet, content: {
+                    DocumentPicker(onPick: sendFiles)
+                })
+#endif
+        }.environmentObject(layoutInfo)
     }
     
     func sendFiles(urls: [URL]) {
@@ -194,6 +207,7 @@ extension RemoteDetailView {
         }
     }
 }
+
 
 #if DEBUG
 

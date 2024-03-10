@@ -32,27 +32,68 @@ struct TransferOpView: View {
     @ObservedObject
     var viewModel: ViewModel
 
+    @EnvironmentObject
+    var layoutInfo: LayoutInfo
+    
     var body: some View {
+        if layoutInfo.width < 500 {
+            narrowView
+        } else {
+            wideView
+        }
+    }
+    
+    var wideView: some View {
         HStack {
             Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
             
             Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
             
+            Text(viewModel.title).lineLimit(1).truncationMode(.middle)
+                .frame(minWidth: 200, alignment: .leading)
 
-            Text(viewModel.title)
-                .frame(maxWidth: 250, alignment: .leading)
-
-            Text(viewModel.size).frame(maxWidth: 50, alignment: .leading)
+            Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
 
             StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
+                .frame(width: 85)
 
             Spacer()
 
             actionButtons
 
         }
+        #if !os(macOS)
+        .frame(minHeight: 40)
+        #endif
     }
     
+    var narrowView: some View {
+        HStack {
+            HStack {
+                Image(systemName: viewModel.directionImageSystemName)
+                
+                Image(systemName: viewModel.fileIconSystemName)
+            }
+            
+            VStack {
+                HStack {
+                    Text(viewModel.title).bold().lineLimit(1).truncationMode(.middle)
+                    
+                    Spacer()
+                }.padding(.bottom, 2.0).frame(alignment: .leading)
+                
+                HStack {
+                    Text(viewModel.size).frame(minWidth: 40, alignment: .leading)
+                    
+                    StatusView(state: viewModel.state, progress: viewModel.progressMetrics).frame(alignment: .center)
+                    
+                    Spacer()
+                }
+            }
+            .padding()
+            actionButtons
+        }
+    }
     var actionButtons: some View {
         switch(viewModel.availableActions) {
         case .acceptOrCancel:
@@ -69,7 +110,7 @@ struct TransferOpView: View {
                     Image(systemName: "xmark")
                 }.buttonStyle(.borderless)
             })
-
+            
         case .cancel:
             return AnyView(
                 Button {
@@ -93,16 +134,17 @@ struct TransferOpView: View {
                 } label: {
                     Image(systemName: "folder")
                 }.buttonStyle(.borderless)
-
+                
                 Button {
                     viewModel.remove()
                 } label: {
                     Image(systemName: "minus")
                 }.buttonStyle(.borderless)
-
+                
             })
         }
     }
+    
 }
 
 struct StatusView: View {
