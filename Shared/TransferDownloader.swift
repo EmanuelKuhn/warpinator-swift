@@ -49,16 +49,18 @@ class TransferDownloader {
     }
     
     /// The local paths the topDirBasenames will be downloaded to. This is computed by computing the local save path for each sanitized topDirBaseName given the self.saveDirectory
-    var savePaths: [URL] {
-        let savePaths = try? topDirBasenames.map { baseName in
+    lazy var saveURLs: [URL] = {
+        let saveURLs = try? topDirBasenames.map { baseName in
             try sanitizeRelativePath(relativePath: baseName).absoluteURL
         }
         
-        guard let savePaths = savePaths else {
+        guard let saveURLs = saveURLs else {
             return []
         }
         
-        return savePaths
+        return saveURLs
+    }()
+    
     }
     
     func handleChunk(chunk: FileChunk) throws {

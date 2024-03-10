@@ -415,7 +415,7 @@ class Remote: RemoteProtocol, ObservableObject {
             $0.readableName = auth.networkConfig.hostname
         })
         
-        transferOp.localSaveUrls = downloader.savePaths
+        transferOp.localSaveUrls = downloader.saveURLs
         
         let response = client.startTransfer(opInfo)
         
