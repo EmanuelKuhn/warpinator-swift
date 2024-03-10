@@ -34,10 +34,10 @@ struct TransferOpView: View {
 
     var body: some View {
         HStack {
-            Image(systemName: viewModel.directionImageSystemName)
-            #if canImport(AppKit)
-            Image(nsImage: NSWorkspace.shared.icon(for: viewModel.uttype))
-            #endif
+            Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
+            
+            Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
+            
 
             Text(viewModel.title)
                 .frame(maxWidth: 250, alignment: .leading)
@@ -163,6 +163,35 @@ extension TransferOpView {
             let defaultType: UTType = transferOp.count == 1 ? .data : .folder
             
             return UTType.init(mimeType: transferOp.mimeType) ?? defaultType
+        }
+        
+        var fileIconSystemName: String {
+            /** System icon name to represent the file transfer */
+            
+            if transferOp.count == 1 {
+                
+                print("UTType: \(self.uttype)")
+                
+                if self.uttype.conforms(to: .image) {
+                    return "photo"
+                } else if self.uttype.conforms(to: .archive) {
+                    return "doc.zipper"
+                } else if self.uttype.conforms(to: .plainText) {
+                    return "doc.plaintext"
+                } else if self.uttype.conforms(to: .text) {
+                    return "doc.text"
+                } else if self.uttype.conforms(to: .content) {
+                    return "doc.fill"
+                } else {
+                    return "doc"
+                }
+            } else {
+                if transferOp.mimeType.contains("directory") {
+                    return "folder"
+                } else {
+                    return "doc.on.doc"
+                }
+            }
         }
         
         func accept() {
