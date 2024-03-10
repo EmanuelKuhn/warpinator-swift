@@ -45,8 +45,6 @@ class WarpBackend {
 
 //         Add callback for when connection settings change
         settings.addOnConnectionSettingsChangedCallback(onConnectionSettingsChanged)
-        
-        auth.groupCode
     }
         
     func onConnectionSettingsChanged() {
