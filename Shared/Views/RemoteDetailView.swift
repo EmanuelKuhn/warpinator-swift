@@ -154,7 +154,7 @@ extension RemoteDetailView {
         @Published
         var state: String = ""
         
-        private let remote: Remote
+        private let remote: RemoteProtocol
         
         private var tokens: Set<AnyCancellable> = .init()
         
@@ -170,7 +170,7 @@ extension RemoteDetailView {
             }
         }
         
-        init(remote: Remote) {
+        init(remote: RemoteProtocol) {
             self.remote = remote
             
             self.title = remote.peer.hostName
@@ -186,7 +186,7 @@ extension RemoteDetailView {
             }.store(in: &tokens)
             
             Task {
-                remote.$state.receive(on: DispatchQueue.main).sink { state in
+                remote.statePublisher().receive(on: DispatchQueue.main).sink { state in
                     self.state = "\(state.description)"
                 }.store(in: &tokens)
             }

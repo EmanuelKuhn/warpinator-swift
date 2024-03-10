@@ -35,7 +35,22 @@ struct ResolvedHost {
     let port: Int
 }
 
-class Remote {
+protocol RemoteProtocol {
+    
+    var peer: Peer { get }
+    var transfers: CurrentValueSubject<Array<TransferOp>, Never> { get }
+    var state: RemoteState { get }
+    
+    func ping() async throws
+    
+    func requestTransfer(url: URL) async throws
+    
+    func statePublisher() -> AnyPublisher<RemoteState, Never>
+    
+}
+
+
+class Remote: RemoteProtocol, ObservableObject {
     
     private let statemachine: StateMachine
     private var stateCancellable: AnyCancellable?
@@ -49,7 +64,11 @@ class Remote {
                 }
             }
         }
-      }  
+    }
+    
+    func statePublisher() -> AnyPublisher<RemoteState, Never> {
+        return $state.eraseToAnyPublisher()
+    }
     
     var peer: Peer
     
