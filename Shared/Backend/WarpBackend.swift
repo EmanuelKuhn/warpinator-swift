@@ -10,8 +10,6 @@ import NIOCore
 import GRPC
 
 class WarpBackend {
-    static let shared = WarpBackend()
-    
     private let settings: WarpSettings
     
     private let eventLoopGroup: EventLoopGroup
@@ -28,7 +26,7 @@ class WarpBackend {
     private var certServer: CertServerV2? = nil
     private var warpServer: WarpServer? = nil
     
-    private init() {
+    init() {
         
         self.settings = WarpSetingsUserDefaults.shared
         self.eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 2)
