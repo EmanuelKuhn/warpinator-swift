@@ -9,6 +9,18 @@ import Foundation
 import NIOCore
 import GRPC
 
+enum WarpState {
+    case starting, stopped, running, failure(_ error: WarpError), restarting
+}
+
+enum WarpError: Error {
+    case failedToStart(Error), failedToStop(Error)
+}
+
+protocol WarpObserverDelegate: AnyObject {
+    func stateDidUpdate(newState: WarpState)
+}
+
 class WarpBackend {
     private let settings: WarpSettings
     
@@ -26,7 +38,13 @@ class WarpBackend {
     private var certServer: CertServerV2? = nil
     private var warpServer: WarpServer? = nil
     
-    init() {
+    weak var delegate: WarpObserverDelegate?
+    
+    var state: WarpState = .stopped
+    
+    init(delegate: WarpObserverDelegate?=nil) {
+        
+        self.delegate = delegate
         
         self.settings = WarpSetingsUserDefaults.shared
         self.eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 2)
@@ -41,11 +59,22 @@ class WarpBackend {
         
         self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth, clientEventLoopGroup: eventLoopGroup)
 
-//         Add callback for when connection settings change
+        // Add callback for when connection settings change
         settings.addOnConnectionSettingsChangedCallback(onConnectionSettingsChanged)
     }
+    
+    func updateState(newState: WarpState) {
+        self.state = newState
         
+        DispatchQueue.main.async { [weak self] in
+            self?.delegate?.stateDidUpdate(newState: newState)
+        }
+    }
+    
     func onConnectionSettingsChanged() {
+        
+        // This operation will trigger a restart
+        self.updateState(newState: .restarting)
         
         // Set groupcode to potentially new value
         auth.groupCode = settings.groupCode
@@ -57,10 +86,12 @@ class WarpBackend {
     }
     
     func start() {
-        
+                
         if isStarted {
             return
         }
+        
+        self.updateState(newState: .starting)
         
         isStarted = true
         
@@ -82,6 +113,8 @@ class WarpBackend {
                     print("WarpServer started succesfully")
                 case .failure(let error):
                     print("WarpServer failed to start: \(error)")
+                    
+                    self.updateState(newState: .failure(.failedToStart(error)))
                 }
             })
         }
@@ -98,6 +131,8 @@ class WarpBackend {
             print("setup listener done")
             
             self.isFirstStart = false
+            
+            self.updateState(newState: .running)
         }
     }
     
@@ -129,6 +164,8 @@ class WarpBackend {
             return
         }
         
+        self.updateState(newState: .stopped)
+        
         isStarted = false
         
         // Perform all operations on a background queue
@@ -144,7 +181,9 @@ class WarpBackend {
                 self.certServer = nil
             } catch {
                 print("Restarting: Error closing warpServer: \(error)")
-                // Handle the error or retry as necessary
+
+                self.updateState(newState: .failure(.failedToStop(error)))
+                
                 return
             }
         }
