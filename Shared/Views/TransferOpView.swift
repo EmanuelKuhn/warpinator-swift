@@ -243,3 +243,54 @@ extension TransferOpView {
         }
     }
 }
+
+#if DEBUG
+
+class DummyTransferOp: TransferOp {
+    var direction: Direction = .download
+    
+    var localTimestamp: Date = .init()
+    
+    var timestamp: UInt64 = DispatchTime.now().rawValue
+    
+    var _state: MutableObservableValue<TransferOpState> = .init(.requested)
+    
+    var title: String = "warpinator-project.app.dSYM.zip"
+    
+    var mimeType: String = "archive/zip"
+    
+    var size: UInt64 = 1002
+    
+    var count: UInt64 = 1
+    
+    var topDirBasenames: [String] = ["image.png"]
+    
+    func cancel() async {
+        
+    }
+    
+    func remove() {
+        
+    }
+    
+    var progress: TransferOpMetrics = .init(totalBytesCount: 1000)
+    
+    
+}
+
+extension TransferOpView.ViewModel {
+    static var preview: Self {
+        let dummyTransferOp = DummyTransferOp()
+        
+        return TransferOpView.ViewModel(transferOp: dummyTransferOp) as! Self
+    }
+}
+
+struct TransferOpView_Previews: PreviewProvider {
+    static var previews: some View {
+        TransferOpView(viewModel: TransferOpView.ViewModel.preview).environmentObject(LayoutInfo())
+    }
+}
+
+
+#endif
