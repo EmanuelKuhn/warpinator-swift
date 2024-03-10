@@ -236,6 +236,14 @@ extension TransferOpView {
             }
         }
         
+        func checkIfWillOverwrite() -> Bool {
+            guard let transferOp = transferOp as? TransferFromRemote else {
+                preconditionFailure()
+            }
+
+            return transferOp.checkIfWillOverwrite()
+        }
+        
         func accept() {
             
             guard let transferOp = transferOp as? TransferFromRemote else {

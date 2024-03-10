@@ -161,7 +161,17 @@ class TransferFromRemote: TransferOp {
         self.progress = .init(totalBytesCount: Int(size))
         
     }
-        
+    
+    func checkIfWillOverwrite() -> Bool {
+        switch transferDownloader {
+        case .success(let downloader):
+            return downloader.checkIfWillOverwrite()
+        case .failure(_):
+            // If the downloader failed to instantiate, won't overwrite files because the download can't be started.
+            return false
+        }
+    }
+    
     func accept() async throws {
         if state == .requested {
             do {

@@ -61,6 +61,15 @@ class TransferDownloader {
         return saveURLs
     }()
     
+    func checkIfWillOverwrite() -> Bool {
+        for url in saveURLs {
+            // Check if path already exists
+            if fileManager.fileExists(atPath: url.path) {
+                return true
+            }
+        }
+        
+        return false;
     }
     
     func handleChunk(chunk: FileChunk) throws {
