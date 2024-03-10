@@ -23,12 +23,7 @@ struct ContentView: View {
     init(warp: WarpBackend) {
         self.warp = warp
     }
-    
-//    // File picker
-//    @State private var showingSheet = false
-//    @State private var urls: [URL] = []
-//    @State private var currentRemote: DiscoveryViewModel.VMRemote? = nil
-    
+        
     var body: some View {
         NavigationView {
             VStack {
@@ -68,20 +63,6 @@ struct ContentView: View {
         #endif
     }
 }
-
-
-
-
-
-//struct ItemCard: View {
-//
-//    let title: String
-//
-//    var body: some View {
-//     }
-//}
-
-
 
 struct RemoteListView: View {
     
