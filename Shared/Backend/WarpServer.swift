@@ -90,10 +90,8 @@ class WarpServer {
     }
     
     func close() throws {
-        try server?.map({
-            $0.channel.close()
+        try server?.flatMap({
             $0.initiateGracefulShutdown()
-            $0.close()
         }).wait()
     }
 }
