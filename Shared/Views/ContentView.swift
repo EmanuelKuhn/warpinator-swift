@@ -27,7 +27,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                RemoteListView(discoveryViewModel: .init(warp: warp))
+                RemoteListView(discoveryViewModel: .init(remoteRegistration: warp.remoteRegistration))
             }
             
             .toolbar {
