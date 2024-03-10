@@ -76,7 +76,14 @@ class WarpBackend {
         self.warpServer = warpServer
         
         DispatchQueue.global(qos: .userInitiated).async {
-            try? warpServer.run(eventLoopGroup: self.eventLoopGroup)
+            try? warpServer.run(eventLoopGroup: self.eventLoopGroup, completion: { result in
+                switch result {
+                case .success():
+                    print("WarpServer started succesfully")
+                case .failure(let error):
+                    print("WarpServer failed to start: \(error)")
+                }
+            })
         }
         
         // Start bonjour discovery
