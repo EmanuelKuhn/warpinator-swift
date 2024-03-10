@@ -35,7 +35,22 @@ struct ResolvedHost {
     let port: Int
 }
 
-class Remote {
+protocol RemoteProtocol {
+    
+    var peer: Peer { get }
+    var transfers: CurrentValueSubject<Array<TransferOp>, Never> { get }
+    var state: RemoteState { get }
+    
+    func ping() async throws
+    
+    func requestTransfer(url: URL) async throws
+    
+    func statePublisher() -> AnyPublisher<RemoteState, Never>
+    
+}
+
+
+class Remote: RemoteProtocol, ObservableObject {
     
     private let statemachine: StateMachine
     private var stateCancellable: AnyCancellable?
@@ -49,7 +64,11 @@ class Remote {
                 }
             }
         }
-      }  
+    }
+    
+    func statePublisher() -> AnyPublisher<RemoteState, Never> {
+        return $state.eraseToAnyPublisher()
+    }
     
     var peer: Peer
     
@@ -376,7 +395,7 @@ class Remote {
         }
     }
         
-    func startTransfer(transferOp: TransferFromRemote) async throws {
+    func startTransfer(transferOp: TransferFromRemote, downloader: TransferDownloader) async throws {
         
         guard transferOp.state == .requested else {
             throw TransferOpError.invalidStateToStartTransfer
@@ -395,10 +414,8 @@ class Remote {
             $0.ident = auth.identity
             $0.readableName = auth.networkConfig.hostname
         })
-                
-        let downloader = try TransferDownloader(topDirBasenames: transferOp.topDirBasenames, progress: transferOp.progress)
         
-        transferOp.localSaveUrls = downloader.savePaths
+        transferOp.localSaveUrls = downloader.saveURLs
         
         let response = client.startTransfer(opInfo)
         

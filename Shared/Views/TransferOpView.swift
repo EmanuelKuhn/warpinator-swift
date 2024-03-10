@@ -14,13 +14,15 @@ import Combine
 import AppKit
 #endif
 
+import UniformTypeIdentifiers
+
 extension Direction {
     var imageSystemName: String {
         switch self {
         case .upload:
-            return "chevron.up"
+            return "arrow.up.to.line.alt"
         case .download:
-            return "chevron.down"
+            return "arrow.down.to.line.alt"
         }
     }
 }
@@ -30,36 +32,91 @@ struct TransferOpView: View {
     @ObservedObject
     var viewModel: ViewModel
 
+    @EnvironmentObject
+    var layoutInfo: LayoutInfo
+    
+    @State
+    var showConfirmPopover = false
+
     var body: some View {
+        if layoutInfo.width < 500 {
+            narrowView
+        } else {
+            wideView
+        }
+    }
+    
+    var wideView: some View {
         HStack {
-            Image(systemName: viewModel.directionImageSystemName)
-            #if canImport(AppKit)
-            Image(nsImage: NSWorkspace.shared.icon(for: (.init(filenameExtension: "pdf") ?? .data)))
-            #endif
+            Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
+            
+            Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
+            
+            Text(viewModel.title).lineLimit(1).truncationMode(.middle)
+                .frame(minWidth: 200, alignment: .leading)
 
-            Text(viewModel.title)
-                .frame(maxWidth: 250, alignment: .leading)
-
-            Text(viewModel.size).frame(maxWidth: 50, alignment: .leading)
+            Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
 
             StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
+                .frame(width: 85)
 
             Spacer()
 
             actionButtons
 
         }
+        #if !os(macOS)
+        .frame(minHeight: 40)
+        #endif
     }
     
+    var narrowView: some View {
+        HStack {
+            HStack {
+                Image(systemName: viewModel.directionImageSystemName)
+                
+                Image(systemName: viewModel.fileIconSystemName)
+            }
+            
+            VStack {
+                HStack {
+                    Text(viewModel.title).bold().lineLimit(1).truncationMode(.middle)
+                    
+                    Spacer()
+                }.padding(.bottom, 2.0).frame(alignment: .leading)
+                
+                HStack {
+                    Text(viewModel.size).frame(minWidth: 40, alignment: .leading)
+                    
+                    StatusView(state: viewModel.state, progress: viewModel.progressMetrics).frame(alignment: .center)
+                    
+                    Spacer()
+                }
+            }
+            .padding()
+            actionButtons
+        }
+    }
     var actionButtons: some View {
         switch(viewModel.availableActions) {
         case .acceptOrCancel:
             return AnyView(HStack {
                 Button {
-                    viewModel.accept()
+                    if viewModel.checkIfWillOverwrite() {
+                        self.showConfirmPopover = true
+                    } else {
+                        viewModel.accept()
+                    }
                 } label: {
                     Image(systemName: "checkmark")
                 }.buttonStyle(.borderless)
+                    .overwriteConfirmation(
+                    isPresented: $showConfirmPopover,
+                    title: "Accepting this transfer will overwrite files. Are you sure?",
+                    onConfirm: {
+                        viewModel.accept()
+                    }
+                )
                 
                 Button {
                     viewModel.cancel()
@@ -67,7 +124,7 @@ struct TransferOpView: View {
                     Image(systemName: "xmark")
                 }.buttonStyle(.borderless)
             })
-
+            
         case .cancel:
             return AnyView(
                 Button {
@@ -91,16 +148,17 @@ struct TransferOpView: View {
                 } label: {
                     Image(systemName: "folder")
                 }.buttonStyle(.borderless)
-
+                
                 Button {
                     viewModel.remove()
                 } label: {
                     Image(systemName: "minus")
                 }.buttonStyle(.borderless)
-
+                
             })
         }
     }
+    
 }
 
 struct StatusView: View {
@@ -157,6 +215,49 @@ extension TransferOpView {
             transferOp.availableActions
         }
         
+        var uttype: UTType {
+            let defaultType: UTType = transferOp.count == 1 ? .data : .folder
+            
+            return UTType.init(mimeType: transferOp.mimeType) ?? defaultType
+        }
+        
+        var fileIconSystemName: String {
+            /** System icon name to represent the file transfer */
+            
+            if transferOp.count == 1 {
+                
+                print("UTType: \(self.uttype)")
+                
+                if self.uttype.conforms(to: .image) {
+                    return "photo"
+                } else if self.uttype.conforms(to: .archive) {
+                    return "doc.zipper"
+                } else if self.uttype.conforms(to: .plainText) {
+                    return "doc.plaintext"
+                } else if self.uttype.conforms(to: .text) {
+                    return "doc.text"
+                } else if self.uttype.conforms(to: .content) {
+                    return "doc.fill"
+                } else {
+                    return "doc"
+                }
+            } else {
+                if transferOp.mimeType.contains("directory") {
+                    return "folder"
+                } else {
+                    return "doc.on.doc"
+                }
+            }
+        }
+        
+        func checkIfWillOverwrite() -> Bool {
+            guard let transferOp = transferOp as? TransferFromRemote else {
+                preconditionFailure()
+            }
+
+            return transferOp.checkIfWillOverwrite()
+        }
+        
         func accept() {
             
             guard let transferOp = transferOp as? TransferFromRemote else {
@@ -206,3 +307,54 @@ extension TransferOpView {
         }
     }
 }
+
+#if DEBUG
+
+class DummyTransferOp: TransferOp {
+    var direction: Direction = .download
+    
+    var localTimestamp: Date = .init()
+    
+    var timestamp: UInt64 = DispatchTime.now().rawValue
+    
+    var _state: MutableObservableValue<TransferOpState> = .init(.requested)
+    
+    var title: String = "warpinator-project.app.dSYM.zip"
+    
+    var mimeType: String = "archive/zip"
+    
+    var size: UInt64 = 1002
+    
+    var count: UInt64 = 1
+    
+    var topDirBasenames: [String] = ["image.png"]
+    
+    func cancel() async {
+        
+    }
+    
+    func remove() {
+        
+    }
+    
+    var progress: TransferOpMetrics = .init(totalBytesCount: 1000)
+    
+    
+}
+
+extension TransferOpView.ViewModel {
+    static var preview: Self {
+        let dummyTransferOp = DummyTransferOp()
+        
+        return TransferOpView.ViewModel(transferOp: dummyTransferOp) as! Self
+    }
+}
+
+struct TransferOpView_Previews: PreviewProvider {
+    static var previews: some View {
+        TransferOpView(viewModel: TransferOpView.ViewModel.preview).environmentObject(LayoutInfo())
+    }
+}
+
+
+#endif

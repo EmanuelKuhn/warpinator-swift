@@ -49,16 +49,27 @@ class TransferDownloader {
     }
     
     /// The local paths the topDirBasenames will be downloaded to. This is computed by computing the local save path for each sanitized topDirBaseName given the self.saveDirectory
-    var savePaths: [URL] {
-        let savePaths = try? topDirBasenames.map { baseName in
+    lazy var saveURLs: [URL] = {
+        let saveURLs = try? topDirBasenames.map { baseName in
             try sanitizeRelativePath(relativePath: baseName).absoluteURL
         }
         
-        guard let savePaths = savePaths else {
+        guard let saveURLs = saveURLs else {
             return []
         }
         
-        return savePaths
+        return saveURLs
+    }()
+    
+    func checkIfWillOverwrite() -> Bool {
+        for url in saveURLs {
+            // Check if path already exists
+            if fileManager.fileExists(atPath: url.path) {
+                return true
+            }
+        }
+        
+        return false;
     }
     
     func handleChunk(chunk: FileChunk) throws {
@@ -93,7 +104,7 @@ class TransferDownloader {
             // The first chunk should have timestamp
             if chunk.hasTime {
                 let timestamp = NSDate.from(time: chunk.time)
-                try FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
+                try fileManager.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
             }
         } else {
             // Read the current modification date
@@ -103,7 +114,7 @@ class TransferDownloader {
             try chunk.chunk.append(fileURL: fileUrl)
 
             // Keep the modification date
-            try FileManager.default.setAttributes([.modificationDate: timestamp as Any], ofItemAtPath: fileUrl.path)
+            try fileManager.setAttributes([.modificationDate: timestamp as Any], ofItemAtPath: fileUrl.path)
         }
     }
 
@@ -118,7 +129,7 @@ class TransferDownloader {
         
         let newFolderPath = try self.sanitizeRelativePath(relativePath: chunk.relativePath)
         
-        try FileManager.default.createDirectory(at: newFolderPath, withIntermediateDirectories: true, attributes: [.modificationDate: timestamp])
+        try fileManager.createDirectory(at: newFolderPath, withIntermediateDirectories: true, attributes: [.modificationDate: timestamp])
     }
     
     /// Make sure that the relative path doesn't go outside of the save directory and starts with a path component that is in

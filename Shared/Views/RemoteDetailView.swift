@@ -14,6 +14,10 @@ import Combine
 import AppKit
 #endif
 
+class LayoutInfo: ObservableObject {
+    @Published var width: CGFloat = 0
+}
+
 struct RemoteDetailView: View {
     
     @ObservedObject
@@ -22,44 +26,53 @@ struct RemoteDetailView: View {
     @State
     var showingSheet = false
     
+    @StateObject
+    var layoutInfo = LayoutInfo()
+    
     var body: some View {
-        VStack {
+        GeometryReader {geom in
             VStack {
-                
-                List {
-                    Section(content: {
-                        ForEach(viewModel.transfers) { transfer in
-                            TransferOpView(viewModel: transfer)
-                            #if os(macOS)
-                            Divider()
-                            #endif
+                VStack {
+                    
+                    List {
+                        Section(content: {
+                            ForEach(viewModel.transfers) { transfer in
+                                TransferOpView(viewModel: transfer)
+#if os(macOS)
+                                Divider()
+#endif
                             }
-                    }, header: {
-                        Text("Transfers")
+                        }, header: {
+                            Text("Transfers")
+                        })
+                    }.overlay(Group {
+                        if viewModel.transfers.isEmpty {
+                            Text("No transfers yet...")
+                        }
                     })
-                }.overlay(Group {
-                    if viewModel.transfers.isEmpty {
-                        Text("No transfers yet...")
-                    }
-                })
-            }
-        }.navigationTitle("\(viewModel.title) (\(viewModel.state))")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Send files") {
-                        #if os(macOS)
-                        openFilesMac(onPick: sendFiles)
-                        #else
-                        showingSheet.toggle()
-                        #endif
+                }
+            }.onAppear() {
+                layoutInfo.width = geom.size.width
+            }.onChange(of: geom.size) { newSize in
+                layoutInfo.width = newSize.width
+            }.navigationTitle("\(viewModel.title) (\(viewModel.state))")
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Send files") {
+#if os(macOS)
+                            openFilesMac(onPick: sendFiles)
+#else
+                            showingSheet.toggle()
+#endif
+                        }
                     }
                 }
-            }
-            #if !os(macOS)
-            .sheet(isPresented: $showingSheet, content: {
-                DocumentPicker(onPick: sendFiles)
-            })
-            #endif
+#if !os(macOS)
+                .sheet(isPresented: $showingSheet, content: {
+                    DocumentPicker(onPick: sendFiles)
+                })
+#endif
+        }.environmentObject(layoutInfo)
     }
     
     func sendFiles(urls: [URL]) {
@@ -154,7 +167,7 @@ extension RemoteDetailView {
         @Published
         var state: String = ""
         
-        private let remote: Remote
+        private let remote: RemoteProtocol
         
         private var tokens: Set<AnyCancellable> = .init()
         
@@ -170,7 +183,7 @@ extension RemoteDetailView {
             }
         }
         
-        init(remote: Remote) {
+        init(remote: RemoteProtocol) {
             self.remote = remote
             
             self.title = remote.peer.hostName
@@ -186,7 +199,7 @@ extension RemoteDetailView {
             }.store(in: &tokens)
             
             Task {
-                remote.$state.receive(on: DispatchQueue.main).sink { state in
+                remote.statePublisher().receive(on: DispatchQueue.main).sink { state in
                     self.state = "\(state.description)"
                 }.store(in: &tokens)
             }
@@ -194,3 +207,45 @@ extension RemoteDetailView {
         }
     }
 }
+
+
+#if DEBUG
+
+class DummyRemote: RemoteProtocol {
+    var peer: Peer = MDNSPeer(domain: "mint.local", type: "real", name: "Warpinator mint", txtRecord: .init())
+    
+    var transfers: CurrentValueSubject<Array<TransferOp>, Never> = .init([DummyTransferOp(), DummyTransferOp(), DummyTransferOp()])
+    
+    var state: RemoteState = .online
+    
+    func ping() async throws {
+        
+    }
+    
+    func requestTransfer(url: URL) async throws {
+        
+    }
+    
+    func statePublisher() -> AnyPublisher<RemoteState, Never> {
+        CurrentValueSubject<RemoteState, Never>.init(.online).eraseToAnyPublisher()
+    }
+    
+    
+}
+
+extension RemoteDetailView.ViewModel {
+    static var preview: Self {
+        let dummyRemote = DummyRemote()
+        
+        return RemoteDetailView.ViewModel(remote: dummyRemote) as! Self
+    }
+}
+
+struct RemoteDetailViewPreview: PreviewProvider {
+    static var previews: some View {
+        RemoteDetailView(viewModel: RemoteDetailView.ViewModel.preview, showingSheet: false)
+    }
+}
+
+
+#endif
