@@ -22,7 +22,7 @@ class CertServerV2 {
     
     private var server: EventLoopFuture<Server>! = nil
     
-    init(auth: Auth, auth_port: Int=42001) {
+    init(auth: Auth, auth_port: Int) {
         self.auth = auth
         self.address = "::"
         self.auth_port = auth_port
