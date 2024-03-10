@@ -35,6 +35,9 @@ struct TransferOpView: View {
     @EnvironmentObject
     var layoutInfo: LayoutInfo
     
+    @State
+    var showConfirmPopover = false
+
     var body: some View {
         if layoutInfo.width < 500 {
             narrowView
@@ -99,10 +102,21 @@ struct TransferOpView: View {
         case .acceptOrCancel:
             return AnyView(HStack {
                 Button {
-                    viewModel.accept()
+                    if viewModel.checkIfWillOverwrite() {
+                        self.showConfirmPopover = true
+                    } else {
+                        viewModel.accept()
+                    }
                 } label: {
                     Image(systemName: "checkmark")
                 }.buttonStyle(.borderless)
+                    .overwriteConfirmation(
+                    isPresented: $showConfirmPopover,
+                    title: "Accepting this transfer will overwrite files. Are you sure?",
+                    onConfirm: {
+                        viewModel.accept()
+                    }
+                )
                 
                 Button {
                     viewModel.cancel()
