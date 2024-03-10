@@ -95,7 +95,7 @@ class TransferDownloader {
             // The first chunk should have timestamp
             if chunk.hasTime {
                 let timestamp = NSDate.from(time: chunk.time)
-                try FileManager.default.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
+                try fileManager.setAttributes([.modificationDate: timestamp], ofItemAtPath: fileUrl.path)
             }
         } else {
             // Read the current modification date
@@ -105,7 +105,7 @@ class TransferDownloader {
             try chunk.chunk.append(fileURL: fileUrl)
 
             // Keep the modification date
-            try FileManager.default.setAttributes([.modificationDate: timestamp as Any], ofItemAtPath: fileUrl.path)
+            try fileManager.setAttributes([.modificationDate: timestamp as Any], ofItemAtPath: fileUrl.path)
         }
     }
 
@@ -120,7 +120,7 @@ class TransferDownloader {
         
         let newFolderPath = try self.sanitizeRelativePath(relativePath: chunk.relativePath)
         
-        try FileManager.default.createDirectory(at: newFolderPath, withIntermediateDirectories: true, attributes: [.modificationDate: timestamp])
+        try fileManager.createDirectory(at: newFolderPath, withIntermediateDirectories: true, attributes: [.modificationDate: timestamp])
     }
     
     /// Make sure that the relative path doesn't go outside of the save directory and starts with a path component that is in
