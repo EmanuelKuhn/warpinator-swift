@@ -194,3 +194,44 @@ extension RemoteDetailView {
         }
     }
 }
+
+#if DEBUG
+
+class DummyRemote: RemoteProtocol {
+    var peer: Peer = MDNSPeer(domain: "mint.local", type: "real", name: "Warpinator mint", txtRecord: .init())
+    
+    var transfers: CurrentValueSubject<Array<TransferOp>, Never> = .init([DummyTransferOp(), DummyTransferOp(), DummyTransferOp()])
+    
+    var state: RemoteState = .online
+    
+    func ping() async throws {
+        
+    }
+    
+    func requestTransfer(url: URL) async throws {
+        
+    }
+    
+    func statePublisher() -> AnyPublisher<RemoteState, Never> {
+        CurrentValueSubject<RemoteState, Never>.init(.online).eraseToAnyPublisher()
+    }
+    
+    
+}
+
+extension RemoteDetailView.ViewModel {
+    static var preview: Self {
+        let dummyRemote = DummyRemote()
+        
+        return RemoteDetailView.ViewModel(remote: dummyRemote) as! Self
+    }
+}
+
+struct RemoteDetailViewPreview: PreviewProvider {
+    static var previews: some View {
+        RemoteDetailView(viewModel: RemoteDetailView.ViewModel.preview, showingSheet: false)
+    }
+}
+
+
+#endif
