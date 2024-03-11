@@ -45,9 +45,10 @@ jobs:
       # files under test-results folder in the Artifacts tab
       - store_test_results:
           path: output/scan
-      - store_artifacts:
-          path: output
-          destination: scan-output
+
+      # - store_artifacts:
+      #     path: output
+      #     destination: scan-output
 
       - save_cache:
           paths:
@@ -150,9 +151,9 @@ jobs:
       # files under test-results folder in the Artifacts tab
       - store_test_results:
           path: output/scan
-      - store_artifacts:
-          path: output
-          destination: scan-output
+      # - store_artifacts:
+      #     path: output
+      #     destination: scan-output
       
       - run:
           name: compute sha256sum checksum of warpinator-project.app.zip
@@ -199,9 +200,10 @@ jobs:
       # files under test-results folder in the Artifacts tab
       - store_test_results:
           path: output/scan
-      - store_artifacts:
-          path: output
-          destination: scan-output
+
+      # - store_artifacts:
+      #     path: output
+      #     destination: scan-output
 
       - save_cache:
           paths:
