@@ -28,7 +28,13 @@ final class WarpIntegrationTests: XCTestCase {
         let done_warpenv = self.expectation(description: "setupWarpInstance(\(port), \(authPort)")
         
         let warpEnv = TestWarpInstance(identity: identity, port: port, authPort: authPort)
-        await warpEnv.run {
+        await warpEnv.run { result in
+            do {
+                try result.get()
+            } catch {
+                assertionFailure("failed to start warp instance: \(error)")
+            }
+            
             done_warpenv.fulfill()
         }
         
