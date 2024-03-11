@@ -214,7 +214,7 @@ extension RemoteDetailView {
 class DummyRemote: RemoteProtocol {
     var peer: Peer = MDNSPeer(domain: "mint.local", type: "real", name: "Warpinator mint", txtRecord: .init())
     
-    var transfers: CurrentValueSubject<Array<TransferOp>, Never> = .init([DummyTransferOp(), DummyTransferOp(), DummyTransferOp()])
+    var transfers: CurrentValueSubject<Array<TransferOp>, Never> = .init([DummyTransferOp(), DummyTransferOp.multiTransfer, DummyTransferOp()])
     
     var state: RemoteState = .online
     

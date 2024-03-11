@@ -63,6 +63,12 @@ protocol TransferOp: AnyObject {
     var progress: TransferOpMetrics { get }
 }
 
+protocol TransferOpFromRemote: TransferOp {
+    func checkIfWillOverwrite() -> Bool
+    
+    func accept() async throws -> Void 
+}
+
 extension TransferOp {
     var state: TransferOpState {
         get { _state.wrappedValue }
@@ -118,7 +124,7 @@ extension TransferOp {
 }
 
 /// An incoming transfer operation.
-class TransferFromRemote: TransferOp {
+class TransferFromRemote: TransferOpFromRemote {
     let direction: Direction = .download
     
     let localTimestamp: Date = Date(timeIntervalSinceNow: 0)

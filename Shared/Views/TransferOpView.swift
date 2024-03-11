@@ -330,17 +330,19 @@ extension TransferOpView {
         }
         
         func checkIfWillOverwrite() -> Bool {
-            guard let transferOp = transferOp as? TransferFromRemote else {
-                preconditionFailure()
+            guard let transferOp = transferOp as? TransferOpFromRemote else {
+                assertionFailure()
+                return false
             }
-
+            
             return transferOp.checkIfWillOverwrite()
         }
         
         func accept() {
             
-            guard let transferOp = transferOp as? TransferFromRemote else {
-                preconditionFailure()
+            guard let transferOp = transferOp as? TransferOpFromRemote else {
+                assertionFailure()
+                return
             }
             
             Task {
@@ -389,7 +391,15 @@ extension TransferOpView {
 
 #if DEBUG
 
-class DummyTransferOp: TransferOp {
+class DummyTransferOp: TransferOpFromRemote {
+    func checkIfWillOverwrite() -> Bool {
+        willOverwrite
+    }
+    
+    func accept() async throws {
+        
+    }
+    
     var direction: Direction = .download
     
     var localTimestamp: Date = .init()
@@ -407,6 +417,21 @@ class DummyTransferOp: TransferOp {
     var count: UInt64 = 1
     
     var topDirBasenames: [String] = ["image.png"]
+    
+    var willOverwrite: Bool = true
+    
+    init(direction: Direction = .download, title: String="warpinator-project.app.dSYM.zip", mimeType: String="archive/zip", size:UInt64=1430000, count: UInt64=1, topDirBaseNames: [String] = ["warpinator-project.app.dSYM.zip"], willOverwrite: Bool = true) {
+        self.direction = direction
+        self.title = title
+        self.mimeType = mimeType
+        self.size = size
+        self.count = count
+        self.topDirBasenames = topDirBaseNames
+        
+        self.willOverwrite = true
+    }
+    
+    static var multiTransfer: DummyTransferOp = .init(title: "3 files", mimeType: "application/data", count: 3, topDirBaseNames: ["image.png", "archive.zip", "warpinator-project.app.dSYM.zip"])
     
     func cancel() async {
         
@@ -431,7 +456,10 @@ extension TransferOpView.ViewModel {
 
 struct TransferOpView_Previews: PreviewProvider {
     static var previews: some View {
-        TransferOpView(viewModel: TransferOpView.ViewModel.preview).environmentObject(LayoutInfo())
+        Group {
+            TransferOpView(viewModel: TransferOpView.ViewModel.preview, isExpanded: false).environmentObject(LayoutInfo())
+            TransferOpView(viewModel: TransferOpView.ViewModel.preview, isExpanded: true).previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/199.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100.0/*@END_MENU_TOKEN@*/)).environmentObject(LayoutInfo())
+        }
     }
 }
 
