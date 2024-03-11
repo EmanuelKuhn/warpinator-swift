@@ -11,11 +11,8 @@
 		4C1443B527E7290000F87557 /* Shield in Frameworks */ = {isa = PBXBuildFile; productRef = 4C1443B427E7290000F87557 /* Shield */; };
 		4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
 		4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1443B627E7A2E600F87557 /* NetworkConfig.swift */; };
-		4C195A8D2B931A4800E18958 /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
 		4C195A8E2B931A4800E18958 /* TransferDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */; };
 		4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
-		4C195A902B931A4800E18958 /* WarpIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */; };
-		4C195A912B931A4800E18958 /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
 		4C195A922B931A4800E18958 /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
 		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
@@ -53,8 +50,6 @@
 		4C7E832A27EB2ED400E393B5 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
 		4CA343772802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
 		4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA343762802D32F00702DD6 /* Backpressure.swift */; };
-		4CA9E5B0280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */; };
-		4CA9E5B1280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */; };
 		4CA9E5B5280D89DD0044CE1F /* WarpServerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */; };
 		4CA9E5B6280D89DD0044CE1F /* WarpServerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */; };
 		4CA9E5B8280F02220044CE1F /* WarpServerInterceptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */; };
@@ -63,11 +58,7 @@
 		4CA9E5BE280F11390044CE1F /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5BD280F11390044CE1F /* Peer.swift */; };
 		4CA9E5BF280F11740044CE1F /* Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5BD280F11390044CE1F /* Peer.swift */; };
 		4CA9E5C1280F127A0044CE1F /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5BB280F11040044CE1F /* Discovery.swift */; };
-		4CA9E5C5281447A90044CE1F /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
-		4CA9E5C7281448060044CE1F /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
 		4CA9E5C9281449460044CE1F /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
-		4CA9E5CA281468C30044CE1F /* TestDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */; };
-		4CA9E5CB281468C50044CE1F /* TestWarpInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */; };
 		4CA9E5CC281468CC0044CE1F /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4CD3F06F283CC23200DFE396 /* ObservableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD3F06E283CC23200DFE396 /* ObservableValue.swift */; };
 		4CD3F070283CC23200DFE396 /* ObservableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD3F06E283CC23200DFE396 /* ObservableValue.swift */; };
@@ -187,14 +178,11 @@
 		4C731B692B9DC3B4003390EC /* ConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationView.swift; sourceTree = "<group>"; };
 		4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		4CA343762802D32F00702DD6 /* Backpressure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backpressure.swift; sourceTree = "<group>"; };
-		4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WarpIntegrationTests.swift; path = "warpinator-projectTests/WarpIntegrationTests.swift"; sourceTree = SOURCE_ROOT; };
 		4CA9E5B4280D89DD0044CE1F /* WarpServerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServerProvider.swift; sourceTree = "<group>"; };
 		4CA9E5B7280F02220044CE1F /* WarpServerInterceptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpServerInterceptors.swift; sourceTree = "<group>"; };
 		4CA9E5BB280F11040044CE1F /* Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery.swift; sourceTree = "<group>"; };
 		4CA9E5BD280F11390044CE1F /* Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peer.swift; sourceTree = "<group>"; };
 		4CA9E5C2281444310044CE1F /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
-		4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDiscovery.swift; sourceTree = "<group>"; };
-		4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWarpInstance.swift; sourceTree = "<group>"; };
 		4CA9E5C8281449460044CE1F /* helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpers.swift; sourceTree = "<group>"; };
 		4CAE6C5D29C9C4CF0058E1CD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CD3F06E283CC23200DFE396 /* ObservableValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableValue.swift; sourceTree = "<group>"; };
@@ -391,15 +379,6 @@
 			path = model;
 			sourceTree = "<group>";
 		};
-		4CA9E5C3281447570044CE1F /* WarpHelpers */ = {
-			isa = PBXGroup;
-			children = (
-				4CA9E5C4281447A90044CE1F /* TestDiscovery.swift */,
-				4CA9E5C6281448060044CE1F /* TestWarpInstance.swift */,
-			);
-			path = WarpHelpers;
-			sourceTree = "<group>";
-		};
 		4CDD56BF27B4105800A9B537 /* Backend */ = {
 			isa = PBXGroup;
 			children = (
@@ -460,9 +439,7 @@
 		4CDD570A27B982CA00A9B537 /* warpinator-projectTests */ = {
 			isa = PBXGroup;
 			children = (
-				4CA9E5C3281447570044CE1F /* WarpHelpers */,
 				4CA9E5C2281444310044CE1F /* TestPlan.xctestplan */,
-				4CA9E5AE280D80890044CE1F /* WarpIntegrationTests.swift */,
 				4CDD571227B9842600A9B537 /* AuthTests.swift */,
 				4CA9E5C8281449460044CE1F /* helpers.swift */,
 				4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */,
@@ -733,11 +710,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C195A8D2B931A4800E18958 /* TestWarpInstance.swift in Sources */,
 				4C195A8E2B931A4800E18958 /* TransferDownloaderTests.swift in Sources */,
 				4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */,
-				4C195A902B931A4800E18958 /* WarpIntegrationTests.swift in Sources */,
-				4C195A912B931A4800E18958 /* TestDiscovery.swift in Sources */,
 				4C195A922B931A4800E18958 /* helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -748,9 +722,6 @@
 			files = (
 				4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */,
 				4C5C7EF32846764E0063BE6F /* TransferDownloaderTests.swift in Sources */,
-				4CA9E5B0280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */,
-				4CA9E5CA281468C30044CE1F /* TestDiscovery.swift in Sources */,
-				4CA9E5CB281468C50044CE1F /* TestWarpInstance.swift in Sources */,
 				4CA9E5CC281468CC0044CE1F /* helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -865,11 +836,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CA9E5C7281448060044CE1F /* TestWarpInstance.swift in Sources */,
 				4C5C7EF22846764E0063BE6F /* TransferDownloaderTests.swift in Sources */,
 				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
-				4CA9E5B1280D808F0044CE1F /* WarpIntegrationTests.swift in Sources */,
-				4CA9E5C5281447A90044CE1F /* TestDiscovery.swift in Sources */,
 				4CA9E5C9281449460044CE1F /* helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
