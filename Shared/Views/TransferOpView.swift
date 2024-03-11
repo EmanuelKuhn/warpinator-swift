@@ -16,6 +16,13 @@ import AppKit
 
 import UniformTypeIdentifiers
 
+extension String: Identifiable {
+    public typealias ID = Int
+    public var id: Int {
+        return hash
+    }
+}
+
 extension Direction {
     var imageSystemName: String {
         switch self {
@@ -37,9 +44,21 @@ struct TransferOpView: View {
     
     @State
     var showConfirmPopover = false
-
+    
+    @State
+    var isExpanded = false
+    
+    init(viewModel: ViewModel, isExpanded: Bool=false) {
+        self.viewModel = viewModel
+        self.isExpanded = isExpanded
+    }
+    
+    var showNarrowView: Bool {
+        layoutInfo.width < 500
+    }
+    
     var body: some View {
-        if layoutInfo.width < 500 {
+        if showNarrowView {
             narrowView
         } else {
             wideView
@@ -47,27 +66,37 @@ struct TransferOpView: View {
     }
     
     var wideView: some View {
-        HStack {
-            Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
-            
-            Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
-            
-            Text(viewModel.title).lineLimit(1).truncationMode(.middle)
-                .frame(minWidth: 200, alignment: .leading)
-
-            Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
-
-            StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
-                .frame(width: 85)
-
-            Spacer()
-
-            actionButtons
-
+        VStack {
+            HStack {
+                Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
+                
+                Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
+                
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(viewModel.title).lineLimit(1).truncationMode(.middle)
+                        if viewModel.showExpandButton {
+                            expandButton
+                        }
+                    }
+                    expandedTopDirNames
+                }.frame(minWidth: 200, alignment: .leading).padding(.trailing, 10).padding(.leading, 2)
+                
+                
+                
+                Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
+                
+                StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
+                    .frame(width: 85)
+                
+                Spacer()
+                
+                actionButtons
+            }
         }
-        #if !os(macOS)
+#if !os(macOS)
         .frame(minHeight: 40)
-        #endif
+#endif
     }
     
     var narrowView: some View {
@@ -79,12 +108,20 @@ struct TransferOpView: View {
             }
             
             VStack {
-                HStack {
-                    Text(viewModel.title).bold().lineLimit(1).truncationMode(.middle)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(viewModel.title)
+                            .bold().lineLimit(1).truncationMode(.middle)
+                        if viewModel.showExpandButton {
+                            expandButton
+                        }
+                        
+                        Spacer()
+                    }
                     
-                    Spacer()
-                }.padding(.bottom, 2.0).frame(alignment: .leading)
-                
+                    expandedTopDirNames
+                }
+                .padding(.bottom, 2.0).frame(alignment: .leading)
                 HStack {
                     Text(viewModel.size).frame(minWidth: 40, alignment: .leading)
                     
@@ -97,6 +134,31 @@ struct TransferOpView: View {
             actionButtons
         }
     }
+    
+    var expandButton: some View {
+        Button(action: {
+            isExpanded.toggle()
+        }) {
+            Image(systemName: "chevron.right.circle")
+                .rotationEffect(.degrees(self.isExpanded ? 90 : 0))
+                .frame(alignment: .center)
+        }.buttonStyle(.borderless)
+    }
+    
+    var expandedTopDirNames: some View {
+        VStack(alignment: .leading) {
+            if self.isExpanded {
+                VStack(alignment: .leading) {
+                    ForEach(Array(viewModel.topDirBaseNames)) {name in
+                        Text(name).lineLimit(1).truncationMode(.middle)
+                    }
+                }.frame(alignment: .leading)
+                    .padding(.bottom, 3.0).padding(.top, 0.5)
+                    .opacity(0.7)
+            }
+        }
+    }
+    
     var actionButtons: some View {
         switch(viewModel.availableActions) {
         case .acceptOrCancel:
@@ -111,12 +173,12 @@ struct TransferOpView: View {
                     Image(systemName: "checkmark")
                 }.buttonStyle(.borderless)
                     .overwriteConfirmation(
-                    isPresented: $showConfirmPopover,
-                    title: "Accepting this transfer will overwrite files. Are you sure?",
-                    onConfirm: {
-                        viewModel.accept()
-                    }
-                )
+                        isPresented: $showConfirmPopover,
+                        title: "Accepting this transfer will overwrite files. Are you sure?",
+                        onConfirm: {
+                            viewModel.accept()
+                        }
+                    )
                 
                 Button {
                     viewModel.cancel()
@@ -178,7 +240,6 @@ struct StatusView: View {
             }
         }.frame(maxWidth: 250, alignment: .leading)
     }
-
 }
 
 extension TransferOpView {
@@ -226,7 +287,6 @@ extension TransferOpView {
             
             if transferOp.count == 1 {
                 
-                print("UTType: \(self.uttype)")
                 
                 if self.uttype.conforms(to: .image) {
                     return "photo"
@@ -248,6 +308,25 @@ extension TransferOpView {
                     return "doc.on.doc"
                 }
             }
+        }
+        
+        var topDirBaseNames: [String] {
+            transferOp.topDirBasenames
+        }
+        
+        var showExpandButton: Bool {
+            if topDirBaseNames.count > 1 {
+                return true
+            }
+            
+            guard let topDirBaseName = topDirBaseNames.first else {
+                // Transfer does not have files
+                return false
+            }
+            
+            // Show which file will be sent if the title doesn't match it
+            // This is the case for e.g. a folder
+            return topDirBaseName != self.title
         }
         
         func checkIfWillOverwrite() -> Bool {
