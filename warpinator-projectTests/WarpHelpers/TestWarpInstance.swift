@@ -43,13 +43,13 @@ class TestWarpInstance {
         self.warpServer = WarpServer(auth: auth, remoteRegistration: remoteRegistration, port: port)
     }
     
-    func run(callback: @escaping ()->(), flag: Bool=false) async {
+    func run(callback: @escaping (Result<Void, Error>)->(), flag: Bool=false) async {
         
         Task {
             try self.certServer.run(eventLoopGroup: eventLoopGroup) {
                 Task {
-                    try self.warpServer.run(eventLoopGroup: self.eventLoopGroup) {
-                        callback()
+                    try self.warpServer.run(eventLoopGroup: self.eventLoopGroup) {result in
+                        callback(result)
                         print(flag)
                     }
                 }
