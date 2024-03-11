@@ -28,16 +28,24 @@ extension Direction {
 }
 
 struct TransferOpView: View {
-
+    
     @ObservedObject
     var viewModel: ViewModel
-
+    
     @EnvironmentObject
     var layoutInfo: LayoutInfo
     
     @State
     var showConfirmPopover = false
-
+    
+    @State
+    var isExpanded = false
+    
+    init(viewModel: ViewModel, isExpanded: Bool=false) {
+        self.viewModel = viewModel
+        self.isExpanded = isExpanded
+    }
+    
     var body: some View {
         if layoutInfo.width < 500 {
             narrowView
@@ -54,20 +62,20 @@ struct TransferOpView: View {
             
             Text(viewModel.title).lineLimit(1).truncationMode(.middle)
                 .frame(minWidth: 200, alignment: .leading)
-
+            
             Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
-
+            
             StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
                 .frame(width: 85)
-
+            
             Spacer()
-
+            
             actionButtons
-
+            
         }
-        #if !os(macOS)
+#if !os(macOS)
         .frame(minHeight: 40)
-        #endif
+#endif
     }
     
     var narrowView: some View {
@@ -80,11 +88,35 @@ struct TransferOpView: View {
             
             VStack {
                 HStack {
-                    Text(viewModel.title).bold().lineLimit(1).truncationMode(.middle)
+                    Text(viewModel.title)
+                        .bold().lineLimit(1).truncationMode(.middle)
+                    Button(action: {
+//                        withAnimation {
+                        isExpanded.toggle()
+//                        }
+                    }) {
+                        Image(systemName: "chevron.right.circle")
+                            .rotationEffect(.degrees(self.isExpanded ? 90 : 0))
+                            .frame(alignment: .center)
+                    }.buttonStyle(.borderless)
                     
                     Spacer()
-                }.padding(.bottom, 2.0).frame(alignment: .leading)
+                }
+                .padding(.bottom, 2.0).frame(alignment: .leading)
                 
+                VStack {
+                    if self.isExpanded {
+                        VStack(alignment: .leading) {
+                            Text("File 1.txt")
+                            Text("File 2.png")
+                            Text("Very long folder")
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 2.0)
+        //                    .scaleEffect(x: 1, y: isExpanded ? 1 : 0, anchor: .top)
+                            .opacity(isExpanded ? 0.7 : 0)
+//                            .transition(.opacity)
+                    }
+                }//.animation(.easeInOut.speed(4))
                 HStack {
                     Text(viewModel.size).frame(minWidth: 40, alignment: .leading)
                     
@@ -111,12 +143,12 @@ struct TransferOpView: View {
                     Image(systemName: "checkmark")
                 }.buttonStyle(.borderless)
                     .overwriteConfirmation(
-                    isPresented: $showConfirmPopover,
-                    title: "Accepting this transfer will overwrite files. Are you sure?",
-                    onConfirm: {
-                        viewModel.accept()
-                    }
-                )
+                        isPresented: $showConfirmPopover,
+                        title: "Accepting this transfer will overwrite files. Are you sure?",
+                        onConfirm: {
+                            viewModel.accept()
+                        }
+                    )
                 
                 Button {
                     viewModel.cancel()
@@ -178,15 +210,15 @@ struct StatusView: View {
             }
         }.frame(maxWidth: 250, alignment: .leading)
     }
-
+    
 }
 
 extension TransferOpView {
     @MainActor
     class ViewModel: Identifiable, ObservableObject {
-
+        
         private var transferOp: TransferOp
-
+        
         var title: String {
             transferOp.title
         }
@@ -254,7 +286,7 @@ extension TransferOpView {
             guard let transferOp = transferOp as? TransferFromRemote else {
                 preconditionFailure()
             }
-
+            
             return transferOp.checkIfWillOverwrite()
         }
         
@@ -288,19 +320,19 @@ extension TransferOpView {
             print("localurls:")
             print(transferOp.localSaveUrls)
             
-            #if os(macOS)
+#if os(macOS)
             NSWorkspace.shared.activateFileViewerSelecting(transferOp.localSaveUrls)
-            #endif
+#endif
             
             //TODO: Show file location on iOS
             
         }
-
+        
         var bag: Set<AnyCancellable> = .init()
-
+        
         init(transferOp: TransferOp) {
             self.transferOp = transferOp
-
+            
             transferOp._state.objectWillChange.receive(on: DispatchQueue.main).sink(receiveValue: {
                 self.objectWillChange.send()
             }).store(in: &bag)
@@ -352,7 +384,10 @@ extension TransferOpView.ViewModel {
 
 struct TransferOpView_Previews: PreviewProvider {
     static var previews: some View {
-        TransferOpView(viewModel: TransferOpView.ViewModel.preview).environmentObject(LayoutInfo())
+        Group {
+            TransferOpView(viewModel: TransferOpView.ViewModel.preview, isExpanded: false).environmentObject(LayoutInfo())
+            TransferOpView(viewModel: TransferOpView.ViewModel.preview, isExpanded: true).previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/199.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100.0/*@END_MENU_TOKEN@*/)).environmentObject(LayoutInfo())
+        }
     }
 }
 
