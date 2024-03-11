@@ -16,6 +16,13 @@ import AppKit
 
 import UniformTypeIdentifiers
 
+extension String: Identifiable {
+    public typealias ID = Int
+    public var id: Int {
+        return hash
+    }
+}
+
 extension Direction {
     var imageSystemName: String {
         switch self {
@@ -46,8 +53,12 @@ struct TransferOpView: View {
         self.isExpanded = isExpanded
     }
     
+    var showNarrowView: Bool {
+        layoutInfo.width < 500
+    }
+    
     var body: some View {
-        if layoutInfo.width < 500 {
+        if showNarrowView {
             narrowView
         } else {
             wideView
@@ -55,23 +66,33 @@ struct TransferOpView: View {
     }
     
     var wideView: some View {
-        HStack {
-            Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
-            
-            Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
-            
-            Text(viewModel.title).lineLimit(1).truncationMode(.middle)
-                .frame(minWidth: 200, alignment: .leading)
-            
-            Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
-            
-            StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
-                .frame(width: 85)
-            
-            Spacer()
-            
-            actionButtons
-            
+        VStack {
+            HStack {
+                Image(systemName: viewModel.directionImageSystemName).frame(width: 20, alignment: .center)
+                
+                Image(systemName: viewModel.fileIconSystemName).frame(width: 20, alignment: .center)
+                
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(viewModel.title).lineLimit(1).truncationMode(.middle)
+                        if viewModel.showExpandButton {
+                            expandButton
+                        }
+                    }
+                    expandedTopDirNames
+                }.frame(minWidth: 200, alignment: .leading).padding(.trailing, 10)
+                
+                
+                
+                Text(viewModel.size).frame(minWidth: 80, alignment: .leading)
+                
+                StatusView(state: viewModel.state, progress: viewModel.progressMetrics)
+                    .frame(width: 85)
+                
+                Spacer()
+                
+                actionButtons
+            }
         }
 #if !os(macOS)
         .frame(minHeight: 40)
@@ -87,37 +108,21 @@ struct TransferOpView: View {
             }
             
             VStack {
-                HStack {
-                    Text(viewModel.title)
-                        .bold().lineLimit(1).truncationMode(.middle)
-                    Button(action: {
-//                        withAnimation {
-                        isExpanded.toggle()
-//                        }
-                    }) {
-                        Image(systemName: "chevron.right.circle")
-                            .rotationEffect(.degrees(self.isExpanded ? 90 : 0))
-                            .frame(alignment: .center)
-                    }.buttonStyle(.borderless)
-                    
-                    Spacer()
-                }
-                .padding(.bottom, 2.0).frame(alignment: .leading)
-                
-                VStack {
-                    if self.isExpanded {
-                        VStack(alignment: .leading) {
-                            Text("File 1.txt")
-                            Text("File 2.png")
-                            Text("Very long folder")
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 2.0)
-        //                    .scaleEffect(x: 1, y: isExpanded ? 1 : 0, anchor: .top)
-                            .opacity(isExpanded ? 0.7 : 0)
-//                            .transition(.opacity)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(viewModel.title)
+                            .bold().lineLimit(1).truncationMode(.middle)
+                        if viewModel.showExpandButton {
+                            expandButton
+                        }
+                        
+                        Spacer()
                     }
-                }//.animation(.easeInOut.speed(4))
-                HStack {
+                    
+                    expandedTopDirNames
+                }
+                 .padding(.bottom, 2.0).frame(alignment: .leading)
+               HStack {
                     Text(viewModel.size).frame(minWidth: 40, alignment: .leading)
                     
                     StatusView(state: viewModel.state, progress: viewModel.progressMetrics).frame(alignment: .center)
@@ -129,6 +134,31 @@ struct TransferOpView: View {
             actionButtons
         }
     }
+    
+    var expandButton: some View {
+        Button(action: {
+            isExpanded.toggle()
+        }) {
+            Image(systemName: "chevron.right.circle")
+                .rotationEffect(.degrees(self.isExpanded ? 90 : 0))
+                .frame(alignment: .center)
+        }.buttonStyle(.borderless)
+    }
+    
+    var expandedTopDirNames: some View {
+        VStack(alignment: .leading) {
+            if self.isExpanded {
+                VStack(alignment: .leading) {
+                    ForEach(Array(viewModel.topDirBaseNames)) {name in
+                        Text(name).truncationMode(.middle)
+                    }
+                }.frame(alignment: .leading)
+                    .padding(.bottom, 3.0).padding(.top, 0.0)
+                    .opacity(0.7)
+            }
+        }
+    }
+    
     var actionButtons: some View {
         switch(viewModel.availableActions) {
         case .acceptOrCancel:
@@ -215,7 +245,7 @@ struct StatusView: View {
 
 extension TransferOpView {
     @MainActor
-    class ViewModel: Identifiable, ObservableObject {
+    class ViewModel: Identifiable & ObservableObject {
         
         private var transferOp: TransferOp
         
@@ -227,9 +257,8 @@ extension TransferOpView {
             ByteCountFormatter.string(fromByteCount: Int64(transferOp.size), countStyle: .file)
         }
         
-        var state: TransferOpState {
-            transferOp.state
-        }
+        @Published
+        var state: TransferOpState
         
         var stateDescription: String {
             String(describing: transferOp.state)
@@ -258,7 +287,7 @@ extension TransferOpView {
             
             if transferOp.count == 1 {
                 
-                print("UTType: \(self.uttype)")
+//                print("UTType: \(self.uttype)")
                 
                 if self.uttype.conforms(to: .image) {
                     return "photo"
@@ -282,9 +311,18 @@ extension TransferOpView {
             }
         }
         
+        var topDirBaseNames: [String] {
+            transferOp.topDirBasenames
+        }
+        
+        var showExpandButton: Bool {
+            topDirBaseNames.count > 1
+        }
+        
         func checkIfWillOverwrite() -> Bool {
-            guard let transferOp = transferOp as? TransferFromRemote else {
-                preconditionFailure()
+            guard let transferOp = transferOp as? TransferOpFromRemote else {
+                assertionFailure()
+                return false
             }
             
             return transferOp.checkIfWillOverwrite()
@@ -292,8 +330,9 @@ extension TransferOpView {
         
         func accept() {
             
-            guard let transferOp = transferOp as? TransferFromRemote else {
-                preconditionFailure()
+            guard let transferOp = transferOp as? TransferOpFromRemote else {
+                assertionFailure()
+                return
             }
             
             Task {
@@ -327,29 +366,43 @@ extension TransferOpView {
             //TODO: Show file location on iOS
             
         }
-        
-        var bag: Set<AnyCancellable> = .init()
-        
+                
         init(transferOp: TransferOp) {
             self.transferOp = transferOp
             
-            transferOp._state.objectWillChange.receive(on: DispatchQueue.main).sink(receiveValue: {
-                self.objectWillChange.send()
-            }).store(in: &bag)
+            self.state = transferOp.state
+            
+            transferOp.statePublisher
+                .receive(on: RunLoop.main)
+                .assign(to: &$state)
         }
     }
 }
 
 #if DEBUG
 
-class DummyTransferOp: TransferOp {
+class DummyTransferOp: TransferOpFromRemote {
+    func checkIfWillOverwrite() -> Bool {
+        willOverwrite
+    }
+    
+    func accept() async throws {
+        
+    }
+    
     var direction: Direction = .download
     
     var localTimestamp: Date = .init()
     
     var timestamp: UInt64 = DispatchTime.now().rawValue
     
-    var _state: MutableObservableValue<TransferOpState> = .init(.requested)
+    @Published
+    var state: TransferOpState = .requested
+    
+    var statePublisher: AnyPublisher<TransferOpState, Never> {
+        $state.eraseToAnyPublisher()
+    }
+    
     
     var title: String = "warpinator-project.app.dSYM.zip"
     
@@ -360,6 +413,21 @@ class DummyTransferOp: TransferOp {
     var count: UInt64 = 1
     
     var topDirBasenames: [String] = ["image.png"]
+    
+    var willOverwrite: Bool = true
+    
+    init(direction: Direction = .download, title: String="warpinator-project.app.dSYM.zip", mimeType: String="archive/zip", size:UInt64=1430000, count: UInt64=1, topDirBaseNames: [String] = ["warpinator-project.app.dSYM.zip"], willOverwrite: Bool = true) {
+        self.direction = direction
+        self.title = title
+        self.mimeType = mimeType
+        self.size = size
+        self.count = count
+        self.topDirBasenames = topDirBaseNames
+        
+        self.willOverwrite = true
+    }
+    
+    static var multiTransfer: DummyTransferOp = .init(title: "3 files", mimeType: "application/data", count: 3, topDirBaseNames: ["image.png", "archive.zip", "warpinator-project.app.dSYM.zip"])
     
     func cancel() async {
         

@@ -8,6 +8,8 @@
 import Foundation
 import UniformTypeIdentifiers
 
+import Combine
+
 enum TransferOpState: Equatable {
     case initialized
     case requested
@@ -36,8 +38,9 @@ protocol TransferOp: AnyObject {
     /// Timestamp for uniquely identifying the transferop.
     var timestamp: UInt64 { get }
     
-    var _state: MutableObservableValue<TransferOpState> { get }
+//        var _state: MutableObservableValue<TransferOpState> { get }
     var state: TransferOpState { get set }
+    var statePublisher: AnyPublisher<TransferOpState, Never> { get }
 
     /// A title describing the files that will be transfered.
     var title: String { get }
@@ -63,11 +66,17 @@ protocol TransferOp: AnyObject {
     var progress: TransferOpMetrics { get }
 }
 
+protocol TransferOpFromRemote: TransferOp {
+    func checkIfWillOverwrite() -> Bool
+    
+    func accept() async throws -> Void 
+}
+
 extension TransferOp {
-    var state: TransferOpState {
-        get { _state.wrappedValue }
-        set { _state.wrappedValue = newValue }
-    }
+//    var state: TransferOpState {
+//        get { _state.wrappedValue }
+//        set { _state.wrappedValue = newValue }
+//    }
     
     fileprivate func cancel(remote: Remote?) {
         if state == .initialized || state == .requested {
@@ -118,7 +127,7 @@ extension TransferOp {
 }
 
 /// An incoming transfer operation.
-class TransferFromRemote: TransferOp {
+class TransferFromRemote: TransferOpFromRemote {
     let direction: Direction = .download
     
     let localTimestamp: Date = Date(timeIntervalSinceNow: 0)
@@ -131,7 +140,14 @@ class TransferFromRemote: TransferOp {
     let count: UInt64
     let topDirBasenames: [String]
     
-    let _state: MutableObservableValue<TransferOpState>
+    @Published
+    var state: TransferOpState
+    
+    var statePublisher: AnyPublisher<TransferOpState, Never> {
+        $state.eraseToAnyPublisher()
+    }
+    
+//    let _state: MutableObservableValue<TransferOpState>
     
     let progress: TransferOpMetrics
     
@@ -148,14 +164,14 @@ class TransferFromRemote: TransferOp {
         }
     }()
     
-    init(timestamp: UInt64, title: String, mimeType: String, size: UInt64, count: UInt64, topDirBasenames: [String], _state: MutableObservableValue<TransferOpState>, remote: Remote) {
+    init(timestamp: UInt64, title: String, mimeType: String, size: UInt64, count: UInt64, topDirBasenames: [String], state: TransferOpState, remote: Remote) {
         self.timestamp = timestamp
         self.title = title
         self.mimeType = mimeType
         self.size = size
         self.count = count
         self.topDirBasenames = topDirBasenames
-        self._state = _state
+        self.state = state
         self.remote = remote
         
         self.progress = .init(totalBytesCount: Int(size))
@@ -203,7 +219,7 @@ extension TransferFromRemote {
             size: request.size,
             count: request.count,
             topDirBasenames: request.topDirBasenames,
-            _state: .init(.requested),
+            state: .requested,
             remote: remote
         )
     }
@@ -219,8 +235,13 @@ class TransferToRemote: TransferOp {
     
     let timestamp: UInt64
     
-    let _state: MutableObservableValue<TransferOpState>
+    @Published
+    var state: TransferOpState
     
+    var statePublisher: AnyPublisher<TransferOpState, Never> {
+        $state.eraseToAnyPublisher()
+    }
+
     /// The files to transfer.
     let fileProvider: FileProvider
     
@@ -254,7 +275,7 @@ class TransferToRemote: TransferOp {
 
     init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider, remote: Remote?) {
         self.timestamp = timestamp
-        self._state = .init(initialState)
+        self.state = initialState
         self.fileProvider = fileProvider
         self.remote = remote
         
