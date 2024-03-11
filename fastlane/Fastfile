@@ -55,7 +55,8 @@ platform :ios do
     match(
       type: "adhoc",
       # skip_set_partition_list: true,
-      profile_name: "ad-hoc profile"
+      profile_name: "ad-hoc profile",
+      readonly: true
     )
 
     gym(
@@ -71,7 +72,7 @@ platform :ios do
   lane :upload_testflight do
     increment_version_and_build_number
 
-    match(type: "appstore")
+    match(type: "appstore", readonly: true)
 
     gym(
       scheme: "warpinator-project (iOS)",
@@ -124,7 +125,7 @@ platform :mac do
   
     lane :tests do
       
-      match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
+      match(type: "developer_id", platform: "macos", profile_name: "mac release profile", readonly: true)
 
       # match(type: "development", 
             # app_identifier: "io.github.emanuelkuhn.*")
@@ -141,7 +142,7 @@ platform :mac do
 
       increment_version_and_build_number
 
-      match(type: "developer_id", platform: "macos", profile_name: "mac release profile")
+      match(type: "developer_id", platform: "macos", profile_name: "mac release profile", readonly: true)
 
       build_app(
         scheme: "warpinator-project (macOS)",
