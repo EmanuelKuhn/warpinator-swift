@@ -61,11 +61,6 @@
                BlueprintName = "Tests Shared (macOS)"
                ReferencedContainer = "container:warpinator-project.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "WarpIntegrationTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
