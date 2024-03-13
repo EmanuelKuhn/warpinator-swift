@@ -88,6 +88,10 @@ class BonjourDiscovery: PeerDiscovery {
     private var listener: NWListener?
     private var browser: NWBrowser?
     
+    // Set to true once any peer (even self) has been found
+    // Can be polled to check if ios permission was likely denied
+    private(set) var hasReachedLocalNetwork = false
+    
     init(config: DiscoveryConfig) {
         self.config = config
     }
@@ -108,6 +112,8 @@ class BonjourDiscovery: PeerDiscovery {
     }
         
     private func addOrUpdatePeer(peer: MDNSPeer) {
+        self.hasReachedLocalNetwork = true
+        
         if peer.txtRecord["type"] != "flush" {
             // Ignore own name (|| true is added for debugging to check if sending to self even works)
             if peer.name != config.identity || true {

@@ -14,7 +14,7 @@ enum WarpState {
 }
 
 enum WarpError: Error {
-    case failedToStart(Error), failedToStop(Error)
+    case failedToStart(Error), failedToStop(Error), failedToDiscoverSelf
 }
 
 extension WarpError: LocalizedError {
@@ -24,6 +24,8 @@ extension WarpError: LocalizedError {
             return NSLocalizedString("Failed to start server: \(error)", comment: "Failed to start")
         case .failedToStop(let error):
             return NSLocalizedString("Failed to stop server: \(error)", comment: "Failed to stop server")
+        case .failedToDiscoverSelf:
+            return NSLocalizedString("Unable to discover self. Please check if app has local network permission", comment: "Failed to stop server")
         }
     }
 }
@@ -144,6 +146,13 @@ class WarpBackend {
             self.isFirstStart = false
             
             self.updateState(newState: .running)
+            
+            // After some seconds, poll if app was able to find any remote
+            DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
+                if !self.discovery.hasReachedLocalNetwork {
+                    self.updateState(newState: .failure(.failedToDiscoverSelf))
+                }
+            }
         }
     }
     
