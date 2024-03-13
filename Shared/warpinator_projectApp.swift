@@ -14,18 +14,20 @@ class AppState: ObservableObject, WarpObserverDelegate {
     @Published
     var state: WarpState = .stopped
     
-    private var warp: WarpBackend
-    
+    private lazy var warp: WarpBackend = {
+        let warp = WarpBackend()
+
+        DispatchQueue.main.async {
+            warp.delegate = self
+
+            self.state = warp.state
+        }
+        
+        return warp
+    }()
+
     var remoteRegistration: RemoteRegistrationObserver {
         warp.remoteRegistration
-    }
-    
-    init() {
-        warp = WarpBackend()
-        
-        warp.delegate = self
-        
-        self.state = warp.state
     }
     
     func onScenePhaseChange(phase: ScenePhase) {
