@@ -204,7 +204,7 @@ class WarpBackend {
     func restart() {
         
         if isFirstStart {
-            return
+            return start()
         }
         
         self.stop()
