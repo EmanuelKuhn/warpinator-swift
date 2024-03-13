@@ -44,7 +44,7 @@ class Auth {
         }
     }
     
-    var serverIdentity: ServerIdentity!
+    lazy var serverIdentity: ServerIdentity = makeServerKeys()
     
     init(networkConfig: NetworkConfig, identity: String, groupCode: String = DEFAULT_GROUP_CODE) {
         self.networkConfig = networkConfig
@@ -52,8 +52,6 @@ class Auth {
         self.groupCode = groupCode
         
         self.identity = identity
-        
-        self.serverIdentity = makeServerKeys()
     }
     
     func makeServerKeys() -> ServerIdentity {
