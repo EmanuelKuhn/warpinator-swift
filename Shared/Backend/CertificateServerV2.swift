@@ -66,10 +66,10 @@ class CertServerV2 {
         })
         
 
-        // Wait on the server's `onClose` future to stop the program from exiting.
-        _ = try server.flatMap {
-            $0.onClose
-        }.wait()
+//        // Wait on the server's `onClose` future to stop the program from exiting.
+//        _ = try server.flatMap {
+//            $0.onClose
+//        }.wait()
     }
     
     func close() throws {

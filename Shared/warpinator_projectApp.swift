@@ -8,38 +8,54 @@
 import SwiftUI
 
 
+import Network
+
+
+//// Queue used to serialize calls to warp.start(), warp.restart(), warp.pause()...
+//let serialWarpActionQueue = DispatchQueue.init(label: "io.github.emanuelkuhn.warpinator-swift.warp-action-queue")
 
 class AppState: ObservableObject, WarpObserverDelegate {
     
-    @Published
-    var state: WarpState = .stopped
-    
-    private lazy var warp: WarpBackend = {
-        let warp = WarpBackend()
+    func warpStarted(remoteRegistration: RemoteRegistration) {
+        precondition(Thread.isMainThread)
 
-        DispatchQueue.main.async {
-            warp.delegate = self
-
-            self.state = warp.state
-        }
-        
-        return warp
-    }()
-
-    var remoteRegistration: RemoteRegistrationObserver {
-        warp.remoteRegistration
+        self.remoteRegistration = remoteRegistration
     }
     
+    
+    @Published
+    var state: WarpState = .notInitialized
+    
+    var remoteRegistration: RemoteRegistration! = nil
+
+    var hasNetworkPermission = false
+    
+    var warpManager: WarpManager
+    
+    init() {
+        self.warpManager = WarpManager()
+        
+        Task.detached { [self] in
+            await warpManager.setDelegate(delegate: self)
+        }
+    }
+
     func onScenePhaseChange(phase: ScenePhase) {
         switch(phase) {
         case .background:
-            warp.pause()
+            Task.detached {
+                await self.warpManager.pause()
+            }
             return
         case .inactive:
-            warp.pause()
+            Task.detached {
+                await self.warpManager.pause()
+            }
             return
         case .active:
-            warp.resume()
+            Task.detached {
+                await self.warpManager.resume()
+            }
             return
         @unknown default:
             return
@@ -55,28 +71,12 @@ class AppState: ObservableObject, WarpObserverDelegate {
 
     }
     
-    func start() {
-        DispatchQueue.global().async {
-            self.warp.start()
-        }
-    }
-    
-    func stop() {
-        DispatchQueue.global().async {
-            self.warp.stop()
-        }
-    }
+//    func start() async {
+//        await self.warpManager.start()
+//    }
+        
 
-    func restart() {
-        DispatchQueue.global().async {
-            self.warp.restart()
-        }
-    }
     
-    func resetupListener() {
-        warp.resetupListener()
-    }
-
 }
 
 @main
@@ -87,12 +87,29 @@ struct warpinator_projectApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(appState)
+//            if appState.initialized {
+                ContentView()
+                    .environmentObject(appState)
+                    .onAppear {
+                        print("Calling start")
+                        
+                        Task.detached {
+                            await appState.warpManager.start()
+                        }
+                    }
+                
+//            } else {
+//                ProgressView("Waiting for network permission.")
+//                    .onAppear {
+//                        print("Calling start")
+//                        appState.start()
+//                    }
+//                Button("Try again") {
+//                    appState.start()
+//                }
+//            }
         }
         .onChange(of: scenePhase, perform: appState.onScenePhaseChange)
-
-
 
         .commands {
             SidebarCommands() // 1
@@ -100,6 +117,7 @@ struct warpinator_projectApp: App {
 #if os(macOS)
         .windowToolbarStyle(.unifiedCompact)
 #endif
+
         
 #if os(macOS)
         Settings {

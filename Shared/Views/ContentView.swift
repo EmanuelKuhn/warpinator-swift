@@ -18,19 +18,16 @@ import AppKit
 #endif
 
 struct ContentView: View {
-    @EnvironmentObject var warp: AppState
+    @EnvironmentObject var appState: AppState
 
     @State private var showingSettings = false
     
     var discoveryViewModel: DiscoveryViewModel {
-        .init(remoteRegistration: warp.remoteRegistration)
+        .init(remoteRegistration: appState.remoteRegistration)
     }
     
     var body: some View {
         navigationView
-            .onAppear {
-                warp.start()
-            }
             .toolbar {
                 ToolbarItem(placement: .navigation){
                     Button {
@@ -45,9 +42,11 @@ struct ContentView: View {
     var navigationView: some View {
         NavigationView {
             VStack {
-                switch warp.state {
+                switch appState.state {
                 case .starting:
                     ProgressView("Starting...")
+                case .notInitialized:
+                    ProgressView("Initializing...")
                 case .stopped:
                     ProgressView("Stopped...")
                 case .restarting:
@@ -56,9 +55,13 @@ struct ContentView: View {
                     VStack {
                         Text(warpError.localizedDescription)
                         Button("Try again") {
-                            warp.restart()
+                            Task.detached {
+                                await appState.warpManager.restart()
+                            }
                         }
                     }.padding()
+                case .unableToDiscoverSelf:
+                    Text("Please enable local networking permission.")
                 case .running:
                     RemoteListView(discoveryViewModel: discoveryViewModel)
                 }
@@ -76,7 +79,9 @@ struct ContentView: View {
                 
                 ToolbarItem {
                     Button {
-                        warp.resetupListener()
+                        Task.detached {
+                            await appState.warpManager.resetupListener()
+                        }
                     } label: {
                         Text("restart listener")
                     }
