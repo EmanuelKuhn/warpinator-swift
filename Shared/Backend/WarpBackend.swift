@@ -9,30 +9,6 @@ import Foundation
 import NIOCore
 import GRPC
 
-enum WarpState {
-    case starting, stopped, running, failure(_ error: WarpError), restarting
-}
-
-enum WarpError: Error {
-    case failedToStart(Error), failedToStop(Error), failedToDiscoverSelf
-}
-
-extension WarpError: LocalizedError {
-    var errorDescription: String? {
-        switch self {
-        case .failedToStart(let error):
-            return NSLocalizedString("Failed to start server: \(error)", comment: "Failed to start")
-        case .failedToStop(let error):
-            return NSLocalizedString("Failed to stop server: \(error)", comment: "Failed to stop server")
-        case .failedToDiscoverSelf:
-            return NSLocalizedString("Unable to discover self. Please check if app has local network permission", comment: "Failed to stop server")
-        }
-    }
-}
-
-protocol WarpObserverDelegate: AnyObject {
-    func stateDidUpdate(newState: WarpState)
-}
 
 class WarpBackend {
     private let settings: WarpSettings
@@ -43,21 +19,15 @@ class WarpBackend {
     private let discovery: BonjourDiscovery
     
     let remoteRegistration: RemoteRegistration
-    
-    var isStarted = false
-    
-    var isFirstStart = true
-    
+        
     private var certServer: CertServerV2? = nil
     private var warpServer: WarpServer? = nil
     
-    weak var delegate: WarpObserverDelegate?
-    
-    var state: WarpState = .stopped
-    
-    init(delegate: WarpObserverDelegate?=nil) {
+//    weak var delegate: WarpObserverDelegate?
         
-        self.delegate = delegate
+    init() {
+        
+//        self.delegate = delegate
         
         self.settings = WarpSetingsUserDefaults.shared
         self.eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 2)
@@ -73,40 +43,28 @@ class WarpBackend {
         self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth, clientEventLoopGroup: eventLoopGroup)
 
         // Add callback for when connection settings change
-        settings.addOnConnectionSettingsChangedCallback(onConnectionSettingsChanged)
+//        settings.addOnConnectionSettingsChangedCallback(onConnectionSettingsChanged)
     }
     
-    func updateState(newState: WarpState) {
-        self.state = newState
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.delegate?.stateDidUpdate(newState: newState)
-        }
+    func regenerateCertificate() {
+        self.auth.groupCode = settings.groupCode
+        self.auth.regenerateCertificate()
     }
     
-    func onConnectionSettingsChanged() {
-        
-        // This operation will trigger a restart
-        self.updateState(newState: .restarting)
-        
-        // Set groupcode to potentially new value
-        auth.groupCode = settings.groupCode
-        
-        // Generate new server certificate when changing connection settings
-        auth.regenerateCertificate()
-        
-        restart()
-    }
+//    func updateState(newState: WarpState) {
+////        self.state = newState
+//
+//        DispatchQueue.main.async { [weak self] in
+//            self?.delegate?.stateDidUpdate(newState: newState)
+//        }
+//    }
     
-    func start() {
-                
-        if isStarted {
-            return
-        }
+    
+    func start() async throws {
         
-        self.updateState(newState: .starting)
-        
-        isStarted = true
+//        self.updateState(newState: .starting)
+
+        var initializationSuccessfull = false
         
         // Start servers
         let certServer = CertServerV2(auth: auth, auth_port: settings.authPort)
@@ -115,45 +73,35 @@ class WarpBackend {
         DispatchQueue.global(qos: .userInitiated).async {
             try? certServer.run(eventLoopGroup: self.eventLoopGroup)
         }
+        
+        defer {
+            if !initializationSuccessfull {
+                try? certServer.close()
+            }
+        }
                 
         let warpServer = WarpServer(auth: auth, remoteRegistration: self.remoteRegistration, port: settings.port)
         self.warpServer = warpServer
+           
+        try await warpServer.runAsync(eventLoopGroup: self.eventLoopGroup)
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            try? warpServer.run(eventLoopGroup: self.eventLoopGroup, completion: { result in
-                switch result {
-                case .success():
-                    print("WarpServer started succesfully")
-                case .failure(let error):
-                    print("WarpServer failed to start: \(error)")
-                    
-                    self.updateState(newState: .failure(.failedToStart(error)))
-                }
-            })
+        defer {
+            if !initializationSuccessfull {
+                try? warpServer.close()
+            }
         }
         
         // Start bonjour discovery
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.discovery.setupBrowser()
-            
-            print("setup browser")
+        self.discovery.setupBrowser()
 
-            
-            self.discovery.setupListener(port: UInt16(self.settings.port))
-            
-            print("setup listener done")
-            
-            self.isFirstStart = false
-            
-            self.updateState(newState: .running)
-            
-            // After some seconds, poll if app was able to find any remote
-            DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
-                if !self.discovery.hasReachedLocalNetwork {
-                    self.updateState(newState: .failure(.failedToDiscoverSelf))
-                }
-            }
-        }
+        print("setup browser")
+
+        self.discovery.setupListener(port: UInt16(self.settings.port))
+
+        print("setup listener done")
+        
+        initializationSuccessfull = true
+
     }
     
     func pause() {
@@ -179,54 +127,14 @@ class WarpBackend {
         }
     }
     
-    func stop() {
-        if !isStarted {
-            return
-        }
+    func stop() async throws {
         
-        self.updateState(newState: .stopped)
+        self.discovery.pauseBonjour()
         
-        isStarted = false
+        try self.warpServer?.close()
+        self.warpServer = nil
         
-        // Perform all operations on a background queue
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.discovery.pauseBonjour()
-
-            // Close the current server
-            do {
-                try self.warpServer?.close()
-                self.warpServer = nil
-                
-                try self.certServer?.close()
-                self.certServer = nil
-            } catch {
-                print("Restarting: Error closing warpServer: \(error)")
-
-                self.updateState(newState: .failure(.failedToStop(error)))
-                
-                return
-            }
-        }
+        try self.certServer?.close()
+        self.certServer = nil
     }
-
-    
-    func restart() {
-        
-        if isFirstStart {
-            return start()
-        }
-        
-        self.stop()
-            
-        print("Restarting: Stopped server; waiting 5 seconds")
-        
-        // Need to wait some time for network port to be released
-        // 1 second was too little, 5 works most of the time
-        Thread.sleep(forTimeInterval: 5.0)
-
-        print("Restarting: Finished waiting")
-                
-        self.start()
-    }
-    
 }

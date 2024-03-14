@@ -54,3 +54,92 @@ func getIFAddresses() -> [IFAddress] {
     
     return addresses
 }
+
+
+func requestLocalNetworkPermissionAsync(timeout: Double) async -> Bool {
+    return await withCheckedContinuation { continuation in
+        DispatchQueue.global().async {
+            let hasPermission = requestLocalNetworkPermission(timeout: timeout)
+            continuation.resume(returning: hasPermission)
+        }
+    }
+}
+
+
+
+
+
+func requestLocalNetworkPermission(timeout: Double) -> Bool {
+    
+    var canDiscoverSelf = false
+    
+    let semaphore = DispatchSemaphore(value: 0)
+    
+    let browserParams = NWParameters()
+    browserParams.includePeerToPeer = false
+    
+    let browser = NWBrowser(for: .bonjourWithTXTRecord(type: "_warpinator._tcp", domain: nil), using: browserParams)
+    
+    browser.stateUpdateHandler = { newState in
+        
+        switch newState {
+        case .failed(_):
+            
+            // Signal that something failed and we can stop waiting
+            canDiscoverSelf = false
+            semaphore.signal()
+        default:
+            break
+        }
+    }
+    
+    browser.browseResultsChangedHandler = { results, changes in
+        if results.count >= 1 {
+            // Signal that we found a remote (probably ourselves) and can stop waiting
+            canDiscoverSelf = true
+            semaphore.signal()
+        }
+    }
+    
+    // Start browsing and ask for updates on the main queue.
+    browser.start(queue: .global())
+    
+    
+    let listenerParams = NWParameters.udp
+    listenerParams.includePeerToPeer = true
+    
+    let listener = try! NWListener(using: listenerParams)
+            
+        
+    listener.stateUpdateHandler = { newState in
+        switch newState {
+        case .ready:
+            break
+        case .failed(_):
+            // Signal that something failed and we can stop waiting
+            canDiscoverSelf = false
+            semaphore.signal()
+        default:
+            break
+        }
+    }
+    
+    listener.newConnectionHandler = { _ in }
+            
+    // Start listening, and request updates on the main queue.
+    listener.start(queue: .global())
+    
+    listener.service = NWListener.Service(name: "test service",
+                                          type: "_warpinator._tcp",
+                                          txtRecord: NWTXTRecord(["type": "flush"]))
+    
+    let _ = semaphore.wait(timeout: .now() + timeout)
+    
+    browser.cancel()
+    listener.cancel()
+    
+    return canDiscoverSelf
+}
+
+
+

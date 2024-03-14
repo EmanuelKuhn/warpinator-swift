@@ -15,6 +15,8 @@
 		4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
 		4C195A922B931A4800E18958 /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
+		4C3924EB2BA33A0B0046C923 /* WarpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3924EA2BA33A0B0046C923 /* WarpManager.swift */; };
+		4C3924EC2BA33A0B0046C923 /* WarpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3924EA2BA33A0B0046C923 /* WarpManager.swift */; };
 		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
 		4C39E80927E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
 		4C3F86B527E7B0D900555A83 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
@@ -155,6 +157,7 @@
 /* Begin PBXFileReference section */
 		4C1443B627E7A2E600F87557 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
 		4C195A982B931A4800E18958 /* Tests Shared (macOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (macOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C3924EA2BA33A0B0046C923 /* WarpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpManager.swift; sourceTree = "<group>"; };
 		4C39E80727E8C89F000F0ACD /* TransferOp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOp.swift; sourceTree = "<group>"; };
 		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3F86B627E7B87700555A83 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
@@ -382,6 +385,7 @@
 		4CDD56BF27B4105800A9B537 /* Backend */ = {
 			isa = PBXGroup;
 			children = (
+				4C3924EA2BA33A0B0046C923 /* WarpManager.swift */,
 				4CDD56EB27B79C2C00A9B537 /* WarpBackend.swift */,
 				4CA9E5BA280F10F40044CE1F /* model */,
 				4CDD56C027B4108F00A9B537 /* Auth.swift */,
@@ -730,6 +734,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3924EB2BA33A0B0046C923 /* WarpManager.swift in Sources */,
 				4CDD56EC27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
 				4CDD56C727B6672D00A9B537 /* BonjourDiscovery.swift in Sources */,
 				4CF735E029C76F220056FA45 /* LabeledHStack.swift in Sources */,
@@ -775,6 +780,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3924EC2BA33A0B0046C923 /* WarpManager.swift in Sources */,
 				4CDD56ED27B79C2C00A9B537 /* WarpBackend.swift in Sources */,
 				4CDD56C827B6672D00A9B537 /* BonjourDiscovery.swift in Sources */,
 				4CF735E129C76F220056FA45 /* LabeledHStack.swift in Sources */,
