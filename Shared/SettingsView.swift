@@ -36,7 +36,27 @@ struct SettingsView: View {
                 Button("Set code", action: {
                     settings.groupCode = groupCodeText
                 })
+            }.padding(.bottom, 10)
+            
+            Section(header: Text("Network ports")) {
+                LabeledHStack("Port") {
+                    TextField("Port", text: $portText)
+                }
+                
+                LabeledHStack("Auth port") {
+                    TextField("Auth port", text: $authPortText)
+                }
+
+                                                
+                Button("Set ports", action: {
+                    guard let port = Int(portText) else { return }
+                    guard let authPort = Int(authPortText) else { return }
+                    
+                    settings.port = port
+                    settings.authPort = authPort
+                })
             }
+
 
         }
         .padding(20)

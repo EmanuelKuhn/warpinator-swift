@@ -75,7 +75,7 @@ actor WarpManager {
         didSet {
             let warpState = self.warpState
 
-            print("WarpManager state didset: \(state)")
+            print("WarpManager warpState didset: \(state)")
 
             guard let delegate = self.delegate else { return }
    
@@ -108,6 +108,7 @@ actor WarpManager {
     }
     
     private func initialize() async {
+        
         // Not needed on macOS:
         #if !os(macOS)
         await self.waitForLocalNetworkPermission()
@@ -124,7 +125,7 @@ actor WarpManager {
     }
     
     func start() async {
-        guard state == .idle else {
+        guard state == .idle || state == .restartingForSettings else {
             return
         }
         
@@ -208,19 +209,37 @@ actor WarpManager {
     
     func onConnectionSettingsChanged() async {
         
+        print("WarpManager.onConnectionSettingsChanged() called")
+                
         guard state != .restartingForSettings else { return }
-        
         state = .restartingForSettings
-        
-        guard let warp = warp else { return }
         
         // This operation will trigger a restart
         self.warpState = .restarting
+        
+        do {
+            try self.warp?.stop()
+            warpState = .restarting
+        } catch {
+            warpState = .failure(.failedToStop(error))
+        }
+        
+//        try? await Task.sleep(nanoseconds: 3_000_000_000)
+        
+        self.warp = nil
+        
+        warpState = .notInitialized
+        
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        await start()
+        
+//        guard let warp = warp else { return }
+//
+//        // Set groupcode to potentially new value
+//        warp.regenerateCertificate()
 
-        // Set groupcode to potentially new value
-        warp.regenerateCertificate()
-
-        await restart()
+//        await restart()
     }
 
 }

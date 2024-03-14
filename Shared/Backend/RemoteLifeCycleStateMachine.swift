@@ -75,7 +75,7 @@ extension StateMachine {
             case .peerWentOffline:
                 return .offline
             case .peerCameOnline:
-                return nil
+                return .retrying
             case .channelReady:
                 return .waitingForDuplex
             case .channelShutdown:

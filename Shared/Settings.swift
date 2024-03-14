@@ -22,7 +22,7 @@ protocol WarpSettings {
 }
 
 enum WarpSettingsKey: String {
-    case port, authport, groupcode
+    case port, authPort, groupcode
 }
 
 extension WarpSettingsKey {
@@ -54,20 +54,39 @@ class WarpSetingsUserDefaults: WarpSettings {
         return WarpSetingsUserDefaults.getIdentity(hostName: NetworkConfig.shared.hostname)
     }
     
-    var port = 42000
-    var authPort = 42001
+    var port: Int {
+        get { return WarpSettingsKey.port.get(defaultValue: 42000) }
+        set {
+            WarpSettingsKey.port.set(newValue: newValue)
+            
+            signalConnectionSettingsChanged()
+        }
+    }
+    
+    var authPort: Int {
+        get { return WarpSettingsKey.authPort.get(defaultValue: 42001) }
+        set {
+            WarpSettingsKey.authPort.set(newValue: newValue)
+            
+            signalConnectionSettingsChanged()
+        }
+    }
     
     var groupCode: String {
         get { return WarpSettingsKey.groupcode.get(defaultValue: DEFAULT_GROUP_CODE) }
         set {
             WarpSettingsKey.groupcode.set(newValue: newValue)
             
-            DispatchQueue.global().async {
-                self.connectionSettingsChangedCallbacks.forEach { $0() }
-            }
+            signalConnectionSettingsChanged()
         }
     }
 
+    private func signalConnectionSettingsChanged() {
+        DispatchQueue.global().async {
+            self.connectionSettingsChangedCallbacks.forEach { $0() }
+        }
+    }
+    
     
     static func getIdentity(hostName: String) -> String {
         

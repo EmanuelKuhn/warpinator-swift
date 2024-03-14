@@ -136,6 +136,17 @@ class BonjourDiscovery: PeerDiscovery {
         onRemotesChanged(.mdnsOfflineAll)
     }
     
+    func cancelBonjour() {
+        listener?.service = nil
+        listener?.cancel()
+        
+        browser?.cancel()
+        
+        Task.detached {
+            self.onRemotesChanged(.mdnsOfflineAll)
+        }
+    }
+    
     func restartBonjour() {
         setupBrowser()
         refreshService()
@@ -305,5 +316,11 @@ class BonjourDiscovery: PeerDiscovery {
                                                   type: "_warpinator._tcp",
                                                   txtRecord: txtRecord)
         }
+    }
+    
+    deinit {
+        print("BonjourDiscovery.deinit() called")
+        
+        listener?.cancel()
     }
 }
