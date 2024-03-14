@@ -182,11 +182,17 @@ class Remote: RemoteProtocol, ObservableObject {
     }
     
     static func from(peer: Peer, auth: Auth, eventLoopGroup: EventLoopGroup) async -> Remote {
+//        let _, port = await peer.resolve()
+        
         return .init(id: peer.name, peer: peer, auth: auth, eventLoopGroup: eventLoopGroup)
     }
 
     @MainActor
     func mdnsDiscovered(peer: Peer) {
+        // Peer came online and might have changed port.
+        
+        self.peer = peer
+        
         statemachine.tryEvent(.peerCameOnline)
     }
     

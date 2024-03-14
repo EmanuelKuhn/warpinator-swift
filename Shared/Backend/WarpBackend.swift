@@ -46,10 +46,15 @@ class WarpBackend {
 //        settings.addOnConnectionSettingsChangedCallback(onConnectionSettingsChanged)
     }
     
-    func regenerateCertificate() {
-        self.auth.groupCode = settings.groupCode
-        self.auth.regenerateCertificate()
-    }
+//    func updateNetworkSettings() {
+//        self.discovery.config.auth_port = settings.authPort
+//    }
+//    
+//    func regenerateCertificate() {
+//        self.auth.identity = settings.identity
+//        self.auth.groupCode = settings.groupCode
+//        self.auth.regenerateCertificate()
+//    }
     
 //    func updateState(newState: WarpState) {
 ////        self.state = newState
@@ -70,8 +75,14 @@ class WarpBackend {
         let certServer = CertServerV2(auth: auth, auth_port: settings.authPort)
         self.certServer = certServer
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            try? certServer.run(eventLoopGroup: self.eventLoopGroup)
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            try? certServer.run(eventLoopGroup: self.eventLoopGroup)
+//        }
+        
+        do {
+            try await certServer.runAsync(eventLoopGroup: self.eventLoopGroup)
+        } catch {
+            throw "Failed to start cert server: \(error.localizedDescription)"
         }
         
         defer {
@@ -127,14 +138,21 @@ class WarpBackend {
         }
     }
     
-    func stop() async throws {
+    func stop() throws {
         
-        self.discovery.pauseBonjour()
+        self.discovery.cancelBonjour()
         
-        try self.warpServer?.close()
+        try? self.warpServer?.close()
         self.warpServer = nil
         
-        try self.certServer?.close()
+        try? self.certServer?.close()
         self.certServer = nil
+    }
+    
+    deinit {
+        print("WarpBackend.denit() called")
+        try? stop()
+        
+        try? self.eventLoopGroup.syncShutdownGracefully()
     }
 }

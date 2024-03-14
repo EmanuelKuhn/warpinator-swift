@@ -88,7 +88,7 @@ class WarpServer {
         server.map {
             $0.channel.localAddress
         }.whenFailure({ error in
-            print("server failed to start \(error)")
+            print("server failed to start \(error) (\(self.address):\(self.port)")
             
             completion(.failure(error))
         })
@@ -102,5 +102,9 @@ class WarpServer {
         try server?.flatMap({
             $0.initiateGracefulShutdown()
         }).wait()
+    }
+    
+    deinit {
+        try? close()
     }
 }

@@ -17,6 +17,19 @@ import GRPC
 import AppKit
 #endif
 
+
+
+extension View {
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+}
+
+
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
 
@@ -76,7 +89,6 @@ struct ContentView: View {
                     }
                 }
 #endif
-                
                 ToolbarItem {
                     Button {
                         Task.detached {
@@ -91,9 +103,9 @@ struct ContentView: View {
                 SettingsView()
             }
             
-            VStack {
-                Text(":)")
-            }
+//            VStack {
+//                Text(":)")
+//            }
         }
     }
     
@@ -110,11 +122,20 @@ struct RemoteListView: View {
     
     @ObservedObject var discoveryViewModel: DiscoveryViewModel
     
+    @State private var selectedItem: String?
+    
     var body: some View {
         List(discoveryViewModel.remotes) { remote in
-            NavigationLink(destination: RemoteDetailView(viewModel: remote.getRemoteDetailVM()))
-            {
+            NavigationLink(
+                destination: RemoteDetailView(viewModel: remote.getRemoteDetailVM()),
+                tag: remote.id,
+                selection: $selectedItem
+            ) {
                 RemoteListViewItem(remote: remote)
+            }.onAppear {
+//                if selectedItem == nil {
+//                    selectedItem = remote.id
+//                }
             }
         }.frame(minWidth: 300)
     }
@@ -145,3 +166,4 @@ struct RemoteListViewItem: View {
         
     }
 }
+

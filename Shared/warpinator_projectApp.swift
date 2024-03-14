@@ -20,6 +20,12 @@ class AppState: ObservableObject, WarpObserverDelegate {
         precondition(Thread.isMainThread)
 
         self.remoteRegistration = remoteRegistration
+        
+//        Task.detached {
+//            await self.remoteRegistration.addOnRemoteChangedListener { remotes in
+//                remotes.first?.id
+//            }
+//        }
     }
     
     
