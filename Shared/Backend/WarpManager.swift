@@ -158,13 +158,13 @@ actor WarpManager {
         self.state = .running
     }
 
-    func stop() async {
+    func stop() {
         
         guard state == .running || state == .restartingForSettings else { return }
 
         
         do {
-            try await self.warp?.stop()
+            try self.warp?.stop()
             warpState = .stopped
         } catch {
             warpState = .failure(.failedToStop(error))
@@ -184,7 +184,7 @@ actor WarpManager {
         }
         print("going through with restart")
 
-        await stop()
+        stop()
          
         try? await Task.sleep(nanoseconds: 3_000_000_000)
         
