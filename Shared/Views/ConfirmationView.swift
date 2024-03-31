@@ -17,8 +17,7 @@ struct ConfirmDestructiveActionModifier: ViewModifier {
     let cancelText = "Cancel"
     
     let onConfirm: () -> Void
-    let onCancel: (() -> Void)?
-    
+    let onCancel: () -> Void
     
     func body(content: Content) -> some View {
 #if os(macOS)
@@ -40,9 +39,7 @@ struct ConfirmDestructiveActionModifier: ViewModifier {
             HStack {
                 Button(cancelText) {
                     self.isPresented = false
-                    if let onCancel = self.onCancel {
-                        onCancel()
-                    }
+                    self.onCancel()
                 }
                 Button(confirmText) {
                     self.isPresented = false
@@ -63,7 +60,7 @@ struct ConfirmDestructiveActionModifier: ViewModifier {
 }
 
 extension View {
-    func overwriteConfirmation(isPresented: Binding<Bool>, title: String, onConfirm: @escaping () -> Void, onCancel: (() -> Void)?=nil) -> some View {
+    func overwriteConfirmation(isPresented: Binding<Bool>, title: String, onConfirm: @escaping () -> Void, onCancel: @escaping () -> Void={}) -> some View {
         self.modifier(ConfirmDestructiveActionModifier(
             isPresented: isPresented, title: title, onConfirm: onConfirm, onCancel: onCancel)
         )
