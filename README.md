@@ -24,8 +24,8 @@ There are two ways to run the app:
     - [X] Single file
     - [ ] Single folder
     - [ ] Multiple files/folders
-- [ ] Show received file location
+- [X] Show received file location
     - [X] on macOS
-    - [ ] on iOS (they can be found in the files app)
+    - [X] on iOS
 - [ ] Settings view (currently macOS only)
     - [X] Set groupcode
