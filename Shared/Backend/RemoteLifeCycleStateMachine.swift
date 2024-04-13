@@ -59,9 +59,9 @@ extension StateMachine {
             print("Statemachine transition: \(self.state) -> \(state) for event: \(event)")
             
             self.state = state
+        } else {
+            print("Statemachine ignored transition: \(self.state) -> \(state) for event: \(event)")
         }
-        
-        print("Statemachine ignored transition: \(self.state) -> \(state) for event: \(event)")
     }
 }
 
