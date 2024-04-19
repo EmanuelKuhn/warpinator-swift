@@ -9,6 +9,10 @@ import Foundation
 import NIOCore
 import GRPC
 
+enum WarpBackendError: Error {
+    case failedToStartServer(error: Error)
+    case failedToStartCertServer(error: Error)
+}
 
 class WarpBackend {
     private let settings: WarpSettings
@@ -48,7 +52,7 @@ class WarpBackend {
         do {
             try await certServer.runAsync(eventLoopGroup: self.eventLoopGroup)
         } catch {
-            throw "Failed to start cert server: \(error.localizedDescription)"
+            throw WarpBackendError.failedToStartCertServer(error: error)
         }
         
         defer {
@@ -60,7 +64,11 @@ class WarpBackend {
         let warpServer = WarpServer(auth: auth, remoteRegistration: self.remoteRegistration, port: settings.port)
         self.warpServer = warpServer
         
-        try await warpServer.runAsync(eventLoopGroup: self.eventLoopGroup)
+        do {
+            try await warpServer.runAsync(eventLoopGroup: self.eventLoopGroup)
+        } catch {
+            throw WarpBackendError.failedToStartServer(error: error)
+        }
         
         defer {
             if !initializationSuccessfull {
