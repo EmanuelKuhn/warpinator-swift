@@ -30,7 +30,15 @@ class CertServerV2 {
     
     var stateCallbacks: [(SocketAddress?) -> Void] = []
     
-    func run(eventLoopGroup: EventLoopGroup, callback: (()->Void)?=nil) throws {
+    func runAsync(eventLoopGroup: EventLoopGroup) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            self.run(eventLoopGroup: eventLoopGroup, completion: { result in
+                continuation.resume(with: result)
+            })
+        }
+    }
+    
+    private func run(eventLoopGroup: EventLoopGroup, completion: @escaping (Result<Void, Error>) -> Void) {
         
         print("run()")
         
@@ -52,9 +60,7 @@ class CertServerV2 {
         }.whenSuccess { address in
             print("server started on port \(address!.port!)")
 
-            if let callback = callback {
-                callback()
-            }
+            completion(.success(()))
             
             print("certserver started called callbacks")
         }
@@ -63,19 +69,21 @@ class CertServerV2 {
             $0.channel.localAddress
         }.whenFailure({ error in
             print("cert server failed to start \(error)")
+            
+            completion(.failure(error))
         })
         
 
-        // Wait on the server's `onClose` future to stop the program from exiting.
-        _ = try server.flatMap {
-            $0.onClose
-        }.wait()
     }
     
     func close() throws {
         try server?.flatMap({
             $0.initiateGracefulShutdown()
         }).wait()
+    }
+    
+    deinit {
+        try? close()
     }
 
 }
