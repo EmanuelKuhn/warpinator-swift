@@ -45,8 +45,6 @@ struct ContentView: View {
                 switch appState.state {
                 case .notInitialized:
                     ProgressView("Initializing...")
-                case .stopped:
-                    ProgressView("Stopped...")
                 case .restarting:
                     ProgressView("Restarting...")
                 case .failure(let warpError):
