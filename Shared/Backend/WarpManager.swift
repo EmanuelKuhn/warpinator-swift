@@ -18,7 +18,6 @@ enum WarpState {
     
     case notInitialized
     case running
-    case stopped
     case failure(_ error: WarpError)
     case restarting
 }
@@ -54,7 +53,6 @@ actor WarpManager {
         case idle
         case starting
         case running
-        case stopping
         case restarting
         case suspended
     }
@@ -156,23 +154,6 @@ actor WarpManager {
         
         self.warpState = .running
         self.managerState = .running
-    }
-    
-    func stop() {
-        
-        guard managerState == .running || managerState == .restarting else { return }
-        
-        managerState = .stopping
-        
-        
-        self.warp?.stop()
-        warpState = .stopped
-        
-        managerState = .idle
-        
-        // Needed for iOS
-        endBackgroundTask()
-        
     }
     
     func resetupListener() {
