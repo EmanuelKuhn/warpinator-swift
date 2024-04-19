@@ -35,10 +35,6 @@ extension WarpError: LocalizedError {
     }
 }
 
-extension String: Error {
-    
-}
-
 protocol WarpObserverDelegate: AnyObject {
     func stateDidUpdate(newState: WarpState)
     
