@@ -208,7 +208,18 @@ actor WarpManager {
         // Needed for iOS
         endBackgroundTask()
         
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+        } catch {
+            // Don't call start on cancellation
+            return
+        }
+        
+        guard managerState == .restarting else {
+            // The state was modified outside of restart()
+            // This can happen because actors still suspend and allow other methods to run at await suspension points (.i.e. Task.sleep)
+            return
+        }
         
         await start()
     }
