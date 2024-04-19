@@ -12,32 +12,46 @@ import SwiftUI
 class AppState: ObservableObject, WarpObserverDelegate {
     
     @Published
-    var state: WarpState = .stopped
+    var state: WarpState = .notInitialized
     
-    private var warp: WarpBackend
+    // Needed for the DiscoveryViewModel (the view that shows discovered devices)
+    var remoteRegistration: RemoteRegistrationObserver! = nil
+
+    var hasNetworkPermission = false
     
-    var remoteRegistration: RemoteRegistrationObserver {
-        warp.remoteRegistration
-    }
+    
+    var warpManager: WarpManager
     
     init() {
-        warp = WarpBackend()
+        self.warpManager = WarpManager()
         
-        warp.delegate = self
-        
-        self.state = warp.state
+        Task.detached { [self] in
+            await warpManager.setDelegate(delegate: self)
+        }
+    }
+    
+    func warpStarted(remoteRegistration: RemoteRegistrationObserver) {
+        precondition(Thread.isMainThread)
+
+        self.remoteRegistration = remoteRegistration
     }
     
     func onScenePhaseChange(phase: ScenePhase) {
         switch(phase) {
         case .background:
-            warp.pause()
+//            Task.detached {
+//                await self.warpManager.background()
+//            }
             return
         case .inactive:
-            warp.pause()
+//            Task.detached {
+//                await self.warpManager.pause()
+//            }
             return
         case .active:
-            warp.resume()
+            Task.detached {
+                await self.warpManager.resume()
+            }
             return
         @unknown default:
             return
@@ -50,31 +64,7 @@ class AppState: ObservableObject, WarpObserverDelegate {
         state = newState
         
         print("AppState: state = \(newState)")
-
     }
-    
-    func start() {
-        DispatchQueue.global().async {
-            self.warp.start()
-        }
-    }
-    
-    func stop() {
-        DispatchQueue.global().async {
-            self.warp.stop()
-        }
-    }
-
-    func restart() {
-        DispatchQueue.global().async {
-            self.warp.restart()
-        }
-    }
-    
-    func resetupListener() {
-        warp.resetupListener()
-    }
-
 }
 
 @main
@@ -87,11 +77,15 @@ struct warpinator_projectApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(appState)
+                .onAppear {
+                    print("Calling start")
+                    
+                    Task.detached {
+                        await appState.warpManager.start()
+                    }
+                }
         }
         .onChange(of: scenePhase, perform: appState.onScenePhaseChange)
-
-
-
         .commands {
             SidebarCommands() // 1
         }
