@@ -39,16 +39,15 @@ class AppState: ObservableObject, WarpObserverDelegate {
     func onScenePhaseChange(phase: ScenePhase) {
         switch(phase) {
         case .background:
-//            Task.detached {
-//                await self.warpManager.background()
-//            }
+            // Suspending is handled in WarpManager using beginBackgroundTask.
             return
         case .inactive:
-//            Task.detached {
-//                await self.warpManager.pause()
-//            }
+            // App is not visible to the user here. Could pause bonjour here, to let other remotes
+            // now that the app will suspend soon, but doesn't seem necessary as it is done just before suspending.
             return
         case .active:
+            // The app came into the foreground again. Need to call resume as the app might have suspended,
+            // after which a refresh of bonjour / restart of grpc servers is needed.
             Task.detached {
                 await self.warpManager.resume()
             }
