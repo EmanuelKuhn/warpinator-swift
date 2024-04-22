@@ -18,11 +18,13 @@ protocol WarpSettings {
     
     var groupCode: String { get }
     
+    var canDiscoverSelf: Bool { get }
+    
     func addOnConnectionSettingsChangedCallback(_: @escaping () -> Void)
 }
 
 enum WarpSettingsKey: String {
-    case port, authPort, groupcode
+    case port, authPort, groupcode, canDiscoverSelf
 }
 
 extension WarpSettingsKey {
@@ -84,6 +86,17 @@ class WarpSetingsUserDefaults: WarpSettings, ObservableObject {
             objectWillChange.send()
             
             WarpSettingsKey.groupcode.set(newValue: newValue)
+            
+            signalConnectionSettingsChanged()
+        }
+    }
+    
+    var canDiscoverSelf: Bool {
+        get { return WarpSettingsKey.canDiscoverSelf.get(defaultValue: false) }
+        set {
+            objectWillChange.send()
+            
+            WarpSettingsKey.canDiscoverSelf.set(newValue: newValue)
             
             signalConnectionSettingsChanged()
         }

@@ -88,8 +88,12 @@ class BonjourDiscovery: PeerDiscovery {
     private var listener: NWListener?
     private var browser: NWBrowser?
     
-    init(config: DiscoveryConfig) {
+    private let canDiscoverSelf: Bool
+    
+    init(config: DiscoveryConfig, canDiscoverSelf: Bool=true) {
         self.config = config
+        
+        self.canDiscoverSelf = canDiscoverSelf
     }
 
     
@@ -110,7 +114,7 @@ class BonjourDiscovery: PeerDiscovery {
     private func addOrUpdatePeer(peer: MDNSPeer) {
         if peer.txtRecord["type"] != "flush" {
             // Ignore own name (|| true is added for debugging to check if sending to self even works)
-            if peer.name != config.identity || true {
+            if peer.name != config.identity || self.canDiscoverSelf {
                 self.onRemotesChanged(.added(peer: peer))
             }
         }
