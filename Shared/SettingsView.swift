@@ -37,11 +37,38 @@ struct SettingsView: View {
                     settings.groupCode = groupCodeText
                 })
             }
-
+            
+#if os(macOS)
+            Divider()
+                .padding(.vertical, 5.0)
+#endif
+            
+            Section(header: Text("Network ports")) {
+                LabeledHStack("Port") {
+                    TextField("Port", text: $portText)
+                }
+                
+                LabeledHStack("Auth port") {
+                    TextField("Auth port", text: $authPortText)
+                }
+                
+                Button("Set ports", action: {
+                    guard let port = Int(portText) else { return }
+                    guard let authPort = Int(authPortText) else { return }
+                    
+                    settings.port = port
+                    settings.authPort = authPort
+                })
+            }
         }
         .padding(20)
         .frame(width: 350)
     }
 }
 
-
+// Preview Provider
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView()
+    }
+}
