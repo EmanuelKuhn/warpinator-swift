@@ -9,20 +9,16 @@ import SwiftUI
 
 struct SettingsView: View {
     
+    @ObservedObject
     var settings: WarpSetingsUserDefaults
         
-    @State var portText: String
-    @State var authPortText: String
+    @State var portText: String = ""
+    @State var authPortText: String = ""
 
-    @State var groupCodeText: String
+    @State var groupCodeText: String = ""
     
     init() {
         settings = .shared
-        
-        portText = String(settings.port)
-        authPortText = String(settings.authPort)
-        
-        groupCodeText = String(settings.groupCode)
     }
     
     var body: some View {
@@ -60,6 +56,12 @@ struct SettingsView: View {
                     settings.authPort = authPort
                 })
             }
+        }
+        .onAppear {
+            portText = String(settings.port)
+            authPortText = String(settings.authPort)
+            
+            groupCodeText = String(settings.groupCode)
         }
     }
 }
