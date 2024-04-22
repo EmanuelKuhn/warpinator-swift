@@ -24,10 +24,21 @@ struct RemoteDetailView: View {
     var viewModel: ViewModel
         
     @State
-    var showingSheet = false
+    var showingSheet: Bool
     
     @StateObject
     var layoutInfo = LayoutInfo()
+    
+    init(viewModel: ViewModel, showingSheet: Bool=false) {
+        self.viewModel = viewModel
+        self.showingSheet = showingSheet
+        
+#if canImport(UIKit)
+        // On iOS the title tends to get truncated.
+        // This sets a property of the underlying UILabel to  adjust the font size to fit.
+        UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
+#endif
+    }
     
     var body: some View {
         GeometryReader {geom in
@@ -55,8 +66,15 @@ struct RemoteDetailView: View {
                 layoutInfo.width = geom.size.width
             }.onChange(of: geom.size) { newSize in
                 layoutInfo.width = newSize.width
-            }.navigationTitle("\(viewModel.title) (\(viewModel.state))")
-                .toolbar {
+            }
+            .navigationTitle(Text(viewModel.title))
+            
+#if canImport(UIKit)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
+            
+            .toolbar {
+                    
                     ToolbarItem(placement: .primaryAction) {
                         Button("Send files") {
 #if os(macOS)
