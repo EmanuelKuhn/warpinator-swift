@@ -16,7 +16,7 @@ protocol WarpSettings {
     var port: Int { get }
     var authPort: Int { get }
     
-    var groupCode: String { get set }
+    var groupCode: String { get }
     
     func addOnConnectionSettingsChangedCallback(_: @escaping () -> Void)
 }
@@ -39,7 +39,7 @@ extension WarpSettingsKey {
     }
 }
 
-class WarpSetingsUserDefaults: WarpSettings {
+class WarpSetingsUserDefaults: WarpSettings, ObservableObject {
     private static let defaultPort = 42000
     private static let defaultAuthPort = 42001
     
@@ -59,6 +59,8 @@ class WarpSetingsUserDefaults: WarpSettings {
     var port: Int {
         get { return WarpSettingsKey.port.get(defaultValue: WarpSetingsUserDefaults.defaultPort) }
         set {
+            objectWillChange.send()
+            
             WarpSettingsKey.port.set(newValue: newValue)
             
             signalConnectionSettingsChanged()
@@ -68,6 +70,8 @@ class WarpSetingsUserDefaults: WarpSettings {
     var authPort: Int {
         get { return WarpSettingsKey.authPort.get(defaultValue: WarpSetingsUserDefaults.defaultAuthPort) }
         set {
+            objectWillChange.send()
+            
             WarpSettingsKey.authPort.set(newValue: newValue)
             
             signalConnectionSettingsChanged()
@@ -77,6 +81,8 @@ class WarpSetingsUserDefaults: WarpSettings {
     var groupCode: String {
         get { return WarpSettingsKey.groupcode.get(defaultValue: DEFAULT_GROUP_CODE) }
         set {
+            objectWillChange.send()
+            
             WarpSettingsKey.groupcode.set(newValue: newValue)
             
             signalConnectionSettingsChanged()
