@@ -56,6 +56,19 @@ struct SettingsView: View {
                     settings.authPort = authPort
                 })
             }
+            
+#if os(macOS)
+            Divider()
+                .padding(.vertical, 5.0)
+#endif
+
+            Section(header: Text("Debug settings")) {
+                Toggle("Allow connecting to self", isOn: .init(get: {
+                    settings.canDiscoverSelf
+                }, set: { canDiscoverSelf in
+                    settings.canDiscoverSelf = canDiscoverSelf
+                }))
+            }
         }
         .onAppear {
             portText = String(settings.port)
