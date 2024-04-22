@@ -42,7 +42,13 @@ struct RemoteDetailView: View {
     
     var body: some View {
         GeometryReader {geom in
-            VStack {
+            VStack(spacing: 0) {
+                if viewModel.showStatusView {
+                    statusView
+                        .frame(height: 30, alignment: .center)
+                        .padding(.vertical, 10)
+                }
+                
                 VStack {
                     
                     List {
@@ -91,6 +97,17 @@ struct RemoteDetailView: View {
                 })
 #endif
         }.environmentObject(layoutInfo)
+    }
+    
+    @ViewBuilder
+    var statusView: some View {
+        HStack(spacing: 8) {
+            Image(systemName: viewModel.state.systemImageName) // Example system icon
+                .foregroundColor(.secondary)
+            Text(viewModel.stateDescription)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
     }
     
     func sendFiles(urls: [URL]) {
@@ -183,7 +200,13 @@ extension RemoteDetailView {
         var transfers: Array<TransferOpView.ViewModel> = []
         
         @Published
-        var state: String = ""
+        var stateDescription: String = ""
+        
+        @Published
+        var state: RemoteState = .offline
+        
+        @Published
+        var showStatusView: Bool = true
         
         private let remote: RemoteProtocol
         
@@ -218,10 +241,14 @@ extension RemoteDetailView {
             
             Task {
                 remote.statePublisher().receive(on: DispatchQueue.main).sink { state in
-                    self.state = "\(state.description)"
+                    self.stateDescription = state.description
+                    self.state = state
+                    
+                    withAnimation {
+                        self.showStatusView = self.state != .online
+                    }
                 }.store(in: &tokens)
             }
-            
         }
     }
 }
