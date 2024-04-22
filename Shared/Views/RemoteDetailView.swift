@@ -243,8 +243,12 @@ extension RemoteDetailView {
                 remote.statePublisher().receive(on: DispatchQueue.main).sink { state in
                     self.stateDescription = state.description
                     self.state = state
-                    
-                    withAnimation {
+                                        
+                    // If the new status is online, delay hiding the view for 1 second
+                    let willBecomeHidden = self.showStatusView && state == .online
+                    let delayIfHiding = willBecomeHidden ? 1.0 : 0.0
+
+                    withAnimation(.default.delay(delayIfHiding)) {
                         self.showStatusView = self.state != .online
                     }
                 }.store(in: &tokens)
