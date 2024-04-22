@@ -37,7 +37,7 @@ class WarpBackend {
         
         let discoveryConfig = DiscoveryConfig(identity: auth.identity, api_version: "2", auth_port: settings.authPort, hostname: networkConfig.hostname)
 
-        self.discovery = BonjourDiscovery(config: discoveryConfig)
+        self.discovery = BonjourDiscovery(config: discoveryConfig, canDiscoverSelf: settings.canDiscoverSelf)
         
         self.remoteRegistration = RemoteRegistration(discovery: discovery, auth: auth, clientEventLoopGroup: eventLoopGroup)
     }
