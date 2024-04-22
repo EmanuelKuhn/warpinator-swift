@@ -187,6 +187,9 @@ class Remote: RemoteProtocol, ObservableObject {
 
     @MainActor
     func mdnsDiscovered(peer: Peer) {
+        // Peer came online and might have changed port.
+        self.peer = peer
+        
         statemachine.tryEvent(.peerCameOnline)
     }
     
