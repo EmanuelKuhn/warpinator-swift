@@ -89,6 +89,7 @@ struct RemoteDetailView: View {
                             showingSheet.toggle()
 #endif
                         }
+                        .disabled(viewModel.disableSendFileButton)
                     }
                 }
 #if !os(macOS)
@@ -208,6 +209,9 @@ extension RemoteDetailView {
         @Published
         var showStatusView: Bool = true
         
+        @Published
+        var disableSendFileButton: Bool = true
+        
         private let remote: RemoteProtocol
         
         private var tokens: Set<AnyCancellable> = .init()
@@ -243,6 +247,8 @@ extension RemoteDetailView {
                 remote.statePublisher().receive(on: DispatchQueue.main).sink { state in
                     self.stateDescription = state.description
                     self.state = state
+                    
+                    self.disableSendFileButton = state != .online
                                         
                     // If the new status is online, delay hiding the view for 1 second
                     let willBecomeHidden = self.showStatusView && state == .online
