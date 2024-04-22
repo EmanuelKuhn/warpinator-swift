@@ -95,6 +95,8 @@ struct warpinator_projectApp: App {
 #if os(macOS)
         Settings {
             SettingsView()
+                .padding(20)
+                .frame(width: 350)
         }
 #endif
     }
