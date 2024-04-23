@@ -14,6 +14,8 @@ import Combine
 import AppKit
 #endif
 
+import UniformTypeIdentifiers
+
 class LayoutInfo: ObservableObject {
     @Published var width: CGFloat = 0
 }
@@ -78,7 +80,9 @@ struct RemoteDetailView: View {
 #if canImport(UIKit)
             .navigationBarTitleDisplayMode(.inline)
 #endif
-            
+            .onDrop(of: [.fileURL], delegate: MyDropDelegate(callback: { urls in
+                sendFiles(urls: urls)
+            }))
             .toolbar {
                     
                     ToolbarItem(placement: .primaryAction) {
@@ -133,7 +137,86 @@ struct RemoteDetailView: View {
         }
     }
     #endif
+}
 
+struct MyDropDelegate: DropDelegate {
+        
+    let callback: ([URL]) -> ()
+        
+    func validateDrop(info: DropInfo) -> Bool {
+        return info.hasItemsConforming(to: [.fileURL])
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        // Check that there are file urls
+        guard info.hasItemsConforming(to: [.fileURL]) else { return false }
+        
+        let providers = info.itemProviders(for: [.fileURL])
+                
+        for provider in providers {
+            
+            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, error) in
+                
+                if let error = error as NSError? {
+                    print("performDrop Error: \(error)")
+                }
+                
+                // The item that was dropped is Data...
+                if let data = item as? Data {
+                    
+                    // Which can be decoded as a string
+                    if let urlString = String(data: data, encoding: .utf8) {
+                        // print("urlString: \(urlString)")
+                        // For example "file:///.file/id=6571367.8720033194"
+                        
+                        // Attempt to create a URL from the string
+                        if let url = URL(string: urlString) {
+                            
+                            print("url: \(url)")
+#if os(macOS)
+
+                            // Now the url is a normal looking URL to a path
+                            do {
+                                // Apparently the URL is only valid for a short time after the drop.
+                                // To access it longer make a bookmark
+                                let bookmarkData = try url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: [.isDirectoryKey, .fileSizeKey])
+
+                                var stale = false
+                                if let resolvedURL = try? URL(resolvingBookmarkData: bookmarkData, options: [.withSecurityScope], bookmarkDataIsStale: &stale) {
+                                    
+                                    // print("resolvedURL: \(resolvedURL)")
+                                    // This resolvedURL is the same as url, but now the url can be accessed longer:
+                                    assert(resolvedURL == url)
+                                    
+                                    Task {
+                                        self.callback([resolvedURL])
+                                    }
+                                    
+                                    // Here is should be possible to read from the file:
+                                    // let fileContents = try String(contentsOf: url, encoding: .utf8)
+                                    // print("File contents: \(fileContents)")
+                                    
+                                    if stale {
+                                        print("Warning: for some reason the bookmark is stale")
+                                    }
+                                }
+                            } catch {
+                                print("Failed to make bookmarkData from URL: \(error)")
+                            }
+#endif
+                        } else {
+                            print("Invalid URL string.")
+                        }
+                    } else {
+                        print("Data could not be decoded into a string.")
+                    }
+                } else {
+                    print("Item is not of type Data.")
+                }
+            }
+        }
+        return true
+    }
 }
 
 
