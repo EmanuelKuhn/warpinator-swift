@@ -15,6 +15,11 @@
 		4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDD571227B9842600A9B537 /* AuthTests.swift */; };
 		4C195A922B931A4800E18958 /* helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9E5C8281449460044CE1F /* helpers.swift */; };
 		4C21479227EB3E1700DF0302 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E832927EB2ED400E393B5 /* DocumentPicker.swift */; };
+		4C3507D72BD7E2B600FB150F /* TransferOpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D62BD7E2B600FB150F /* TransferOpTests.swift */; };
+		4C3507D82BD7F5F000FB150F /* TransferOpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D62BD7E2B600FB150F /* TransferOpTests.swift */; };
+		4C3507DA2BD7FF8100FB150F /* MockRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D92BD7FF8100FB150F /* MockRemote.swift */; };
+		4C3507DC2BD7FF8100FB150F /* MockRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D92BD7FF8100FB150F /* MockRemote.swift */; };
+		4C3507DD2BD803BA00FB150F /* MockRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D92BD7FF8100FB150F /* MockRemote.swift */; };
 		4C3924EB2BA33A0B0046C923 /* WarpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3924EA2BA33A0B0046C923 /* WarpManager.swift */; };
 		4C3924EC2BA33A0B0046C923 /* WarpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3924EA2BA33A0B0046C923 /* WarpManager.swift */; };
 		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
@@ -157,6 +162,8 @@
 /* Begin PBXFileReference section */
 		4C1443B627E7A2E600F87557 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
 		4C195A982B931A4800E18958 /* Tests Shared (macOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (macOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C3507D62BD7E2B600FB150F /* TransferOpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOpTests.swift; sourceTree = "<group>"; };
+		4C3507D92BD7FF8100FB150F /* MockRemote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemote.swift; sourceTree = "<group>"; };
 		4C3924EA2BA33A0B0046C923 /* WarpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpManager.swift; sourceTree = "<group>"; };
 		4C39E80727E8C89F000F0ACD /* TransferOp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOp.swift; sourceTree = "<group>"; };
 		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -447,6 +454,8 @@
 				4CDD571227B9842600A9B537 /* AuthTests.swift */,
 				4CA9E5C8281449460044CE1F /* helpers.swift */,
 				4C5C7EF12846764E0063BE6F /* TransferDownloaderTests.swift */,
+				4C3507D62BD7E2B600FB150F /* TransferOpTests.swift */,
+				4C3507D92BD7FF8100FB150F /* MockRemote.swift */,
 			);
 			path = "warpinator-projectTests";
 			sourceTree = "<group>";
@@ -714,6 +723,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3507DD2BD803BA00FB150F /* MockRemote.swift in Sources */,
+				4C3507D82BD7F5F000FB150F /* TransferOpTests.swift in Sources */,
 				4C195A8E2B931A4800E18958 /* TransferDownloaderTests.swift in Sources */,
 				4C195A8F2B931A4800E18958 /* AuthTests.swift in Sources */,
 				4C195A922B931A4800E18958 /* helpers.swift in Sources */,
@@ -827,6 +838,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C4A739E27B3D2D6004EDA61 /* Tests_iOSLaunchTests.swift in Sources */,
+				4C3507DA2BD7FF8100FB150F /* MockRemote.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -843,6 +855,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C5C7EF22846764E0063BE6F /* TransferDownloaderTests.swift in Sources */,
+				4C3507D72BD7E2B600FB150F /* TransferOpTests.swift in Sources */,
+				4C3507DC2BD7FF8100FB150F /* MockRemote.swift in Sources */,
 				4CDD571327B9842600A9B537 /* AuthTests.swift in Sources */,
 				4CA9E5C9281449460044CE1F /* helpers.swift in Sources */,
 			);

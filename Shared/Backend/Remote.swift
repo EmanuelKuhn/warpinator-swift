@@ -49,8 +49,19 @@ protocol RemoteProtocol {
     
 }
 
+protocol TransferCapabilities: AnyObject {
+    var transfersToRemote: Dictionary<UInt64, TransferToRemote>  { get set }
+    var transfersFromRemote: Dictionary<UInt64, TransferFromRemote> { get set }
 
-class Remote: RemoteProtocol, ObservableObject {
+    func cancelTransferOpRequest(timestamp: UInt64) async throws
+    func stopTransfer(timestamp: UInt64, error: Bool) async throws
+    func startTransfer(transferOp: TransferFromRemote, downloader: TransferDownloader) async throws
+}
+
+// For allowing Remote to be Mocked, extract into a seperate protocol
+typealias FullRemoteProtocol = RemoteProtocol & TransferCapabilities
+
+class Remote: FullRemoteProtocol, ObservableObject {
     
     private let statemachine: StateMachine
     private var stateCancellable: AnyCancellable?
