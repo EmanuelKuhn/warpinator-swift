@@ -444,6 +444,9 @@ class Remote: FullRemoteProtocol, ObservableObject {
     
     private func receiveChunks(transferOp: TransferOp, downloader: TransferDownloader, response: GRPCAsyncResponseStream<FileChunk>) async throws {
         for try await chunk in response {
+            guard transferOp.state == .started else {
+                throw TransferOpError.invalidStateWhileDownloading
+            }
             
             // Increment the progress metric
             Task {

@@ -25,6 +25,7 @@ enum Direction {
 
 enum TransferOpError: Error {
     case invalidStateToStartTransfer
+    case invalidStateWhileDownloading
 }
 
 enum TransferOpEvent {
