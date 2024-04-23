@@ -433,6 +433,16 @@ class Remote: FullRemoteProtocol, ObservableObject {
         
         let response = client.startTransfer(opInfo)
         
+        do {
+            try await receiveChunks(transferOp: transferOp, downloader: downloader, response: response)
+            
+            transferOp.tryEvent(event: .completed)
+        } catch {
+            transferOp.tryEvent(event: .failure(reason: error.localizedDescription))
+        }
+    }
+    
+    private func receiveChunks(transferOp: TransferOp, downloader: TransferDownloader, response: GRPCAsyncResponseStream<FileChunk>) async throws {
         for try await chunk in response {
             
             // Increment the progress metric
@@ -440,19 +450,8 @@ class Remote: FullRemoteProtocol, ObservableObject {
                 await transferOp.progress.increment(by: chunk.chunk.count)
             }
 
-            do {
-                try downloader.handleChunk(chunk: chunk)
-            } catch {
-                print(error)
-                transferOp.tryEvent(event: .failure(reason: "\(error)"))
-                
-                throw error
-            }
+            try downloader.handleChunk(chunk: chunk)
         }
-        
-        transferOp.tryEvent(event: .completed)
-        
-        print("done transfering")
     }
     
     func cancelTransferOpRequest(timestamp: UInt64) async throws {
