@@ -392,9 +392,9 @@ class Remote: RemoteProtocol, ObservableObject {
         print("client.processTransferOpRequest(request) result: \(String(describing: result))")
         
         if result != nil {
-            transferOperation.state = .requested
+            transferOperation.tryEvent(event: .requested)
         } else {
-            transferOperation.state = .failed(reason: "Failed to request")
+            transferOperation.tryEvent(event: .failure(reason: "Failed to request"))
         }
     }
         
@@ -410,7 +410,7 @@ class Remote: RemoteProtocol, ObservableObject {
         
         print("startTransfer: \(transferOp)")
         
-        transferOp.state = .started
+        transferOp.tryEvent(event: .start)
         
         let opInfo = OpInfo.with({
             $0.timestamp = transferOp.timestamp
@@ -432,17 +432,14 @@ class Remote: RemoteProtocol, ObservableObject {
             do {
                 try downloader.handleChunk(chunk: chunk)
             } catch {
-                
-                try? await stopTransfer(timestamp: transferOp.timestamp, error: true)
-                
                 print(error)
-                transferOp.state = .failed(reason: "\(error)")
+                transferOp.tryEvent(event: .failure(reason: "\(error)"))
                 
                 throw error
             }
         }
         
-        transferOp.state = .completed
+        transferOp.tryEvent(event: .completed)
         
         print("done transfering")
     }
@@ -451,7 +448,7 @@ class Remote: RemoteProtocol, ObservableObject {
         try await client?.cancelTransferOpRequest(opInfo(for: timestamp))
     }
     
-    func stopTransfer(timestamp: UInt64, error: Bool=false) async throws {
+    func stopTransfer(timestamp: UInt64, error: Bool) async throws {
         let stopInfo: StopInfo = .with {
             $0.info = opInfo(for: timestamp)
             $0.error = error

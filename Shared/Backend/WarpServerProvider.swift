@@ -119,12 +119,24 @@ class WarpServerProvider: WarpAsyncProvider {
             throw ServerError.transferCanceled
         }
                         
-        transferOp.state = .started
+        transferOp.tryEvent(event: .start)
         
         let backpressure = context.userInfo.backpressure
         
         context.userInfo.filechunkMetrics = transferOp.progress
         
+        do {
+            try await sendChunks(transferOp: transferOp, responseStream: responseStream, backpressure: backpressure)
+            
+            transferOp.tryEvent(event: .completed)
+            
+            print("\n\nWarpServerProvider: done sending chunks!")
+        } catch {
+            transferOp.tryEvent(event: .failure(reason: error.localizedDescription))
+        }
+    }
+    
+    private func sendChunks(transferOp: TransferToRemote, responseStream: GRPCAsyncResponseStreamWriter<FileChunk>, backpressure: Backpresure) async throws {
         for chunk: Result<FileChunk, Error> in transferOp.getFileChunks() {
 
             if transferOp.state != .started {
@@ -133,13 +145,11 @@ class WarpServerProvider: WarpAsyncProvider {
             
             switch chunk {
             case let .failure(error):
-                transferOp.state = .failed(reason: error.localizedDescription)
-                
                 throw error
             case let .success(chunk):
                 print("\n\nWarpServerProvider: Sending chunk: \(chunk.relativePath), \(chunk.hasTime)")
                             
-                try! await responseStream.send(chunk)
+                try await responseStream.send(chunk)
                 
                 // Suspend until enough previous chunks have been transmitted over the network.
                 await backpressure.waitForCompleted(waitForAll: false)
@@ -148,10 +158,6 @@ class WarpServerProvider: WarpAsyncProvider {
         
         // Suspend until all chunks have been transmitted.
         await backpressure.waitForCompleted(waitForAll: true)
-        
-        transferOp.state = .completed
-        
-        print("\n\nWarpServerProvider: done sending chunks!")
     }
 
     func cancelTransferOpRequest(request: OpInfo, context: GRPCAsyncServerCallContext) async throws -> VoidType {
@@ -170,7 +176,7 @@ class WarpServerProvider: WarpAsyncProvider {
         }
         
         transferOps.forEach {
-            $0.state = .requestCanceled
+            $0.tryEvent(event: .requestCancelledByRemote)
         }
         
         return VoidType()
@@ -193,7 +199,7 @@ class WarpServerProvider: WarpAsyncProvider {
         }
         
         transferOps.forEach {
-            $0.state = .transferCanceled
+            $0.tryEvent(event: .transferCancelledByRemote)
         }
 
         return VoidType()

@@ -384,6 +384,10 @@ extension TransferOpView {
 #if DEBUG
 
 class DummyTransferOp: TransferOpFromRemote {
+    func tryEvent(event: TransferOpEvent) {
+        
+    }
+    
     func checkIfWillOverwrite() -> Bool {
         willOverwrite
     }

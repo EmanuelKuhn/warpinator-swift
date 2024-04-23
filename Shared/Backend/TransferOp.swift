@@ -27,6 +27,16 @@ enum TransferOpError: Error {
     case invalidStateToStartTransfer
 }
 
+enum TransferOpEvent {
+    case cancelledByUser
+    case requested
+    case start
+    case failure(reason: String)
+    case completed
+    case transferCancelledByRemote
+    case requestCancelledByRemote
+}
+
 /// Protocol for incoming and outgoing transfers to conform to.
 protocol TransferOp: AnyObject {
     var direction: Direction { get }
@@ -37,8 +47,11 @@ protocol TransferOp: AnyObject {
     var timestamp: UInt64 { get }
     
     var _state: MutableObservableValue<TransferOpState> { get }
-    var state: TransferOpState { get set }
-
+    var state: TransferOpState { get }
+    
+    // Statemachine will update state based on events
+    func tryEvent(event: TransferOpEvent)
+    
     /// A title describing the files that will be transfered.
     var title: String { get }
     
@@ -66,29 +79,122 @@ protocol TransferOp: AnyObject {
 protocol TransferOpFromRemote: TransferOp {
     func checkIfWillOverwrite() -> Bool
     
-    func accept() async throws -> Void 
+    func accept() async throws -> Void
 }
 
 extension TransferOp {
     var state: TransferOpState {
         get { _state.wrappedValue }
-        set { _state.wrappedValue = newValue }
     }
     
-    fileprivate func cancel(remote: Remote?) {
-        if state == .initialized || state == .requested {
-            state = .requestCanceled
+    func tryEvent(event: TransferOpEvent, remote: Remote?) {
+        let prevState = state
+        
+        if let state = nextState(for: event) {
             
-            Task {
-                try? await remote?.cancelTransferOpRequest(timestamp: self.timestamp)
-            }
-        } else if state == .started {
-            state = .transferCanceled
+            print("Statemachine transition: \(self.state) -> \(state) for event: \(event)")
             
-            Task {
-                try? await remote?.stopTransfer(timestamp: self.timestamp)
-            }
+            self._state.wrappedValue = state
+            
+            enterState(state: state, prevState: prevState, event: event, remote: remote)
+        } else {
+            print("Statemachine ignored transition: \(self.state) -> \(state) for event: \(event)")
         }
+    }
+    
+    func nextState(for event: TransferOpEvent) -> TransferOpState? {
+        switch event {
+        case .cancelledByUser:
+            switch state {
+            case .initialized, .requested:
+                return .requestCanceled
+            case .started:
+                return .transferCanceled
+            default:
+                return nil
+            }
+        case .requested:
+            switch state {
+            case .initialized:
+                return .requested
+            default:
+                return nil
+            }
+        case .start:
+            switch state {
+            case .requested:
+                return .started
+            default:
+                return nil
+            }
+        case .failure(reason: let reason):
+            switch state {
+            case .requestCanceled, .transferCanceled:
+                return nil
+            default:
+                return .failed(reason: reason)
+            }
+        case .completed:
+            switch state {
+            case .started:
+                return .completed
+            default:
+                return nil
+            }
+        case .transferCancelledByRemote:
+            return .transferCanceled
+        case .requestCancelledByRemote:
+            return .requestCanceled
+        }
+    }
+    
+    fileprivate func enterState(state: TransferOpState, prevState: TransferOpState, event: TransferOpEvent, remote: Remote?) {
+        switch state {
+        case .initialized:
+            return
+        case .requested:
+            return
+        case .started:
+            return
+        case .failed(_):
+            switch prevState {
+            case .initialized, .requested:
+                Task {
+                    try? await remote?.cancelTransferOpRequest(timestamp: self.timestamp)
+                }
+            case .started:
+                Task {
+                    try? await remote?.stopTransfer(timestamp: self.timestamp, error: true)
+                }
+            default:
+                break
+            }
+            return
+        case .requestCanceled:
+            switch event {
+            case .transferCancelledByRemote, .requestCancelledByRemote:
+                return
+            default:
+                Task {
+                    try? await remote?.cancelTransferOpRequest(timestamp: self.timestamp)
+                }
+            }
+        case .transferCanceled:
+            switch event {
+            case .transferCancelledByRemote, .requestCancelledByRemote:
+                return
+            default:
+                Task {
+                    try? await remote?.stopTransfer(timestamp: self.timestamp, error: false)
+                }
+            }
+        case .completed:
+            return
+        }
+    }
+    
+    func cancel() {
+        tryEvent(event: .cancelledByUser)
     }
 }
 
@@ -185,17 +291,17 @@ class TransferFromRemote: TransferOpFromRemote {
                 
                 try await remote?.startTransfer(transferOp: self, downloader: downloader)
             } catch {
-                self.state = .failed(reason: error.localizedDescription)
+                self.tryEvent(event: .failure(reason: error.localizedDescription))
             }
         }
     }
     
-    func cancel() {
-        self.cancel(remote: self.remote)
-    }
-    
     func remove() {
         self.remote?.transfersFromRemote.removeValue(forKey: self.timestamp)
+    }
+    
+    func tryEvent(event: TransferOpEvent) {
+        self.tryEvent(event: event, remote: remote)
     }
 }
 
@@ -271,12 +377,12 @@ class TransferToRemote: TransferOp {
         return fileProvider.getFileChunks()
     }
     
-    func cancel() {
-        self.cancel(remote: self.remote)
-    }
-
     func remove() {
         self.remote?.transfersToRemote.removeValue(forKey: timestamp)
+    }
+    
+    func tryEvent(event: TransferOpEvent) {
+        self.tryEvent(event: event, remote: remote)
     }
 }
 
