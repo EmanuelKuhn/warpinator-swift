@@ -99,7 +99,9 @@ struct FileChunkSequence : Sequence {
             
             // Check if async iterator was canceled
             if Task.isCancelled {
-                return nil
+                
+                // Propagate Task cancellation
+                return .failure(CancellationError())
             }
                         
             // Try to get chunk iterator for next file
@@ -113,6 +115,8 @@ struct FileChunkSequence : Sequence {
                 }
             }
             
+            
+            // Finished iterating
             guard let currentFileChunkIterator = currentFileChunkIterator else {
                 return nil
             }
