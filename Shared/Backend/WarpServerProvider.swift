@@ -131,6 +131,8 @@ class WarpServerProvider: WarpAsyncProvider {
             transferOp.tryEvent(event: .completed)
             
             print("\n\nWarpServerProvider: done sending chunks!")
+        } catch is CancellationError {
+            transferOp.tryEvent(event: .failure(reason: "Transfer was interrupted"))
         } catch {
             transferOp.tryEvent(event: .failure(reason: error.localizedDescription))
         }
