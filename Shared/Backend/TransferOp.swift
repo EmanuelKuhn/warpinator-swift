@@ -87,7 +87,7 @@ extension TransferOp {
         get { _state.wrappedValue }
     }
     
-    func tryEvent(event: TransferOpEvent, remote: Remote?) {
+    func tryEvent(event: TransferOpEvent, remote: FullRemoteProtocol?) {
         let prevState = state
         
         if let state = nextState(for: event) {
@@ -148,7 +148,7 @@ extension TransferOp {
         }
     }
     
-    fileprivate func enterState(state: TransferOpState, prevState: TransferOpState, event: TransferOpEvent, remote: Remote?) {
+    fileprivate func enterState(state: TransferOpState, prevState: TransferOpState, event: TransferOpEvent, remote: FullRemoteProtocol?) {
         switch state {
         case .initialized:
             return
@@ -250,7 +250,7 @@ class TransferFromRemote: TransferOpFromRemote {
     var localSaveUrls: [URL] = []
         
     /// The associated remote. Needed to remove the transferop from the list of transfers.
-    private weak var remote: Remote?
+    private weak var remote: FullRemoteProtocol?
     
     lazy var transferDownloader: Result<TransferDownloader, Error> = {
         do {
@@ -260,14 +260,14 @@ class TransferFromRemote: TransferOpFromRemote {
         }
     }()
     
-    init(timestamp: UInt64, title: String, mimeType: String, size: UInt64, count: UInt64, topDirBasenames: [String], _state: MutableObservableValue<TransferOpState>, remote: Remote) {
+    init(timestamp: UInt64, title: String, mimeType: String, size: UInt64, count: UInt64, topDirBasenames: [String], initialState: TransferOpState, remote: FullRemoteProtocol) {
         self.timestamp = timestamp
         self.title = title
         self.mimeType = mimeType
         self.size = size
         self.count = count
         self.topDirBasenames = topDirBasenames
-        self._state = _state
+        self._state = .init(initialState)
         self.remote = remote
         
         self.progress = .init(totalBytesCount: Int(size))
@@ -306,7 +306,7 @@ class TransferFromRemote: TransferOpFromRemote {
 }
 
 extension TransferFromRemote {
-    static func createFromRequest(_ request: TransferOpRequest, remote: Remote) -> TransferFromRemote {
+    static func createFromRequest(_ request: TransferOpRequest, remote: FullRemoteProtocol) -> TransferFromRemote {
         
         return .init(
             timestamp: request.info.timestamp,
@@ -315,7 +315,7 @@ extension TransferFromRemote {
             size: request.size,
             count: request.count,
             topDirBasenames: request.topDirBasenames,
-            _state: .init(.requested),
+            initialState: .requested,
             remote: remote
         )
     }
@@ -336,7 +336,7 @@ class TransferToRemote: TransferOp {
     /// The files to transfer.
     let fileProvider: FileProvider
     
-    weak var remote: Remote?
+    weak var remote: FullRemoteProtocol?
     
     let progress: TransferOpMetrics
     
@@ -363,8 +363,8 @@ class TransferToRemote: TransferOp {
     var topDirBasenames: [String] {
         return fileProvider.topDirBasenames
     }
-
-    init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider, remote: Remote?) {
+    
+    init(timestamp: UInt64, initialState: TransferOpState, fileProvider: FileProvider, remote: FullRemoteProtocol?) {
         self.timestamp = timestamp
         self._state = .init(initialState)
         self.fileProvider = fileProvider
