@@ -187,11 +187,21 @@ struct MyDropDelegate: DropDelegate {
         guard info.hasItemsConforming(to: [.fileURL]) else { return false }
         
         let providers = info.itemProviders(for: [.fileURL])
-                
+        
+        let dispatchGroup = DispatchGroup()
+
+        var droppedUrls: [URL] = []
+        
         for provider in providers {
+            dispatchGroup.enter()
             loadItem(provider: provider) { fileUrl in
-                callback([fileUrl])
+                droppedUrls.append(fileUrl)
+                dispatchGroup.leave()
             }
+        }
+        
+        dispatchGroup.notify(queue: .global()) {
+            callback(droppedUrls)
         }
         
         return true
