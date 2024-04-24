@@ -218,7 +218,7 @@ extension RemoteDetailView {
         
         func sendFiles(urls: [URL]) {
             Task {
-                try? await remote.requestTransfer(url: urls[0])
+                try? await remote.requestTransfer(urls: urls)
             }
         }
         
@@ -277,7 +277,7 @@ class DummyRemote: RemoteProtocol {
         
     }
     
-    func requestTransfer(url: URL) async throws {
+    func requestTransfer(urls: [URL]) async throws {
         
     }
     

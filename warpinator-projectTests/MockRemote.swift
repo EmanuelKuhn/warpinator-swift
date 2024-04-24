@@ -39,7 +39,7 @@ class MockRemote: FullRemoteProtocol {
         return
     }
     
-    func requestTransfer(url: URL) async throws {
+    func requestTransfer(urls: [URL]) async throws {
         throw MockError.notImplemented
     }
     

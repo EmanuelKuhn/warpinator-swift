@@ -43,7 +43,7 @@ protocol RemoteProtocol {
     
     func ping() async throws
     
-    func requestTransfer(url: URL) async throws
+    func requestTransfer(urls: [URL]) async throws
     
     func statePublisher() -> AnyPublisher<RemoteState, Never>
     
@@ -368,13 +368,13 @@ class Remote: FullRemoteProtocol, ObservableObject {
     
     /// MARK: Transfers
     
-    func requestTransfer(url: URL) async {
+    func requestTransfer(urls: [URL]) async {
         
         guard let client = client else {
             return
         }
         
-        var transferOperation = TransferToRemote.fromUrls(urls: [url], remote: self)
+        var transferOperation = TransferToRemote.fromUrls(urls: urls, remote: self)
         
         self.transfersToRemote[transferOperation.timestamp] = transferOperation
         
