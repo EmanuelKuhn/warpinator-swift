@@ -143,6 +143,10 @@ struct RemoteDetailView: View {
     #endif
 }
 
+enum DropDelegateError: Error {
+    case invalidURLString
+}
+
 struct MyDropDelegate: DropDelegate {
         
     let isTargeted: Binding<Bool>?
@@ -185,69 +189,76 @@ struct MyDropDelegate: DropDelegate {
         let providers = info.itemProviders(for: [.fileURL])
                 
         for provider in providers {
-            
-            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, error) in
-                
-                if let error = error as NSError? {
-                    print("performDrop Error: \(error)")
-                }
-                
-                // The item that was dropped is Data...
-                if let data = item as? Data {
-                    
-                    // Which can be decoded as a string
-                    if let urlString = String(data: data, encoding: .utf8) {
-                        // print("urlString: \(urlString)")
-                        // For example "file:///.file/id=6571367.8720033194"
-                        
-                        // Attempt to create a URL from the string
-                        if let url = URL(string: urlString) {
-                            
-                            print("url: \(url)")
-#if os(macOS)
-
-                            // Now the url is a normal looking URL to a path
-                            do {
-                                // Apparently the URL is only valid for a short time after the drop.
-                                // To access it longer make a bookmark
-                                let bookmarkData = try url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: [.isDirectoryKey, .fileSizeKey])
-
-                                var stale = false
-                                if let resolvedURL = try? URL(resolvingBookmarkData: bookmarkData, options: [.withSecurityScope], bookmarkDataIsStale: &stale) {
-                                    
-                                    // print("resolvedURL: \(resolvedURL)")
-                                    // This resolvedURL is the same as url, but now the url can be accessed longer:
-                                    assert(resolvedURL == url)
-                                    
-                                    Task {
-                                        self.callback([resolvedURL])
-                                    }
-                                    
-                                    // Here is should be possible to read from the file:
-                                    // let fileContents = try String(contentsOf: url, encoding: .utf8)
-                                    // print("File contents: \(fileContents)")
-                                    
-                                    if stale {
-                                        print("Warning: for some reason the bookmark is stale")
-                                    }
-                                }
-                            } catch {
-                                print("Failed to make bookmarkData from URL: \(error)")
-                            }
-#endif
-                        } else {
-                            print("Invalid URL string.")
-                        }
-                    } else {
-                        print("Data could not be decoded into a string.")
-                    }
-                } else {
-                    print("Item is not of type Data.")
-                }
+            loadItem(provider: provider) { fileUrl in
+                callback([fileUrl])
             }
         }
+        
         return true
     }
+    
+#if os(macOS)
+    func loadItem(provider: NSItemProvider, callback: @escaping (URL) -> ()) {
+        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, error) in
+            
+            if let error = error as NSError? {
+                print("performDrop Error: \(error)")
+            }
+            
+            // The item that was dropped is Data...
+            if let data = item as? Data {
+                
+                // Which can be decoded as a string (like "file:///.file/id=6571367.8720033194")
+                if let urlString = String(data: data, encoding: .utf8) {
+                    do {
+                        let resolvedURL = try processURLString(urlString: urlString)
+                            callback(resolvedURL)
+                    } catch {
+                        print("performDrop: Failed to process urlString: \(error)")
+                    }
+                    
+                } else {
+                    print("Data could not be decoded into a string.")
+                }
+            } else {
+                print("Item is not of type Data.")
+            }
+        }
+
+    }
+    
+    private func processURLString(urlString: String) throws -> URL {
+        /// Gets as input a file path like file:///.file/id=6571367.8720033194, and returns a URL that can be used outside of the drop action.
+        /// The URL made from the urlString will only allow accessing for a short time, because it resulted froma  drop action.
+        /// Thus the URL is first bookmarked and the URL is returned after resolving it from the bookmark.
+        
+        // Attempt to create a URL from the string
+        if let url = URL(string: urlString) {
+            // Now the url is a normal looking URL...
+            // But, Apparently the URL is only valid for a short time after the drop.
+            // To access it longer make a bookmark
+            let bookmarkData = try url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: [.isDirectoryKey, .fileSizeKey])
+
+            var stale = false
+            let resolvedURL = try URL(resolvingBookmarkData: bookmarkData, options: [.withSecurityScope], bookmarkDataIsStale: &stale)
+                
+            // This resolvedURL is the same as url, but now the url can be accessed longer:
+            assert(resolvedURL == url)
+            
+            if stale {
+                print("Warning: for some reason the bookmark is stale")
+            }
+            
+            return resolvedURL
+        } else {
+            throw DropDelegateError.invalidURLString
+        }
+    }
+#else
+    func loadItem(provider: provider) {
+        print("Not implemented: loadItem(provider: \(provider)")
+    }
+#endif
 }
 
 
