@@ -74,7 +74,7 @@ struct RemoteDetailView: View {
                     })
                 }
                 .overlay(isDropTargeted ? Color.primary.opacity(0.4).blendMode(.hardLight) : nil)
-                .onDrop(of: [.fileURL], delegate: MyDropDelegate(isTargeted: $isDropTargeted, callback: { urls in
+                .onDrop(of: [.fileURL], delegate: MyDropDelegate(isTargeted: $isDropTargeted, isActive: !viewModel.disableSendFileButton, callback: { urls in
                     sendFiles(urls: urls)
                 }))
             }.onAppear() {
@@ -147,6 +147,8 @@ struct MyDropDelegate: DropDelegate {
         
     let isTargeted: Binding<Bool>?
     
+    let isActive: Bool?
+    
     let callback: ([URL]) -> ()
         
     func validateDrop(info: DropInfo) -> Bool {
@@ -161,6 +163,19 @@ struct MyDropDelegate: DropDelegate {
     
     func dropExited(info: DropInfo) {
         self.isTargeted?.wrappedValue = false
+    }
+    
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        guard let isActive = isActive else {
+            return nil
+        }
+        
+        if isActive {
+            return .init(operation: .copy)
+        } else {
+            return .init(operation: .forbidden)
+        }
+
     }
     
     func performDrop(info: DropInfo) -> Bool {
