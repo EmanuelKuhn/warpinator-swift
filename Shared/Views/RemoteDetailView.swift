@@ -31,6 +31,9 @@ struct RemoteDetailView: View {
     @StateObject
     var layoutInfo = LayoutInfo()
     
+    @State
+    var isDropTargeted: Bool = false
+    
     init(viewModel: ViewModel, showingSheet: Bool=false) {
         self.viewModel = viewModel
         self.showingSheet = showingSheet
@@ -70,6 +73,10 @@ struct RemoteDetailView: View {
                         }
                     })
                 }
+                .overlay(isDropTargeted ? Color.primary.opacity(0.4).blendMode(.hardLight) : nil)
+                .onDrop(of: [.fileURL], delegate: MyDropDelegate(isTargeted: $isDropTargeted, callback: { urls in
+                    sendFiles(urls: urls)
+                }))
             }.onAppear() {
                 layoutInfo.width = geom.size.width
             }.onChange(of: geom.size) { newSize in
@@ -80,9 +87,6 @@ struct RemoteDetailView: View {
 #if canImport(UIKit)
             .navigationBarTitleDisplayMode(.inline)
 #endif
-            .onDrop(of: [.fileURL], delegate: MyDropDelegate(callback: { urls in
-                sendFiles(urls: urls)
-            }))
             .toolbar {
                     
                     ToolbarItem(placement: .primaryAction) {
@@ -141,10 +145,22 @@ struct RemoteDetailView: View {
 
 struct MyDropDelegate: DropDelegate {
         
+    let isTargeted: Binding<Bool>?
+    
     let callback: ([URL]) -> ()
         
     func validateDrop(info: DropInfo) -> Bool {
         return info.hasItemsConforming(to: [.fileURL])
+    }
+    
+    func dropEntered(info: DropInfo) {
+        self.isTargeted?.wrappedValue = validateDrop(info: info)
+        
+        print("self.isTargeted?.wrappedValue: \(self.isTargeted?.wrappedValue)")
+    }
+    
+    func dropExited(info: DropInfo) {
+        self.isTargeted?.wrappedValue = false
     }
     
     func performDrop(info: DropInfo) -> Bool {
