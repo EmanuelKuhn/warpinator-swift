@@ -117,10 +117,9 @@ struct MyDropDelegate: DropDelegate {
 
             var stale = false
             let resolvedURL = try URL(resolvingBookmarkData: bookmarkData, options: [.withSecurityScope], bookmarkDataIsStale: &stale)
-                
-            // This resolvedURL is the same as url, but now the url can be accessed longer:
-            assert(resolvedURL == url)
             
+            // resolvedURL is almost the same as url (might have extra '/' in the path), but now the url can be accessed longer.
+                            
             if stale {
                 print("Warning: for some reason the bookmark is stale")
             }
