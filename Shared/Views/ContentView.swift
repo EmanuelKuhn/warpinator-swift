@@ -19,7 +19,7 @@ import AppKit
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-
+    
     @State private var showingSettings = false
     
     var discoveryViewModel: DiscoveryViewModel {
@@ -119,6 +119,9 @@ struct RemoteListViewItem: View {
     
     @ObservedObject var remote: DiscoveryViewModel.RemoteItem
     
+    @State
+    var isDropTargeted = false
+    
     var body: some View {
         HStack {
             VStack (alignment: .leading) {
@@ -137,6 +140,13 @@ struct RemoteListViewItem: View {
             }
             Spacer()
         }
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isDropTargeted ? Color.gray.opacity(0.2) : Color.clear)
+        )
+        .onDrop(of: [.fileURL], delegate: MyDropDelegate(isTargeted: $isDropTargeted, isActive: remote.isOnline, callback: { urls in
+            remote.sendFiles(urls: urls)
+        }))
         
     }
 }
