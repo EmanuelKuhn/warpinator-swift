@@ -75,6 +75,9 @@ class DiscoveryViewModel: ObservableObject {
         @Published
         var resolvedHost: String
         
+        @Published
+        var isOnline: Bool = false
+        
         var tokens: Set<AnyCancellable> = .init()
         
         init(remote: Remote) {
@@ -92,6 +95,8 @@ class DiscoveryViewModel: ObservableObject {
             Task {
                 tokens.update(with: remote.$state.receive(on: DispatchQueue.main).sink { newState in
                     self.connectivityImageSystemName = newState.systemImageName
+                    
+                    self.isOnline = newState == .online
                 })
                 
                 tokens.update(with: remote.$remoteMachineInfo.receive(on: DispatchQueue.main).sink { newInfo in
@@ -111,6 +116,11 @@ class DiscoveryViewModel: ObservableObject {
             }
         }
 
+        func sendFiles(urls: [URL]) {
+            Task {
+                await remote.requestTransfer(urls: urls)
+            }
+        }
         
         func getRemoteDetailVM() -> RemoteDetailView.ViewModel {
             return .init(remote: remote)

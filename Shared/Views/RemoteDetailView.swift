@@ -14,6 +14,8 @@ import Combine
 import AppKit
 #endif
 
+import UniformTypeIdentifiers
+
 class LayoutInfo: ObservableObject {
     @Published var width: CGFloat = 0
 }
@@ -28,6 +30,9 @@ struct RemoteDetailView: View {
     
     @StateObject
     var layoutInfo = LayoutInfo()
+    
+    @State
+    var isDropTargeted: Bool = false
     
     init(viewModel: ViewModel, showingSheet: Bool=false) {
         self.viewModel = viewModel
@@ -68,6 +73,10 @@ struct RemoteDetailView: View {
                         }
                     })
                 }
+                .overlay(isDropTargeted ? Color.primary.opacity(0.4).blendMode(.hardLight) : nil)
+                .onDrop(of: [.fileURL], delegate: MyDropDelegate(isTargeted: $isDropTargeted, isActive: !viewModel.disableSendFileButton, callback: { urls in
+                    sendFiles(urls: urls)
+                }))
             }.onAppear() {
                 layoutInfo.width = geom.size.width
             }.onChange(of: geom.size) { newSize in
@@ -78,7 +87,6 @@ struct RemoteDetailView: View {
 #if canImport(UIKit)
             .navigationBarTitleDisplayMode(.inline)
 #endif
-            
             .toolbar {
                     
                     ToolbarItem(placement: .primaryAction) {
@@ -133,9 +141,7 @@ struct RemoteDetailView: View {
         }
     }
     #endif
-
 }
-
 
 extension RemoteState {
     var description: String {

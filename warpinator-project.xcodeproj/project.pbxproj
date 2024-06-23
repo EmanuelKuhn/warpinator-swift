@@ -20,6 +20,8 @@
 		4C3507DA2BD7FF8100FB150F /* MockRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D92BD7FF8100FB150F /* MockRemote.swift */; };
 		4C3507DC2BD7FF8100FB150F /* MockRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D92BD7FF8100FB150F /* MockRemote.swift */; };
 		4C3507DD2BD803BA00FB150F /* MockRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507D92BD7FF8100FB150F /* MockRemote.swift */; };
+		4C3507E22BD9505C00FB150F /* DropDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507E12BD9505B00FB150F /* DropDelegate.swift */; };
+		4C3507E32BD9505C00FB150F /* DropDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3507E12BD9505B00FB150F /* DropDelegate.swift */; };
 		4C3924EB2BA33A0B0046C923 /* WarpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3924EA2BA33A0B0046C923 /* WarpManager.swift */; };
 		4C3924EC2BA33A0B0046C923 /* WarpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3924EA2BA33A0B0046C923 /* WarpManager.swift */; };
 		4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C39E80727E8C89F000F0ACD /* TransferOp.swift */; };
@@ -164,6 +166,7 @@
 		4C195A982B931A4800E18958 /* Tests Shared (macOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (macOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3507D62BD7E2B600FB150F /* TransferOpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOpTests.swift; sourceTree = "<group>"; };
 		4C3507D92BD7FF8100FB150F /* MockRemote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemote.swift; sourceTree = "<group>"; };
+		4C3507E12BD9505B00FB150F /* DropDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDelegate.swift; sourceTree = "<group>"; };
 		4C3924EA2BA33A0B0046C923 /* WarpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarpManager.swift; sourceTree = "<group>"; };
 		4C39E80727E8C89F000F0ACD /* TransferOp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferOp.swift; sourceTree = "<group>"; };
 		4C3F86A927E7AFE000555A83 /* Tests Shared (iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests Shared (iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -422,6 +425,7 @@
 				4CFCBAEC2816E7C200D154AB /* RemoteDetailView.swift */,
 				4CD3F071283CEA6A00DFE396 /* TransferOpView.swift */,
 				4C731B692B9DC3B4003390EC /* ConfirmationView.swift */,
+				4C3507E12BD9505B00FB150F /* DropDelegate.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -766,6 +770,7 @@
 				4CDD56C427B412A900A9B537 /* WarpRegistrationProvider.swift in Sources */,
 				4C39E80827E8C89F000F0ACD /* TransferOp.swift in Sources */,
 				4CD3F072283CEA6A00DFE396 /* TransferOpView.swift in Sources */,
+				4C3507E22BD9505C00FB150F /* DropDelegate.swift in Sources */,
 				4CA9E5BE280F11390044CE1F /* Peer.swift in Sources */,
 				4CA343772802D32F00702DD6 /* Backpressure.swift in Sources */,
 				4C1443B727E7A2E600F87557 /* NetworkConfig.swift in Sources */,
@@ -812,6 +817,7 @@
 				4C1443B827E7A2E600F87557 /* NetworkConfig.swift in Sources */,
 				4CA343782802D32F00702DD6 /* Backpressure.swift in Sources */,
 				4CD3F073283CEA6A00DFE396 /* TransferOpView.swift in Sources */,
+				4C3507E32BD9505C00FB150F /* DropDelegate.swift in Sources */,
 				4C4A73D027B3FB8A004EDA61 /* warp.grpc.swift in Sources */,
 				4CFCBAED2816E7C200D154AB /* RemoteDetailView.swift in Sources */,
 				4CA9E5C1280F127A0044CE1F /* Discovery.swift in Sources */,
