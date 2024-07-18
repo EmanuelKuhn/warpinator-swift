@@ -389,11 +389,9 @@ class TransferToRemote: TransferOp {
 
 
 extension TransferToRemote {
-    
-    /// Create an outgoing transfer operation from a single file url
     static func fromUrls(urls: [URL], remote: Remote, now: () -> DispatchTime = DispatchTime.now) -> TransferToRemote {
         let files = urls.map { url in
-            File(url: url, relativePath: url.lastPathComponent)
+            FileItemFactory.from(url: url, relativePath: url.lastPathComponent)
         }
         
         let fileProvider = FileProvider(files: files)
