@@ -9,13 +9,36 @@ import Foundation
 
 import UniformTypeIdentifiers
 
+protocol FileItem {
+    func getDataChunkIterator() throws -> ChunkIterator
+    
+    var relativePath: String { get }
+    var url: URL { get }
+}
+
+struct FileItemFactory {
+    static func from(url: URL, relativePath: String) -> FileItem {
+        if url.isDirectory {
+            return Folder(url: url, relativePath: relativePath)
+        }
+        else {
+            return File(url: url, relativePath: relativePath)
+        }
+    }
+}
+
+protocol ChunkIterator {
+    func next() throws -> FileChunk?
+    func hasNext() -> Bool
+}
+
 class FileProvider {
     
     /// Files in depth first search order.
     /// Such that they can be send in this order, and nested directories can be reconstructed.
-    let files: [File]
+    let files: [FileItem]
     
-    init(files: [File]) {
+    init(files: [FileItem]) {
         self.files = files
     }
     
@@ -81,17 +104,21 @@ struct FileChunkSequence : Sequence {
     
     /// The files in to read and generate FileChunks from.
     /// The files are iterated over in  the order
-    let files: [File]
+    let files: [FileItem]
+    
+    func makeIterator() -> Iterator {
+        return Iterator(files: files)
+    }
     
     class Iterator : IteratorProtocol {
         
-        var fileIterator: IndexingIterator<Array<File>>
+        var fileIterator: IndexingIterator<Array<FileItem>>
         
         
         /// The datachunk iterator of the current file.
-        var currentFileChunkIterator: File.ChunkIterator?
+        var currentFileChunkIterator: ChunkIterator?
         
-        init(files: [File]) {
+        init(files: [FileItem]) {
             self.fileIterator = files.makeIterator()
         }
         
@@ -140,10 +167,6 @@ struct FileChunkSequence : Sequence {
             print("deinit FileChunkSequence.Iterator")
         }
     }
-
-    func makeIterator() -> Iterator {
-        return Iterator(files: files)
-    }
 }
 
 
@@ -168,7 +191,7 @@ class SecurityScopedURL {
 }
 
 
-struct File {
+struct File: FileItem {
     
     let url: URL
     
@@ -183,10 +206,10 @@ struct File {
     }
     
     internal func getDataChunkIterator() throws -> ChunkIterator {
-        return try .init(parent: self)
+        return try FileChunkIterator(parent: self)
     }
     
-    internal class ChunkIterator {
+    internal class FileChunkIterator: ChunkIterator {
         
         typealias Element = FileChunk
         
@@ -319,6 +342,155 @@ struct File {
             print("deinit File.ChunkIterator")
             
             self.inputStream.close()
+        }
+    }
+}
+
+struct Folder: FileItem {
+    
+    let url: URL
+    
+    /// The path that will be transmitted to the reciever.
+    let relativePath: String
+    
+    let chunkSize = 1024 * 1024
+    
+    let fileManager = FileManager.default
+    
+    init(url: URL, relativePath: String) {
+        self.url = url
+        self.relativePath = relativePath
+    }
+    
+    internal func getDataChunkIterator() throws -> ChunkIterator {
+        return try FolderChunkIterator(parent: self, fileManager: fileManager)
+    }
+    
+    internal class FolderChunkIterator: ChunkIterator {
+        
+        typealias Element = FileChunk
+        
+        private let securityScopedURL: SecurityScopedURL
+        
+        private var url: URL {
+            securityScopedURL.url
+        }
+        
+        private var relativePath: String
+        
+        private var isFirstChunk: Bool = true
+        
+        private var children: [FileItem]
+        
+        private var currentChildIterator: ChunkIterator? = nil
+                
+        init(parent folder: Folder, fileManager: FileManager) throws {
+            self.securityScopedURL = SecurityScopedURL(folder.url)
+            self.relativePath = folder.relativePath
+            
+            let url = securityScopedURL.url
+            
+            let childPaths: [URL] = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: [.totalFileSizeKey])
+            
+            // Recursively find children
+            self.children = childPaths.map({FileItemFactory.from(url: $0, relativePath: "\(folder.relativePath)/\($0.lastPathComponent)")})
+        }
+        
+        func hasNext() -> Bool {
+            
+            // Still have to send FileChunk representing this folder
+            if isFirstChunk {
+                return true
+            }
+            
+            // Still have children to iterate over
+            if !self.children.isEmpty {
+                return true
+            }
+            
+            // Last child still has chunks left
+            if let currentChildIterator = currentChildIterator {
+                return currentChildIterator.hasNext()
+            }
+            
+            // Done
+            return false
+        }
+        
+        /// Get the next FileChunk. Returns nil if there is no next Chunk.
+        func next() throws -> FileChunk? {
+            let currentChunk: FileChunk?
+            
+            if isFirstChunk {
+                // Return chunk representing this folder
+                
+                currentChunk = makeFolderChunk()
+                
+                isFirstChunk = false
+            } else {
+                // Try iterating over children
+                
+                let chunk = try self.currentChildIterator?.next()
+                
+                if let chunk = chunk {
+                    currentChunk = chunk
+                } else {
+                    if !self.children.isEmpty {
+                        let nextFileItem = self.children.removeFirst()
+                        
+                        self.currentChildIterator = try nextFileItem.getDataChunkIterator()
+
+                        if let currentChildIterator = self.currentChildIterator {
+                            
+                            print(nextFileItem)
+                            
+                            print(nextFileItem.relativePath)
+                            print(nextFileItem.url)
+                            
+                            assert(currentChildIterator.hasNext(), "Assume if there is a next currentChildIterator, then the first call will always return a filechunk, but \(nextFileItem), \(nextFileItem.relativePath)")
+                            
+                            currentChunk = try currentChildIterator.next()
+                        } else {
+                            currentChunk = nil
+                        }
+                    } else {
+                        // No more children to iterate over
+                        currentChunk = nil
+                        
+                        assert(self.hasNext() == false, "now really shouldn't have more chunks right?")
+
+                    }
+                }
+            }
+            
+            if currentChunk == nil {
+                // if currentChunk is nil here, that should mean that we iterated over all the children
+                print(self.currentChildIterator?.hasNext())
+                
+                assert(self.hasNext() == false, "It should be the case that hasNext() returns false when next() is going to return nil")
+            }
+
+            return currentChunk
+        }
+        
+        /// Create a FileChunk from a read data Chunk.
+        private func makeFolderChunk() -> FileChunk {
+            assert(isFirstChunk, "This (makeFolderChunk()) should only get called once for each folder")
+            
+                
+            let mTime = self.url.contentModificationDate()?.timeIntervalSince1970 ?? 0
+            
+            let fileTime = FileTime.with({
+                $0.mtime = UInt64(mTime)
+                $0.mtimeUsec = UInt32(mTime.truncatingRemainder(dividingBy: 1) * 10e6)
+            })
+            
+            return FileChunk.with({
+                $0.relativePath = self.relativePath
+                $0.fileType = WarpFileType.directory.rawValue
+                $0.fileMode = 509
+                $0.time = fileTime
+            })
         }
     }
 }
