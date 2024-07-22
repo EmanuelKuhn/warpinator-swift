@@ -20,6 +20,34 @@ enum TransferDownloaderError: Error {
     case failedCreatingPath
     case timeNotSet
     case symLinksAreNotSupported
+    case moreFilesThanAdvertised
+    case finishedWithMoreThan0Remaining
+    case finishedWithLessThan0Remaining
+}
+
+extension TransferDownloaderError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .unkownFileType:
+            return "unkownFileType"
+        case .invalidTopDirBasenames:
+            return "invalidTopDirBasenames"
+        case .invalidRelativePath:
+            return "invalidRelativePath"
+        case .failedCreatingPath:
+            return "failedCreatingPath"
+        case .timeNotSet:
+            return "timeNotSet"
+        case .symLinksAreNotSupported:
+            return "symLinksAreNotSupported"
+        case .moreFilesThanAdvertised:
+            return "moreFilesThanAdvertised"
+        case .finishedWithMoreThan0Remaining:
+            return "finishedWithMoreThan0Remaining"
+        case .finishedWithLessThan0Remaining:
+            return "finishedWithLessThan0Remaining"
+        }
+    }
 }
 
 class TransferDownloader {
@@ -34,8 +62,9 @@ class TransferDownloader {
     
     var seenRelativePaths: Set<String>
     
+    var remainingFileCount: UInt64
         
-    init(topDirBasenames: [String], progress: TransferOpMetrics) throws {
+    init(topDirBasenames: [String], progress: TransferOpMetrics, fileCount totalFileCount: UInt64) throws {
         
         self.progress = progress
         
@@ -46,6 +75,8 @@ class TransferDownloader {
         self.topDirBasenames = try topDirBasenames.map(TransferDownloader.sanitizeTopDirName)
         
         self.seenRelativePaths = Set()
+                
+        self.remainingFileCount = totalFileCount
     }
     
     /// The local paths the topDirBasenames will be downloaded to. This is computed by computing the local save path for each sanitized topDirBaseName given the self.saveDirectory
@@ -98,7 +129,14 @@ class TransferDownloader {
         // If this is the first chunk of fileUrl
         if !self.seenRelativePaths.contains(chunk.relativePath) {
             self.seenRelativePaths.update(with: chunk.relativePath)
-
+                        
+            if remainingFileCount == 0 {
+                throw TransferDownloaderError.moreFilesThanAdvertised
+            }
+            
+            // Decrement here, as not keeping track when last chunk of a file was sent.
+            remainingFileCount -= 1;
+            
             try chunk.chunk.write(to: fileUrl, options: .atomic)
 
             // The first chunk should have timestamp
@@ -157,6 +195,16 @@ class TransferDownloader {
         }
         
         return url.standardized
+    }
+    
+    func finish() throws {
+        if self.remainingFileCount > 0 {
+            throw TransferDownloaderError.finishedWithMoreThan0Remaining
+        }
+        
+        if self.remainingFileCount < 0 {
+            throw TransferDownloaderError.finishedWithLessThan0Remaining
+        }
     }
     
     static func standardizePath(path: String) -> String? {
