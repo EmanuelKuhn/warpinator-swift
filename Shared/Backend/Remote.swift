@@ -455,6 +455,8 @@ class Remote: FullRemoteProtocol, ObservableObject {
 
             try downloader.handleChunk(chunk: chunk)
         }
+        
+        try downloader.finish()
     }
     
     func cancelTransferOpRequest(timestamp: UInt64) async throws {

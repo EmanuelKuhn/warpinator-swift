@@ -255,7 +255,7 @@ class TransferFromRemote: TransferOpFromRemote {
     
     lazy var transferDownloader: Result<TransferDownloader, Error> = {
         do {
-            return .success(try TransferDownloader(topDirBasenames: self.topDirBasenames, progress: self.progress))
+            return .success(try TransferDownloader(topDirBasenames: self.topDirBasenames, progress: self.progress, fileCount: self.count))
         } catch {
             return .failure(error)
         }
