@@ -21,7 +21,7 @@ class TransferDownloaderTests: XCTestCase {
     func testSanitizeRelativePathCanHandleSpaces() throws {
         let relpath = "versions/solution (copy).ipynb"
         
-        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100))
+        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 2)
         
         let result = try downloader.sanitizeRelativePath(relativePath: relpath)
         
@@ -30,7 +30,7 @@ class TransferDownloaderTests: XCTestCase {
     }
 
     func testTopDirBasenamesCanHaveSpaces() throws {
-        let downloader = try TransferDownloader(topDirBasenames: ["top dir name with spaces"], progress: TransferOpMetrics(totalBytesCount: 100))
+        let downloader = try TransferDownloader(topDirBasenames: ["top dir name with spaces"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 1)
         
         XCTAssertNotNil(downloader)
     }
@@ -38,28 +38,28 @@ class TransferDownloaderTests: XCTestCase {
     func testTopDirBasenamesCannotHaveMultipleComponents() throws {
         
         XCTAssertThrowsError(
-            try TransferDownloader(topDirBasenames: ["nested/folder/"], progress: TransferOpMetrics(totalBytesCount: 100))
+            try TransferDownloader(topDirBasenames: ["nested/folder/"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 2)
         )
     }
 
     func testTopDirBasenamesCannotHaveLinksToParentDir() throws {
         
         XCTAssertThrowsError(
-            try TransferDownloader(topDirBasenames: [".."], progress: TransferOpMetrics(totalBytesCount: 100))
+            try TransferDownloader(topDirBasenames: [".."], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 1)
         )
     }
 
     func testTopDirBasenamesCannotBeEmpty() throws {
         
         XCTAssertThrowsError(
-            try TransferDownloader(topDirBasenames: ["hey", ""], progress: TransferOpMetrics(totalBytesCount: 100))
+            try TransferDownloader(topDirBasenames: ["hey", ""], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 2)
         )
     }
     
     func testTopDirBasenamesCannotPointToRandomPath() throws {
         
         XCTAssertThrowsError(
-            try TransferDownloader(topDirBasenames: ["/Users/throwaway/Downloads"], progress: TransferOpMetrics(totalBytesCount: 100))
+            try TransferDownloader(topDirBasenames: ["/Users/throwaway/Downloads"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 100)
         )
     }
     
@@ -68,7 +68,7 @@ class TransferDownloaderTests: XCTestCase {
         
         let relpath = "solution (copy).ipynb"
         
-        let downloader = try TransferDownloader(topDirBasenames: ["versions", "hello"], progress: TransferOpMetrics(totalBytesCount: 100))
+        let downloader = try TransferDownloader(topDirBasenames: ["versions", "hello"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 3)
 
         XCTAssertThrowsError(
             try downloader.sanitizeRelativePath(relativePath: relpath)
@@ -79,7 +79,7 @@ class TransferDownloaderTests: XCTestCase {
         
         let relpath = "versions/../solution (copy).ipynb"
         
-        let downloader = try TransferDownloader(topDirBasenames: ["versions", "hello"], progress: TransferOpMetrics(totalBytesCount: 100))
+        let downloader = try TransferDownloader(topDirBasenames: ["versions", "hello"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 100)
 
         XCTAssertThrowsError(
             try downloader.sanitizeRelativePath(relativePath: relpath)
@@ -91,7 +91,7 @@ class TransferDownloaderTests: XCTestCase {
         
         let relpath = "versions/../versions/solution (copy).ipynb"
         
-        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100))
+        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 100)
         
         let result = try downloader.sanitizeRelativePath(relativePath: relpath)
         
@@ -102,7 +102,7 @@ class TransferDownloaderTests: XCTestCase {
     func testSanitizeRelativePathCanNotEscape2() throws {
         let relpath = "versions/../versions/../solution (copy).ipynb"
         
-        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100))
+        let downloader = try TransferDownloader(topDirBasenames: ["versions"], progress: TransferOpMetrics(totalBytesCount: 100), fileCount: 100)
         
         XCTAssertThrowsError(
             try downloader.sanitizeRelativePath(relativePath: relpath)
