@@ -201,7 +201,12 @@ class TransferDownloader {
         
         print("newSymlinkUrl: \(newSymlinkUrl); targetUrl: \(targetUrl)")
         
+        if fileManager.fileExists(atPath: newSymlinkUrl.path) {
+            try fileManager.removeItem(at: newSymlinkUrl)
+        }
+        
         try fileManager.createSymbolicLink(at: newSymlinkUrl, withDestinationURL: targetUrl)
+        try fileManager.setAttributes([.modificationDate: timestamp], ofItemAtPath: newSymlinkUrl.path)
     }
     
     /// Make sure that the relative path doesn't go outside of the save directory and starts with a path component that is in
