@@ -85,4 +85,9 @@ extension URL {
     var isDirectory: Bool {
        (try? resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
     }
+    
+    var isSymbolicLink: Bool {
+        let resourceValues = try? self.resourceValues(forKeys: [.isSymbolicLinkKey])
+        return resourceValues?.isSymbolicLink ?? false
+    }
 }
