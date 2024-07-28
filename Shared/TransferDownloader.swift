@@ -24,6 +24,7 @@ enum TransferDownloaderError: Error {
     case finishedWithMoreThan0Remaining
     case finishedWithLessThan0Remaining
     case invalidFolderChunk
+    case invalidSymLink
 }
 
 extension TransferDownloaderError: LocalizedError {
@@ -49,6 +50,8 @@ extension TransferDownloaderError: LocalizedError {
             return "finishedWithLessThan0Remaining"
         case .invalidFolderChunk:
             return "invalidFolderChunk"
+        case .invalidSymLink:
+            return "invalidSymLink"
         }
     }
 }
@@ -133,7 +136,7 @@ class TransferDownloader {
         case WarpFileType.directory.rawValue:
             try handleDirectory(chunk: chunk, isFirstChunk: isFirstChunkOfPath)
         case WarpFileType.symLink.rawValue:
-            throw TransferDownloaderError.symLinksAreNotSupported
+            try handleSymLink(chunk: chunk, isFirstChunk: isFirstChunkOfPath)
         default:
             throw TransferDownloaderError.unkownFileType
         }
@@ -183,6 +186,24 @@ class TransferDownloader {
         try fileManager.createDirectory(at: newFolderPath, withIntermediateDirectories: true, attributes: [.modificationDate: timestamp])
     }
     
+    func handleSymLink(chunk: FileChunk, isFirstChunk: Bool) throws {
+        precondition(chunk.fileType == WarpFileType.symLink.rawValue)
+        
+        guard isFirstChunk else {
+            throw TransferDownloaderError.invalidSymLink
+        }
+        
+        let timestamp = NSDate.from(time: chunk.time)
+        
+        let newSymlinkUrl = try self.sanitizeRelativePath(relativePath: chunk.relativePath)
+
+        let targetUrl = try sanitizeSymLink(relativePath: chunk.relativePath, targetPath: chunk.symlinkTarget)
+        
+        print("newSymlinkUrl: \(newSymlinkUrl); targetUrl: \(targetUrl)")
+        
+        try fileManager.createSymbolicLink(at: newSymlinkUrl, withDestinationURL: targetUrl)
+    }
+    
     /// Make sure that the relative path doesn't go outside of the save directory and starts with a path component that is in
     /// the list of topDirBasenames.
     ///
@@ -210,6 +231,45 @@ class TransferDownloader {
         return url.standardized
     }
     
+    /// Make sure the symbolic link doesn't go outside of the save directory and the target stays inside one of the topDirBasenames
+    /// Returns: a relative target URL for the symlink
+    func sanitizeSymLink(relativePath: String, targetPath: String) throws -> URL {
+        
+        guard let relativePath = relativePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            throw TransferDownloaderError.invalidRelativePath
+        }
+        
+        guard let targetPath = targetPath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            throw TransferDownloaderError.invalidSymLink
+        }
+
+        // Create the relative URL for the symbolic link
+        guard let relativeURL = URL(string: relativePath) else {
+            throw TransferDownloaderError.invalidSymLink
+        }
+        
+        // Resolve the target path relative to the symlink's directory
+        let combinedURL = relativeURL.deletingLastPathComponent().appendingPathComponent(targetPath).standardized
+        
+        // Get the first path component of the combined path
+        let firstPathComponent = combinedURL.firstPathComponent
+        
+        // Check if the first path component is in the allowed top directories
+        guard topDirBasenames.contains(firstPathComponent) else {
+            throw TransferDownloaderError.invalidSymLink
+        }
+        
+        guard let targetURL = URL(string: targetPath) else {
+            throw TransferDownloaderError.invalidSymLink
+        }
+        
+        guard targetURL.firstPathComponent != "/" else {
+            throw TransferDownloaderError.invalidSymLink
+        }
+        
+        return targetURL
+    }
+
     func finish() throws {
         if self.remainingFileCount > 0 {
             print("remainingCount: \(self.remainingFileCount)")

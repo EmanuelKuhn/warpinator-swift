@@ -23,6 +23,9 @@ struct FileItemFactory {
     static func from(url: URL, relativePath: String) -> FileItem {
         if url.isDirectory {
             return Folder(url: url, relativePath: relativePath)
+        } else if url.isSymbolicLink {
+            
+            return Link(url: url, relativePath: relativePath)
         }
         else {
             return File(url: url, relativePath: relativePath)
@@ -546,4 +549,75 @@ class Folder: FileItem {
             })
         }
     }
+}
+
+class Link: FileItem {
+    
+    var relativePath: String
+    var url: URL
+    
+    var fileSize: Int = 0
+    var fileCount: UInt64 = 0
+    
+    
+    init(url: URL, relativePath: String) {
+        self.url = url
+        self.relativePath = relativePath
+    }
+
+    func getDataChunkIterator() throws -> ChunkIterator {
+        return try LinkChunkIterator(parent: self, fileManager: FileManager.default)
+    }
+    
+    internal class LinkChunkIterator: ChunkIterator {
+        
+        var isFirstChunk = true
+        
+        let mTime: Double
+        
+        let relativePath: String
+        let targetPath: String
+
+        init(parent link: Link, fileManager: FileManager) throws {
+            let securityScopedURL = SecurityScopedURL(link.url)
+            let url = securityScopedURL.url
+        
+            self.mTime = url.contentModificationDate()?.timeIntervalSince1970 ?? 0
+            
+            self.relativePath = link.relativePath
+            self.targetPath = try fileManager.destinationOfSymbolicLink(atPath: url.path)
+                        
+        }
+        
+        func next() throws -> FileChunk? {
+            if !isFirstChunk {
+                return nil
+            }
+            
+            isFirstChunk = false
+            
+            return makeSymLinkChunk()
+        }
+        
+        func hasNext() -> Bool {
+            return isFirstChunk
+        }
+        
+        private func makeSymLinkChunk() -> FileChunk {
+            
+            let fileTime = FileTime.with({
+                $0.mtime = UInt64(mTime)
+                $0.mtimeUsec = UInt32(mTime.truncatingRemainder(dividingBy: 1) * 10e6)
+            })
+            
+            return FileChunk.with({
+                $0.relativePath = self.relativePath
+                $0.fileType = WarpFileType.symLink.rawValue
+                $0.symlinkTarget = self.targetPath
+                $0.time = fileTime
+            })
+        }
+    }
+    
+    
 }
