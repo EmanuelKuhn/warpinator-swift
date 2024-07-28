@@ -350,11 +350,7 @@ class TransferToRemote: TransferOp {
     }
     
     var size: UInt64 {
-        if let size = fileProvider.size {
-            return UInt64(size)
-        } else {
-            return 0
-        }
+        return UInt64(fileProvider.size)
     }
     
     var count: UInt64 {
