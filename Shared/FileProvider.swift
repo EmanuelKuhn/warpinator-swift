@@ -298,7 +298,7 @@ class File: FileItem {
         
         /// Returns true if iterator has a next FileChunk.
         func hasNext() -> Bool {
-            return nextData != nil
+            return nextData != nil || isFirstChunk
         }
         
         /// Get the next FileChunk. Returns nil if there is no next Chunk.
@@ -306,8 +306,16 @@ class File: FileItem {
             print("inside File.ChunkIterator next()")
             print(inputStream.streamStatus)
             
-            guard let currentData = nextData else {
-                return nil
+            let currentData: Data
+            
+            // If this is the first chunk, also send a chunk with empty data buffer
+            if isFirstChunk {
+                currentData = nextData ?? Data()
+            } else {
+                guard let nextData = nextData else {
+                    return nil
+                }
+                currentData = nextData
             }
             
             let currentChunk = makeFileChunk(data: currentData)
