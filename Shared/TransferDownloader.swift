@@ -192,21 +192,18 @@ class TransferDownloader {
         guard isFirstChunk else {
             throw TransferDownloaderError.invalidSymLink
         }
-        
-        let timestamp = NSDate.from(time: chunk.time)
-        
+                
         let newSymlinkUrl = try self.sanitizeRelativePath(relativePath: chunk.relativePath)
 
         let targetUrl = try sanitizeSymLink(relativePath: chunk.relativePath, targetPath: chunk.symlinkTarget)
         
         print("newSymlinkUrl: \(newSymlinkUrl); targetUrl: \(targetUrl)")
         
-        if fileManager.fileExists(atPath: newSymlinkUrl.path) {
-            try fileManager.removeItem(at: newSymlinkUrl)
-        }
+        // Remove the previous item if it exists (can't use fileManager.fileExists(..) because it follows links.
+        try? fileManager.removeItem(at: newSymlinkUrl)
         
         try fileManager.createSymbolicLink(at: newSymlinkUrl, withDestinationURL: targetUrl)
-        try fileManager.setAttributes([.modificationDate: timestamp], ofItemAtPath: newSymlinkUrl.path)
+        // Don't set the attributes, as fileManager.setAttributes will attempt to follow the symbolic link.
     }
     
     /// Make sure that the relative path doesn't go outside of the save directory and starts with a path component that is in
