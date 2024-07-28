@@ -14,6 +14,9 @@ protocol FileItem {
     
     var relativePath: String { get }
     var url: URL { get }
+    
+    var fileSize: Int { get }
+    var fileCount: UInt64 { get }
 }
 
 struct FileItemFactory {
@@ -62,20 +65,20 @@ class FileProvider {
         }
     }
     
-    var size: Int? {
+    var size: Int {
         return files.map {
-            $0.url.fileSize()
-        }.reduce(0) { prev, next in
-            if let prev = prev, let next = next {
-                return prev + next
-            } else {
-                return nil
-            }
+            $0.fileSize
+        }.reduce(0) { acc, next in
+            return acc + next
         }
     }
     
-    var count: Int {
-        return files.count
+    var count: UInt64 {
+        return files.map {
+            $0.fileCount
+        }.reduce(0) { acc, next in
+            return acc + next
+        }
     }
     
     var topDirBasenames: [String] {
@@ -191,7 +194,13 @@ class SecurityScopedURL {
 }
 
 
-struct File: FileItem {
+class File: FileItem {
+    
+    let fileCount: UInt64 = 1
+    
+    lazy var fileSize: Int = {
+        return self.url.fileSize() ?? 0
+    }()
     
     let url: URL
     
@@ -346,7 +355,7 @@ struct File: FileItem {
     }
 }
 
-struct Folder: FileItem {
+class Folder: FileItem {
     
     let url: URL
     
@@ -357,6 +366,14 @@ struct Folder: FileItem {
     
     let fileManager = FileManager.default
     
+    lazy var fileCount: UInt64 = {
+        return calculateFileCount()
+    }()
+    
+    lazy var fileSize: Int = {
+        return calculateFileSize()
+    }()
+    
     init(url: URL, relativePath: String) {
         self.url = url
         self.relativePath = relativePath
@@ -365,6 +382,34 @@ struct Folder: FileItem {
     internal func getDataChunkIterator() throws -> ChunkIterator {
         return try FolderChunkIterator(parent: self, fileManager: fileManager)
     }
+    
+    private func calculateFileCount() -> UInt64 {
+        
+        let securityScopedURL: SecurityScopedURL = .init(self.url)
+        
+        var count: UInt64 = 1
+        if let enumerator = fileManager.enumerator(at: securityScopedURL.url, includingPropertiesForKeys: nil) {
+            for case let fileURL as URL in enumerator {
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    private func calculateFileSize() -> Int {
+        let securityScopedURL: SecurityScopedURL = .init(self.url)
+
+        var size: Int = 0
+        if let enumerator = fileManager.enumerator(at: securityScopedURL.url, includingPropertiesForKeys: [.fileSizeKey]) {
+            for case let fileURL as URL in enumerator {
+                if let fileSize = try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+                    size += fileSize
+                }
+            }
+        }
+        return size
+    }
+
     
     internal class FolderChunkIterator: ChunkIterator {
         
