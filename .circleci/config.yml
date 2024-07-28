@@ -245,7 +245,7 @@ workflows:
                 - /^mac-test/
                 - /^test/
             branches:
-              only: main
+              only: /.*/
 
       # Should run for all branches, and tags for which a release should be published
       - mac_release_build:
