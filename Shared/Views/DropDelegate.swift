@@ -130,7 +130,7 @@ struct MyDropDelegate: DropDelegate {
         }
     }
 #else
-    func loadItem(provider: provider) {
+    func loadItem(provider: NSItemProvider, callback: @escaping (URL) -> ()) {
         print("Not implemented: loadItem(provider: \(provider)")
     }
 #endif
