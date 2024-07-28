@@ -23,6 +23,7 @@ enum TransferDownloaderError: Error {
     case moreFilesThanAdvertised
     case finishedWithMoreThan0Remaining
     case finishedWithLessThan0Remaining
+    case invalidFolderChunk
 }
 
 extension TransferDownloaderError: LocalizedError {
@@ -46,6 +47,8 @@ extension TransferDownloaderError: LocalizedError {
             return "finishedWithMoreThan0Remaining"
         case .finishedWithLessThan0Remaining:
             return "finishedWithLessThan0Remaining"
+        case .invalidFolderChunk:
+            return "invalidFolderChunk"
         }
     }
 }
@@ -108,12 +111,27 @@ class TransferDownloader {
         var verbosePrintedChunk = chunk
         verbosePrintedChunk.chunk = Data()
         print(verbosePrintedChunk)
+        
+        let isFirstChunkOfPath = !self.seenRelativePaths.contains(chunk.relativePath)
+        
+        // If this is the first chunk of `relativePath`
+        if isFirstChunkOfPath {
+            self.seenRelativePaths.update(with: chunk.relativePath)
+            
+            if remainingFileCount == 0 {
+                print("seen paths count: \(self.seenRelativePaths.count)")
+                throw TransferDownloaderError.moreFilesThanAdvertised
+            }
+            
+            // Decrement here, as not keeping track when last chunk of a file was sent.
+            remainingFileCount -= 1;
+        }
 
         switch(chunk.fileType) {
         case WarpFileType.file.rawValue:
-            try handleFile(chunk: chunk)
+            try handleFile(chunk: chunk, isFirstChunk: isFirstChunkOfPath)
         case WarpFileType.directory.rawValue:
-            try handleDirectory(chunk: chunk)
+            try handleDirectory(chunk: chunk, isFirstChunk: isFirstChunkOfPath)
         case WarpFileType.symLink.rawValue:
             throw TransferDownloaderError.symLinksAreNotSupported
         default:
@@ -121,22 +139,13 @@ class TransferDownloader {
         }
     }
     
-    func handleFile(chunk: FileChunk) throws {
+    func handleFile(chunk: FileChunk, isFirstChunk: Bool) throws {
         precondition(chunk.fileType == WarpFileType.file.rawValue)
         
         let fileUrl = try sanitizeRelativePath(relativePath: chunk.relativePath)
         
         // If this is the first chunk of fileUrl
-        if !self.seenRelativePaths.contains(chunk.relativePath) {
-            self.seenRelativePaths.update(with: chunk.relativePath)
-                        
-            if remainingFileCount == 0 {
-                throw TransferDownloaderError.moreFilesThanAdvertised
-            }
-            
-            // Decrement here, as not keeping track when last chunk of a file was sent.
-            remainingFileCount -= 1;
-            
+        if isFirstChunk {
             try chunk.chunk.write(to: fileUrl, options: .atomic)
 
             // The first chunk should have timestamp
@@ -156,8 +165,12 @@ class TransferDownloader {
         }
     }
 
-    func handleDirectory(chunk: FileChunk) throws {
+    func handleDirectory(chunk: FileChunk, isFirstChunk: Bool) throws {
         precondition(chunk.fileType == WarpFileType.directory.rawValue)
+        
+        guard isFirstChunk else {
+            throw TransferDownloaderError.invalidFolderChunk
+        }
         
         guard chunk.hasTime else {
             throw TransferDownloaderError.timeNotSet
@@ -199,6 +212,7 @@ class TransferDownloader {
     
     func finish() throws {
         if self.remainingFileCount > 0 {
+            print("remainingCount: \(self.remainingFileCount)")
             throw TransferDownloaderError.finishedWithMoreThan0Remaining
         }
         
