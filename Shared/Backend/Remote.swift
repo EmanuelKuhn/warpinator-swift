@@ -398,13 +398,18 @@ class Remote: FullRemoteProtocol, ObservableObject {
         
         print("requestTransfer: created:\n \(request)")
         
+        // Mark the operation as requested before sending the request. The receiver is
+        // allowed to call startTransfer back as soon as it has processed the request,
+        // which can happen before processTransferOpRequest returns here. The
+        // startTransfer handler rejects operations that are not in the requested state,
+        // so setting it afterwards loses that race and fails the transfer.
+        transferOperation.tryEvent(event: .requested)
+        
         let result = try? await client.processTransferOpRequest(request)
         
         print("client.processTransferOpRequest(request) result: \(String(describing: result))")
         
-        if result != nil {
-            transferOperation.tryEvent(event: .requested)
-        } else {
+        if result == nil {
             transferOperation.tryEvent(event: .failure(reason: "Failed to request"))
         }
     }
