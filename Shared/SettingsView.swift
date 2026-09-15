@@ -7,11 +7,18 @@
 
 import SwiftUI
 
+#if os(macOS)
+import AppKit
+#endif
+
 struct SettingsView: View {
     
     @ObservedObject
     var settings: WarpSetingsUserDefaults
-        
+
+    @ObservedObject
+    var downloadFolder: DownloadFolder
+
     @State var portText: String = ""
     @State var authPortText: String = ""
 
@@ -19,6 +26,7 @@ struct SettingsView: View {
     
     init() {
         settings = .shared
+        downloadFolder = .shared
     }
     
     var body: some View {
@@ -35,6 +43,25 @@ struct SettingsView: View {
             }
             
 #if os(macOS)
+            Divider()
+                .padding(.vertical, 5.0)
+
+            Section(header: Text("Download folder")) {
+                LabeledHStack("Save to") {
+                    Text(downloadFolder.displayPath)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .help(downloadFolder.displayPath)
+                }
+
+                HStack {
+                    Button("Choose...", action: chooseDownloadFolder)
+
+                    Button("Use default", action: { downloadFolder.reset() })
+                        .disabled(!downloadFolder.isCustom)
+                }
+            }
+
             Divider()
                 .padding(.vertical, 5.0)
 #endif
@@ -77,6 +104,32 @@ struct SettingsView: View {
             groupCodeText = String(settings.groupCode)
         }
     }
+
+#if os(macOS)
+    /// Ask the user for a folder. Picking it through NSOpenPanel is what grants the
+    /// sandboxed app access to it, which is then persisted as a security scoped bookmark.
+    private func chooseDownloadFolder() {
+        let panel = NSOpenPanel()
+
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.allowsMultipleSelection = false
+        panel.canCreateDirectories = true
+        panel.prompt = "Choose"
+        panel.message = "Choose the folder received files are saved to"
+        panel.directoryURL = downloadFolder.url
+
+        guard panel.runModal() == .OK, let url = panel.url else {
+            return
+        }
+
+        do {
+            try downloadFolder.select(url: url)
+        } catch {
+            print("Failed to select download folder: \(error)")
+        }
+    }
+#endif
 }
 
 // Preview Provider
