@@ -29,3 +29,4 @@ There are two ways to run the app:
     - [X] on iOS
 - [ ] Settings view (currently macOS only)
     - [X] Set groupcode
+    - [X] Choose the folder received files are saved to

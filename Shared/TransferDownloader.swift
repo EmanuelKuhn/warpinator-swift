@@ -70,13 +70,16 @@ class TransferDownloader {
     
     var remainingFileCount: UInt64
         
-    init(topDirBasenames: [String], progress: TransferOpMetrics, fileCount totalFileCount: UInt64) throws {
+    /// - Parameter saveDirectory: overrides where the files are written to. When nil,
+    ///   the folder configured in the settings is used, which defaults to the app's own
+    ///   Documents directory.
+    init(topDirBasenames: [String], progress: TransferOpMetrics, fileCount totalFileCount: UInt64, saveDirectory: URL? = nil) throws {
         
         self.progress = progress
         
         self.fileManager = FileManager.default
         
-        self.saveDirectory = try getDocumentsDirectory()
+        self.saveDirectory = try saveDirectory ?? DownloadFolder.shared.resolve()
         
         self.topDirBasenames = try topDirBasenames.map(TransferDownloader.sanitizeTopDirName)
         
